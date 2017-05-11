@@ -1,0 +1,70 @@
+module Education.MakeThemToLearnHaskell
+  ( main
+  ) where
+
+
+#include <imports/external.hs>
+
+import qualified Education.MakeThemToLearnHaskell.Exercise as Exercise
+import           Education.MakeThemToLearnHaskell.Util
+
+
+main :: IO ()
+main = do
+  args <- Env.getArgs
+  case args of
+      ("verify" : left) -> verifySource left
+      ("show" : left) -> showExercise left
+      _ -> printExerciseList
+
+
+printExerciseList :: IO ()
+printExerciseList = do
+  Text.putStrLn "# Make Them to Learn Haskell!"
+  Text.putStrLn ""
+  Text.putStrLn "## Contents"
+
+  let printHeader n h = Text.putStrLn $ Text.pack (show n) <> ". " <> h
+  zipWithM_ printHeader [1..] =<< Exercise.loadHeaders
+
+  Text.putStrLn ""
+  Text.putStrLn $ "Run `" <> Text.pack appName <> " show <the exercise number>` to try the exercise."
+
+
+verifySource :: [FilePath] -> IO ()
+verifySource [] = die "Specify the Haskell source file to veirfy!"
+verifySource (file : _) = do
+  ePrg <- Hint.runInterpreter $ do
+    Hint.loadModules [file]
+    Hint.interpret "main" (Hint.as :: IO ())
+
+  currentExercise <- Exercise.loadLastShown
+
+  case ePrg of
+      Right prg -> do
+        result <-
+          Exercise.verify currentExercise prg
+            `catch` (return . Exercise.resultOnException)
+        case result of
+            Exercise.Success details -> do
+              Text.putStrLn details
+              putStrLn "\n\nSUCCESS: Congratulations! Your solution got compiled and ran correctly!"
+              putStrLn "Here's an example solution of this exercise:"
+              Text.putStr =<< Exercise.loadExampleSolution currentExercise
+              Exit.exitSuccess
+            Exercise.Fail details -> do
+              Error.errLn $ Text.unpack details
+              Exit.die "\n\nFAIL: Your solution didn't pass. Try again!"
+      Left e -> do
+        -- TODO: Give hints based on the compilation error or source code
+        IO.hPrint IO.stderr e
+        Exit.die "\n\nFAIL: Your solution couldn't be compiled. Fix the error(s) and try again!"
+
+
+showExercise :: [String] -> IO ()
+showExercise [] = die "Specify an exercise number to show"
+showExercise (nStr : _) = do
+  n <- dieWhenNothing ("Exercise id " ++ nStr ++ " not found!") (readMay nStr)
+  d <- Exercise.loadDescriptionById n >>= dieWhenNothing ("Invalid exercise id: '" ++ nStr ++ "'")
+  Exercise.saveLastShownId n
+  Text.putStr d
