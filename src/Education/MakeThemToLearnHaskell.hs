@@ -55,7 +55,8 @@ verifySource (file : _) = do
 showExercise :: [String] -> IO ()
 showExercise [] = die "Specify an exercise number to show"
 showExercise (nStr : _) = do
-  n <- dieWhenNothing ("Exercise id " ++ nStr ++ " not found!") (readMay nStr)
-  d <- Exercise.loadDescriptionById n >>= dieWhenNothing ("Invalid exercise id: '" ++ nStr ++ "'")
+  n <- dieWhenNothing ("Invalid exercise id: '" ++ nStr ++ "'") (readMay nStr)
+  d <- Exercise.loadDescriptionById n
+        >>= dieWhenNothing ("Exercise id " ++ nStr ++ " not found!")
   Exercise.saveLastShownId n
   Text.putStr d
