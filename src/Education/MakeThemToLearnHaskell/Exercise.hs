@@ -17,9 +17,10 @@ module Education.MakeThemToLearnHaskell.Exercise
 
 import qualified Paths_makeThemToLearnHaskell
 
+import           Education.MakeThemToLearnHaskell.Diagnosis
+import qualified Education.MakeThemToLearnHaskell.Evaluator.RunHaskell as RunHaskell
 import           Education.MakeThemToLearnHaskell.Exercise.Record
 import           Education.MakeThemToLearnHaskell.Exercise.Types
-import qualified Education.MakeThemToLearnHaskell.Exercise.Evaluator.RunHaskell as RunHaskell
 import           Education.MakeThemToLearnHaskell.Util
 
 
@@ -47,10 +48,14 @@ exercises = Vector.fromList [exercise1]
               return $
                 if out == right && Text.null eMsg
                   then Success $ "Nice output!\n\n" <> msg
-                  else Fail $ "Wrong output!\n\n" <> msg <> eMsg
-           -- TODO: return Fail when copile error.
-            Left err -> return $ Error $ Text.pack $ show err
-
+                  else Fail $ "Wrong output!\n\n" <> msg
+            Left err ->
+              case err of
+                  RunHaskell.RunHaskellNotFound ->
+                    return $ Error "runhaskell command is not available.\nInstall stack or Haskell Platform."
+                  RunHaskell.RunHaskellFailure _ msg -> do
+                    print msg
+                    return $ Fail $ diagnoseErrorMessage msg
 
 
 loadHeaders :: IO [Text]
