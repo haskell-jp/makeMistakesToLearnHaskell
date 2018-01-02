@@ -30,10 +30,14 @@ saveLastShownId n = do
 
 getRecordFilePath :: IO FilePath
 getRecordFilePath = do
-  d <- (</> dirName) <$> Dir.getXdgDirectory Dir.XdgData appName
+  d <- (</> dirName) <$> (Env.getEnv homePathEnvVarName <|> Dir.getXdgDirectory Dir.XdgData appName)
   Dir.createDirectoryIfMissing True d
   return $ d </> "record.yaml"
 
 
 dirName :: FilePath
 dirName = "Exercise"
+
+
+homePathEnvVarName :: String
+homePathEnvVarName = "MAKE_THEM_TO_LEARN_HASKELL_HOME"
