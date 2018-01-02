@@ -1,0 +1,1 @@
+main = putStrL "Hello, world!"
