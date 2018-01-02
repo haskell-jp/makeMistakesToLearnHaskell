@@ -1,3 +1,7 @@
+-- Common import statements for external libraries.
+-- Intended to include by CPP.
+
+import           Control.Applicative ((<|>))
 import qualified Control.Error as Error
 import           Control.Exception
                    ( Exception
@@ -29,6 +33,5 @@ import qualified System.Exit as Exit
 import           System.Exit (ExitCode(ExitSuccess, ExitFailure))
 import           System.FilePath ((</>))
 import qualified System.IO as IO
-import qualified System.IO.Silently as Silently
 import           System.Process.Typed (readProcess)
 import qualified System.Process.Typed as Process

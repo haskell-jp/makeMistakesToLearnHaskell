@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
-module Education.MakeThemToLearnHaskell.Exercise.Evaluator.RunHaskell
+module Education.MakeThemToLearnHaskell.Evaluator.RunHaskell
   ( runFile
   , RunHaskellError(..)
   ) where
@@ -9,9 +9,7 @@ module Education.MakeThemToLearnHaskell.Exercise.Evaluator.RunHaskell
 #include <imports/external.hs>
 
 
--- TODO: Split out these Error* type synonyms into another module.
-type ErrorCode = Int
-type ErrorMessage = ByteString
+import           Education.MakeThemToLearnHaskell.Evaluator.Types
 
 
 data RunHaskellError =
@@ -26,6 +24,7 @@ runFile src = do
   case cmd of
       [] -> return $ Left RunHaskellNotFound
       (h:left) -> do
+        -- TODO: -fdiagnostics-color=always
         (ecode, out, err) <- readProcess $ Process.proc h $ left ++ [src]
         return $ case ecode of
             ExitSuccess -> Right (out, err)
