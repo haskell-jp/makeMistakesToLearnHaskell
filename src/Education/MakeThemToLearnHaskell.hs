@@ -45,10 +45,10 @@ verifySource (file : _) = do
         Text.putStr =<< Exercise.loadExampleSolution currentExercise
         Exit.exitSuccess
       Exercise.Fail details -> do
-        Error.errLn $ Text.unpack $ details <> "\n\n"
-        Exit.die "FAIL: Your solution didn't pass. Try again!"
+        Text.putStrLn $ details <> "\n\nFAIL: Your solution didn't pass. Try again!"
+        Exit.exitFailure
       Exercise.Error details -> do
-        Error.errLn $ Text.unpack $ details <> "\n\n"
+        Error.errLn $ Text.toStrict $ details <> "\n\n"
         die "An unexpected error occurred when evaluating your solution."
 
 
