@@ -8,12 +8,12 @@ import           Data.ByteString.Lazy.Char8 (ByteString)
 import qualified Data.ByteString.Lazy.Char8 as ByteString
 import qualified Data.ByteString.Char8 as ByteString'
 import           Data.Function ((&))
+import qualified System.Directory as Dir
 import qualified System.Environment as Env
 import           System.Exit (ExitCode(ExitSuccess, ExitFailure))
 import           System.FilePath ((</>))
 import           System.Process.Typed (readProcess, readProcess_)
 import qualified System.Process.Typed as Process
-import           System.IO.Temp (withSystemTempDirectory)
 
 
 -- `main` is here so that this module can be run from GHCi on its own.  It is
@@ -56,22 +56,12 @@ runMtlh :: [String] -> IO (ExitCode, ByteString, ByteString)
 runMtlh args = do
   (result, _) <- readProcess_ "stack path --local-install-root"
   let binPath = ByteString.unpack $ ByteString.takeWhile (not . isNewLine) result
-  withSystemTempDirectory "makeThemToLearnHaskell-test" $ \tmpDir -> do
-    Env.setEnv "MAKE_THEM_TO_LEARN_HASKELL_HOME" $ tmpDir </> "mtlh"
-    {-
-    envPath <- Env.getEnv "PATH"
-    envHome <- Env.getEnv "HOME"
-    let env =
-          [ ("MAKE_THEM_TO_LEARN_HASKELL_HOME", tmpDir </> "mtlh")
-          , ("PATH", envPath)
-          , ("HOME", envHome)
-          ]
-    -}
-    let cfg =
-          Process.proc (binPath </> "bin" </> "mtlh") args
-            -- & Process.setEnv env
-            & Process.setStdin Process.closed
-    readProcess cfg
+  tmpDir <- (</> "tmp/mtlh") <$> Dir.getCurrentDirectory
+  Env.setEnv "MAKE_THEM_TO_LEARN_HASKELL_HOME" tmpDir
+  let cfg =
+        Process.proc (binPath </> "bin" </> "mtlh") args
+          & Process.setStdin Process.closed
+  readProcess cfg
 
 
 isNewLine :: Char -> Bool
