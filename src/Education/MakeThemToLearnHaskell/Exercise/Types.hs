@@ -4,20 +4,21 @@ module Education.MakeThemToLearnHaskell.Exercise.Types where
 
 #include <imports/external.hs>
 
+import           Education.MakeThemToLearnHaskell.Env
 
 data Exercise =
   Exercise
     { exerciseName :: !String
-    , verify :: String -> IO Result
+    , verify :: Env -> String -> IO Result
     }
 
 
 data Result =
   Error !Details | Fail !Details | Success !Details deriving (Eq, Show)
 
-data Record =
+newtype Record =
   Record
-    { lastShownId :: !ExerciseId
+    { lastShownId :: ExerciseId
     } deriving Generic
 
 instance Yaml.FromJSON Record
