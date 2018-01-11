@@ -18,6 +18,6 @@ diagnoseErrorMessage =
   f . TextEncoding.decodeUtf8
   where
     f msg =
-      if msg `Text.isInfixOf` "Variable not in scope: main :: IO a0"
+      if "Variable not in scope: main :: IO" `Text.isInfixOf` msg
         then "HINT: This error indicates you haven't defined main function."
         else msg
