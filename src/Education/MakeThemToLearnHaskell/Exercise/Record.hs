@@ -7,13 +7,14 @@ module Education.MakeThemToLearnHaskell.Exercise.Record
 
 #include <imports/external.hs>
 
+import           Education.MakeThemToLearnHaskell.Env
 import           Education.MakeThemToLearnHaskell.Exercise.Types
 import           Education.MakeThemToLearnHaskell.Util
 
 
-loadLastShownId :: IO ExerciseId
-loadLastShownId = do
-  path <- getRecordFilePath
+loadLastShownId :: Env -> IO ExerciseId
+loadLastShownId e = do
+  path <- prepareRecordFilePath e
   exists <- Dir.doesFileExist path
   if exists
     then
@@ -22,22 +23,18 @@ loadLastShownId = do
       return 1
 
 
-saveLastShownId :: ExerciseId -> IO ()
-saveLastShownId n = do
-  path <- getRecordFilePath
+saveLastShownId :: Env -> ExerciseId -> IO ()
+saveLastShownId e n = do
+  path <- prepareRecordFilePath e
   Yaml.encodeFile path $ Record n
 
 
-getRecordFilePath :: IO FilePath
-getRecordFilePath = do
-  d <- (</> dirName) <$> (Env.getEnv homePathEnvVarName <|> Dir.getXdgDirectory Dir.XdgData appName)
+prepareRecordFilePath :: Env -> IO FilePath
+prepareRecordFilePath e = do
+  let d = appHomePath e </> dirName
   Dir.createDirectoryIfMissing True d
   return $ d </> "record.yaml"
 
 
 dirName :: FilePath
 dirName = "Exercise"
-
-
-homePathEnvVarName :: String
-homePathEnvVarName = "MAKE_THEM_TO_LEARN_HASKELL_HOME"

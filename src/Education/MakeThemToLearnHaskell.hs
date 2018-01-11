@@ -7,17 +7,20 @@ module Education.MakeThemToLearnHaskell
 
 #include <imports/external.hs>
 
+import           Education.MakeThemToLearnHaskell.Env
 import qualified Education.MakeThemToLearnHaskell.Exercise as Exercise
 import           Education.MakeThemToLearnHaskell.Util
 
 
 main :: IO ()
 main = do
+  avoidCodingError
   args <- Env.getArgs
-  case args of
-      ("verify" : left) -> verifySource left
-      ("show" : left) -> showExercise left
-      _ -> printExerciseList
+  withEnv $ \e ->
+    case args of
+        ("verify" : left) -> verifySource e left
+        ("show" : left) -> showExercise e left
+        _ -> printExerciseList
 
 
 printExerciseList :: IO ()
@@ -32,11 +35,11 @@ printExerciseList = do
   Text.putStrLn $ "\nRun `" <> Text.pack appName <> " show <the exercise number>` to try the exercise."
 
 
-verifySource :: [FilePath] -> IO ()
-verifySource [] = die "Specify the Haskell source file to veirfy!"
-verifySource (file : _) = do
-  currentExercise <- Exercise.loadLastShown
-  result <- Exercise.verify currentExercise file
+verifySource :: Env -> [FilePath] -> IO ()
+verifySource _ [] = die "Specify the Haskell source file to veirfy!"
+verifySource e (file : _) = do
+  currentExercise <- Exercise.loadLastShown e
+  result <- Exercise.verify currentExercise e file
   case result of
       Exercise.Success details -> do
         Text.putStrLn details
@@ -52,11 +55,20 @@ verifySource (file : _) = do
         die "An unexpected error occurred when evaluating your solution."
 
 
-showExercise :: [String] -> IO ()
-showExercise [] = die "Specify an exercise number to show"
-showExercise (nStr : _) = do
+showExercise :: Env -> [String] -> IO ()
+showExercise _ [] = die "Specify an exercise number to show"
+showExercise e (nStr : _) = do
   n <- dieWhenNothing ("Invalid exercise id: '" ++ nStr ++ "'") (readMay nStr)
   d <- Exercise.loadDescriptionById n
         >>= dieWhenNothing ("Exercise id " ++ nStr ++ " not found!")
-  Exercise.saveLastShownId n
+  Exercise.saveLastShownId e n
   Text.putStr d
+
+
+avoidCodingError :: IO ()
+#ifdef mingw32_HOST_OS
+avoidCodingError =
+  IO.hSetEncoding IO.stdout $ mkLocaleEncoding TransliterateCodingFailure
+#else
+avoidCodingError = return ()
+#endif

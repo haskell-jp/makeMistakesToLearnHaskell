@@ -25,6 +25,7 @@ library
   exposed-modules:      Education.MakeThemToLearnHaskell
   other-modules:        Paths_makeThemToLearnHaskell
                       , Education.MakeThemToLearnHaskell.Diagnosis
+                      , Education.MakeThemToLearnHaskell.Env
                       , Education.MakeThemToLearnHaskell.Evaluator.RunHaskell
                       , Education.MakeThemToLearnHaskell.Evaluator.Types
                       , Education.MakeThemToLearnHaskell.Exercise
@@ -47,6 +48,7 @@ library
                       , transformers
                       , typed-process
                       , vector
+                      , Win32
                       , yaml
   default-language:     Haskell2010
   default-extensions:   CPP

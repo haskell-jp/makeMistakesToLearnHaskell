@@ -18,6 +18,7 @@ module Education.MakeThemToLearnHaskell.Exercise
 import qualified Paths_makeThemToLearnHaskell
 
 import           Education.MakeThemToLearnHaskell.Diagnosis
+import           Education.MakeThemToLearnHaskell.Env
 import qualified Education.MakeThemToLearnHaskell.Evaluator.RunHaskell as RunHaskell
 import           Education.MakeThemToLearnHaskell.Exercise.Record
 import           Education.MakeThemToLearnHaskell.Exercise.Types
@@ -28,8 +29,8 @@ exercises :: Vector Exercise
 exercises = Vector.fromList [exercise1]
   where
     exercise1 =
-      Exercise "1" $ \prgFile -> do
-        result <- RunHaskell.runFile prgFile
+      Exercise "1" $ \e prgFile -> do
+        result <- RunHaskell.runFile e prgFile
         case result of
             Right (out, errB) -> do
               let right = "Hello, world!\n"
@@ -38,7 +39,8 @@ exercises = Vector.fromList [exercise1]
                         , "Your program's output: " <> Text.pack (show out)
                         , "      Expected output: " <> Text.pack (show right)
                         ]
-                  err = TextEncoding.decodeUtf8 errB
+              logDebug e $ "Right: " <> errB
+              let err = TextEncoding.decodeUtf8 errB
                   eMsg =
                     if Text.null err
                       then ""
@@ -54,7 +56,7 @@ exercises = Vector.fromList [exercise1]
                   RunHaskell.RunHaskellNotFound ->
                     return $ Error "runhaskell command is not available.\nInstall stack or Haskell Platform."
                   RunHaskell.RunHaskellFailure _ msg -> do
-                    print msg
+                    logDebug e $ "RunHaskellFailure: " <> msg
                     return $ Fail $ diagnoseErrorMessage msg
 
 
@@ -91,9 +93,9 @@ loadDescriptionById n = MaybeT.runMaybeT $ do
 
 -- Handle error internally.
 -- Because lastShownId is usually saved internally.
-loadLastShown :: IO Exercise
-loadLastShown =
-  loadLastShownId >>=
+loadLastShown :: Env -> IO Exercise
+loadLastShown e =
+  loadLastShownId e >>=
     dieWhenNothing "Assertion failure: Invalid lastShownId saved! " . getById
 
 
