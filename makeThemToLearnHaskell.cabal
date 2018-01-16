@@ -76,6 +76,7 @@ test-suite makeThemToLearnHaskell-test
                      , directory
                      , filepath
                      , hspec
+                     , hspec-core
                      , QuickCheck
                      , typed-process
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
