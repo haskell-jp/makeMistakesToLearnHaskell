@@ -75,6 +75,6 @@ includes s =
 
 shouldExitWithHints :: [ByteString] -> (ExitCode, ByteString, ByteString) -> IO ()
 shouldExitWithHints hintMsgs (code, out, err) = do
-  code `shouldBe` ExitFailure 1
   err `shouldSatisfy` ByteString.null
   mapM_ ((out `shouldSatisfy`) . includes) hintMsgs
+  code `shouldBe` ExitFailure 1
