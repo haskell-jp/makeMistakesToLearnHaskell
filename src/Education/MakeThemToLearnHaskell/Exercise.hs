@@ -20,9 +20,10 @@ import qualified Paths_makeThemToLearnHaskell
 import           Education.MakeThemToLearnHaskell.Diagnosis
 import           Education.MakeThemToLearnHaskell.Env
 import qualified Education.MakeThemToLearnHaskell.Evaluator.RunHaskell as RunHaskell
+import           Education.MakeThemToLearnHaskell.Evaluator.Util
 import           Education.MakeThemToLearnHaskell.Exercise.Record
 import           Education.MakeThemToLearnHaskell.Exercise.Types
-import           Education.MakeThemToLearnHaskell.Util
+import           Education.MakeThemToLearnHaskell.Error
 
 
 exercises :: Vector Exercise
@@ -32,13 +33,9 @@ exercises = Vector.fromList [exercise1]
       Exercise "1" $ \e prgFile -> do
         result <- RunHaskell.runFile e prgFile
         case result of
-            Right (out, errB) -> do
+            Right (outB, errB) -> do
               let right = "Hello, world!\n"
-                  msg = Text.unlines
-                        [ Text.replicate 80 "="
-                        , "Your program's output: " <> Text.pack (show out)
-                        , "      Expected output: " <> Text.pack (show right)
-                        ]
+                  out = canonicalizeOutput outB
               logDebug e $ "Right: " <> errB
               let err = TextEncoding.decodeUtf8 errB
                   eMsg =
@@ -47,6 +44,11 @@ exercises = Vector.fromList [exercise1]
                       else
                         Text.unlines
                           ["Found error message printed on stderr:", err]
+                  msg = Text.unlines
+                        [ Text.replicate 80 "="
+                        , "Your program's output: " <> Text.pack (show out)
+                        , "      Expected output: " <> Text.pack (show right)
+                        ]
               return $
                 if out == right && Text.null eMsg
                   then Success $ "Nice output!\n\n" <> msg
@@ -57,7 +59,7 @@ exercises = Vector.fromList [exercise1]
                     return $ Error "runhaskell command is not available.\nInstall stack or Haskell Platform."
                   RunHaskell.RunHaskellFailure _ msg -> do
                     logDebug e $ "RunHaskellFailure: " <> msg
-                    return $ Fail $ diagnoseErrorMessage msg
+                    return $ Fail $ appendDiagnosis msg
 
 
 loadHeaders :: IO [Text]

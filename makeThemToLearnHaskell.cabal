@@ -26,12 +26,13 @@ library
   other-modules:        Paths_makeThemToLearnHaskell
                       , Education.MakeThemToLearnHaskell.Diagnosis
                       , Education.MakeThemToLearnHaskell.Env
+                      , Education.MakeThemToLearnHaskell.Error
                       , Education.MakeThemToLearnHaskell.Evaluator.RunHaskell
                       , Education.MakeThemToLearnHaskell.Evaluator.Types
+                      , Education.MakeThemToLearnHaskell.Evaluator.Util
                       , Education.MakeThemToLearnHaskell.Exercise
                       , Education.MakeThemToLearnHaskell.Exercise.Record
                       , Education.MakeThemToLearnHaskell.Exercise.Types
-                      , Education.MakeThemToLearnHaskell.Util
   -- ghc-options:          -Wno-unused-imports
   -- ^ Why doesn't -Wno-unused-imports work?
   build-depends:        base >= 4.7 && < 5

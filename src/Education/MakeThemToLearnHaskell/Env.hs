@@ -3,6 +3,7 @@
 module Education.MakeThemToLearnHaskell.Env
   ( Env(..)
   , withEnv
+  , appName
   ) where
 
 #include <imports/external.hs>

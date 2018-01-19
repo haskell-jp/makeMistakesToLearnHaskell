@@ -9,7 +9,7 @@ module Education.MakeThemToLearnHaskell
 
 import           Education.MakeThemToLearnHaskell.Env
 import qualified Education.MakeThemToLearnHaskell.Exercise as Exercise
-import           Education.MakeThemToLearnHaskell.Util
+import           Education.MakeThemToLearnHaskell.Error
 
 
 main :: IO ()

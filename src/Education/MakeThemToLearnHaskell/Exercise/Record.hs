@@ -9,7 +9,7 @@ module Education.MakeThemToLearnHaskell.Exercise.Record
 
 import           Education.MakeThemToLearnHaskell.Env
 import           Education.MakeThemToLearnHaskell.Exercise.Types
-import           Education.MakeThemToLearnHaskell.Util
+import           Education.MakeThemToLearnHaskell.Error
 
 
 loadLastShownId :: Env -> IO ExerciseId
