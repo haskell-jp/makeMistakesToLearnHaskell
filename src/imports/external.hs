@@ -22,7 +22,7 @@ import qualified Data.Text.Lazy as Text
 import qualified Data.Text.Lazy.IO as Text
 import qualified Data.Text.Lazy.Encoding as TextEncoding
 import           Data.Typeable (Typeable)
-import           Data.Vector (Vector, (!?))
+import           Data.Vector (Vector, (!?), (!))
 import qualified Data.Vector as Vector
 import qualified Data.Yaml as Yaml
 import qualified Data.Yaml.TH as Yaml

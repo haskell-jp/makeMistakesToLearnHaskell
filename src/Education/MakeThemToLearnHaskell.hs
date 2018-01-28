@@ -9,6 +9,7 @@ module Education.MakeThemToLearnHaskell
 
 import           Education.MakeThemToLearnHaskell.Env
 import qualified Education.MakeThemToLearnHaskell.Exercise as Exercise
+import qualified Education.MakeThemToLearnHaskell.Evaluator.RunHaskell as RunHaskell
 import           Education.MakeThemToLearnHaskell.Error
 
 
@@ -16,11 +17,24 @@ main :: IO ()
 main = do
   avoidCodingError
   args <- Env.getArgs
-  withEnv $ \e ->
+  withMainEnv $ \e ->
     case args of
         ("verify" : left) -> verifySource e left
         ("show" : left) -> showExercise e left
         _ -> printExerciseList
+
+
+withMainEnv :: (Env -> IO r) -> IO r
+withMainEnv action = do
+  d <- Env.getEnv homePathEnvVarName <|> Dir.getXdgDirectory Dir.XdgData appName
+  Dir.createDirectoryIfMissing True d
+  IO.withFile (d </> "debug.log") IO.WriteMode $ \h ->
+    action
+      Env
+        { logDebug = ByteString.hPutStr h . (<> "\n")
+        , appHomePath = d
+        , runHaskell = RunHaskell.runFile
+        }
 
 
 printExerciseList :: IO ()
@@ -63,12 +77,3 @@ showExercise e (nStr : _) = do
         >>= dieWhenNothing ("Exercise id " ++ nStr ++ " not found!")
   Exercise.saveLastShownId e n
   Text.putStr d
-
-
-avoidCodingError :: IO ()
-#ifdef mingw32_HOST_OS
-avoidCodingError =
-  IO.hSetEncoding IO.stdout $ mkLocaleEncoding TransliterateCodingFailure
-#else
-avoidCodingError = return ()
-#endif

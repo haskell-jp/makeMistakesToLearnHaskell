@@ -1,0 +1,10 @@
+
+[;1mtest\assets\1\typo.hs:1:8: [;1m[31merror:[0m[0m[;1m[0m[0m[;1m
+    • Variable not in scope: putStrL :: [Char] -> t
+    • Perhaps you meant one of these:
+        ‘putStr’ (imported from Prelude),
+        ‘putStrLn’ (imported from Prelude)[0m[0m
+[;1m[34m  |[0m[0m
+[;1m[34m1 |[0m[0m main = [;1m[31mputStrL[0m[0m "Hello, world!"
+[;1m[34m  |[0m[0m[;1m[31m        ^^^^^^^[0m[0m
+[0m[0m[0mexit status 1

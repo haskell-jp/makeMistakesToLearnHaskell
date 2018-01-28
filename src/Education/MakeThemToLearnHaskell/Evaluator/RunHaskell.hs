@@ -13,12 +13,6 @@ import           Education.MakeThemToLearnHaskell.Env
 import           Education.MakeThemToLearnHaskell.Evaluator.Types
 
 
-data RunHaskellError =
-  RunHaskellNotFound | RunHaskellFailure ErrorCode ErrorMessage deriving (Show, Typeable)
-
-instance Exception RunHaskellError
-
-
 runFile :: Env -> FilePath -> IO (Either RunHaskellError (ByteString, ByteString))
 runFile e src = do
   cmd <- resolveInterpreter
@@ -37,12 +31,12 @@ resolveInterpreter :: IO [String]
 resolveInterpreter = do
   stack <- Dir.findExecutable "stack"
   case stack of
-      Just p -> return [p, runHaskell]
-      _ -> maybeToList <$> Dir.findExecutable runHaskell
+      Just p -> return [p, executableName]
+      _ -> maybeToList <$> Dir.findExecutable executableName
 
 
-runHaskell :: String
-runHaskell = "runhaskell"
+executableName :: String
+executableName = "runhaskell"
 
 -- | Ref: https://github.com/commercialhaskell/stack/blob/a9042ad6fa1d7c813a1c79713a518ee521da9add/src/Stack/Build.hs#L306-L332
 fixingCodePage :: Env -> IO a -> IO a

@@ -14,15 +14,18 @@ import           Education.MakeThemToLearnHaskell.Exercise.Types
 import           Debug.Trace
 
 
-appendDiagnosis :: ErrorMessage -> Details
-appendDiagnosis m =
-  let d = TextEncoding.decodeUtf8 m
+appendDiagnosis :: SourceCode -> ErrorMessage -> Details
+appendDiagnosis c m =
+  let m' = TextEncoding.decodeUtf8 m
   in
-    d <> "\n" <> diagnoseErrorMessage d
+    m' <> "\n" <> diagnoseErrorMessage c m'
 
 
-diagnoseErrorMessage :: Details -> Details
-diagnoseErrorMessage msg
+diagnoseErrorMessage :: SourceCode -> Details -> Details
+diagnoseErrorMessage code msg
+  | "parse error on input" `Text.isInfixOf` msg
+      && "'" `Text.isInfixOf` code =
+        "HINT: In Haskell, you must surround string literals with double-quote '\"'. Such as \"Hello, world\"."
   | "Variable not in scope: main :: IO" `Text.isInfixOf` msg =
     "HINT: This error indicates you haven't defined main function."
   | "Variable not in scope:" `Text.isInfixOf` msg =

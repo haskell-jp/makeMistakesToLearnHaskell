@@ -15,6 +15,7 @@ cabal-version:        >=1.10
 data-files:           assets/*.md
                     , assets/*.hs
 extra-source-files:   src/imports/*.hs
+                    , src/test/imports/*.hs
 -- test data here. see https://stackoverflow.com/questions/29361413/including-data-files-only-in-cabal-test-suites
                     , test/assets/1/*.hs
                     , test/assets/common/*.hs
@@ -23,16 +24,16 @@ library
   hs-source-dirs:       src
   include-dirs:         src
   exposed-modules:      Education.MakeThemToLearnHaskell
+                      , Education.MakeThemToLearnHaskell.Env
+                      , Education.MakeThemToLearnHaskell.Evaluator.Types
+                      , Education.MakeThemToLearnHaskell.Exercise
+                      , Education.MakeThemToLearnHaskell.Exercise.Types
   other-modules:        Paths_makeThemToLearnHaskell
                       , Education.MakeThemToLearnHaskell.Diagnosis
-                      , Education.MakeThemToLearnHaskell.Env
                       , Education.MakeThemToLearnHaskell.Error
                       , Education.MakeThemToLearnHaskell.Evaluator.RunHaskell
-                      , Education.MakeThemToLearnHaskell.Evaluator.Types
                       , Education.MakeThemToLearnHaskell.Evaluator.Util
-                      , Education.MakeThemToLearnHaskell.Exercise
                       , Education.MakeThemToLearnHaskell.Exercise.Record
-                      , Education.MakeThemToLearnHaskell.Exercise.Types
   -- ghc-options:          -Wno-unused-imports
   -- ^ Why doesn't -Wno-unused-imports work?
   build-depends:        base >= 4.7 && < 5
@@ -71,6 +72,8 @@ test-suite makeThemToLearnHaskell-test
   main-is:             Spec.hs
   other-modules:       Paths_makeThemToLearnHaskell
                      , Education.MakeThemToLearnHaskellSpec
+                     , Education.MakeThemToLearnHaskell.Exercise1Spec
+                     , Education.MakeThemToLearnHaskell.SpecEnv
   build-depends:       base
                      , makeThemToLearnHaskell
                      , bytestring
@@ -79,6 +82,7 @@ test-suite makeThemToLearnHaskell-test
                      , hspec
                      , hspec-core
                      , QuickCheck
+                     , text
                      , typed-process
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   default-language:    Haskell2010

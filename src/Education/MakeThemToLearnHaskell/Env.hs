@@ -1,32 +1,31 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
-module Education.MakeThemToLearnHaskell.Env
-  ( Env(..)
-  , withEnv
-  , appName
-  ) where
+module Education.MakeThemToLearnHaskell.Env where
 
 #include <imports/external.hs>
 
+import           Education.MakeThemToLearnHaskell.Evaluator.Types
 
 data Env =
   Env
     { logDebug :: ByteString -> IO ()
     , appHomePath :: FilePath
+    , runHaskell :: Env -> FilePath -> IO (Either RunHaskellError (ByteString, ByteString))
     }
 
 
-withEnv :: (Env -> IO r) -> IO r
-withEnv k = do
-  d <- Env.getEnv homePathEnvVarName <|> Dir.getXdgDirectory Dir.XdgData appName
-  Dir.createDirectoryIfMissing True d
-  IO.withFile (d </> "debug.log") IO.WriteMode $ \h ->
-    k $ Env (ByteString.hPutStr h . (<> "\n")) d
+appName :: String
+appName = "mmlh"
 
 
 homePathEnvVarName :: String
 homePathEnvVarName = "MAKE_THEM_TO_LEARN_HASKELL_HOME"
 
 
-appName :: String
-appName = "mmlh"
+avoidCodingError :: IO ()
+#ifdef mingw32_HOST_OS
+avoidCodingError =
+  IO.hSetEncoding IO.stdout $ mkLocaleEncoding TransliterateCodingFailure
+#else
+avoidCodingError = return ()
+#endif

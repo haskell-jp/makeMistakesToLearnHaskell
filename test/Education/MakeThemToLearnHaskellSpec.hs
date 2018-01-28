@@ -1,20 +1,8 @@
+{-# OPTIONS_GHC -Wno-unused-imports #-}
+
 module Education.MakeThemToLearnHaskellSpec (main, spec) where
 
-import           Test.Hspec
-import           Test.Hspec.Core.Spec (SpecM)
-
-import qualified Paths_makeThemToLearnHaskell
-
-import           Data.ByteString.Lazy.Char8 (ByteString)
-import qualified Data.ByteString.Lazy.Char8 as ByteString
-import qualified Data.ByteString.Char8 as ByteString'
-import           Data.Function ((&))
-import qualified System.Directory as Dir
-import qualified System.Environment as Env
-import           System.Exit (ExitCode(ExitSuccess, ExitFailure))
-import           System.FilePath ((</>))
-import           System.Process.Typed (readProcess, readProcess_)
-import qualified System.Process.Typed as Process
+#include <test/imports/external.hs>
 
 
 -- `main` is here so that this module can be run from GHCi on its own.  It is
@@ -24,6 +12,7 @@ main = hspec spec
 
 
 newtype TestEnv = TestEnv { mtlhPath :: FilePath }
+
 
 prepareTestEnv :: SpecM a TestEnv
 prepareTestEnv = runIO $ do
@@ -51,21 +40,6 @@ spec = do
       it "given an empty answer, show FAIL" $
         runMtlh e ["verify", "test/assets/common/empty.hs"]
           >>= shouldExitWithHints ["HINT: This error indicates you haven't defined main function."]
-
-      it "given an answer whose 'Hello, world!' is singlequoted, show FAIL" $
-        runMtlh e ["verify", "test/assets/1/single-quote.hs"]
-          >>= shouldExitWithHints ["HINT: In Haskell, you must surround string literals with double-quote '\"'. Such as \"Hello, world\"."]
-
-      it "given an answer whose 'Hello, world!' is singlequoted and putStrLn isn't assigned to main, show FAIL" $
-        runMtlh e ["verify", "test/assets/1/single-quote-no-main.hs"]
-          >>= shouldExitWithHints
-            [ "HINT: This error indicates you haven't defined main function."
-            , "HINT: In Haskell, you must surround string literals with double-quote '\"'. Such as \"Hello, world\"."
-            ]
-
-      it "given an answer with typo, show FAIL" $
-        runMtlh e ["verify", "test/assets/1/typo.hs"]
-          >>= shouldExitWithHints ["HINT: you might have misspelled 'putStrLn'."]
 
 
 runMtlh :: TestEnv -> [String] -> IO (ExitCode, ByteString, ByteString)

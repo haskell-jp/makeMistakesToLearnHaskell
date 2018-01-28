@@ -10,6 +10,7 @@ module Education.MakeThemToLearnHaskell.Exercise
   , loadExampleSolution
   , loadLastShown
   , saveLastShownId
+  , unsafeGetById
   ) where
 
 
@@ -31,7 +32,7 @@ exercises = Vector.fromList [exercise1]
   where
     exercise1 =
       Exercise "1" $ \e prgFile -> do
-        result <- RunHaskell.runFile e prgFile
+        result <- runHaskell e e prgFile
         case result of
             Right (outB, errB) -> do
               let right = "Hello, world!\n"
@@ -59,7 +60,8 @@ exercises = Vector.fromList [exercise1]
                     return $ Error "runhaskell command is not available.\nInstall stack or Haskell Platform."
                   RunHaskell.RunHaskellFailure _ msg -> do
                     logDebug e $ "RunHaskellFailure: " <> msg
-                    return $ Fail $ appendDiagnosis msg
+                    code <- Text.readFile prgFile
+                    return $ Fail $ appendDiagnosis code msg
 
 
 loadHeaders :: IO [Text]
@@ -103,3 +105,7 @@ loadLastShown e =
 
 getById :: ExerciseId -> Maybe Exercise
 getById n = exercises !? (n - 1)
+
+
+unsafeGetById :: ExerciseId -> Exercise
+unsafeGetById n = exercises ! (n - 1)

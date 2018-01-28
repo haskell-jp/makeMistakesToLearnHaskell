@@ -26,4 +26,6 @@ instance Yaml.ToJSON Record
 
 type Details = Text
 
+type SourceCode = Text
+
 type ExerciseId = Int

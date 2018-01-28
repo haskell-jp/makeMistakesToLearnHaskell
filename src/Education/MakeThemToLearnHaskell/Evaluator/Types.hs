@@ -3,6 +3,7 @@
 module Education.MakeThemToLearnHaskell.Evaluator.Types
   ( ErrorCode
   , ErrorMessage
+  , RunHaskellError(..)
   ) where
 
 
@@ -11,3 +12,9 @@ module Education.MakeThemToLearnHaskell.Evaluator.Types
 
 type ErrorCode = Int
 type ErrorMessage = ByteString
+
+
+data RunHaskellError =
+  RunHaskellNotFound | RunHaskellFailure ErrorCode ErrorMessage deriving (Show, Typeable)
+
+instance Exception RunHaskellError
