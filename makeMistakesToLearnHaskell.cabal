@@ -1,8 +1,8 @@
-name:                 makeThemToLearnHaskell
+name:                 makeMistakesToLearnHaskell
 version:              0.1.0.0
-synopsis:             Make apps (and mistakes) to learn Haskell!
+synopsis:             Make mistakes to learn Haskell!
 -- description:
-homepage:             https://gitlab.com/igrep/makeThemToLearnHaskell#readme
+homepage:             https://gitlab.com/igrep/makeMistakesToLearnHaskell#readme
 license:              Apache-2.0
 license-file:         LICENSE
 author:               Yuji Yamamoto
@@ -23,17 +23,17 @@ extra-source-files:   src/imports/*.hs
 library
   hs-source-dirs:       src
   include-dirs:         src
-  exposed-modules:      Education.MakeThemToLearnHaskell
-                      , Education.MakeThemToLearnHaskell.Env
-                      , Education.MakeThemToLearnHaskell.Evaluator.Types
-                      , Education.MakeThemToLearnHaskell.Exercise
-                      , Education.MakeThemToLearnHaskell.Exercise.Types
-  other-modules:        Paths_makeThemToLearnHaskell
-                      , Education.MakeThemToLearnHaskell.Diagnosis
-                      , Education.MakeThemToLearnHaskell.Error
-                      , Education.MakeThemToLearnHaskell.Evaluator.RunHaskell
-                      , Education.MakeThemToLearnHaskell.Evaluator.Util
-                      , Education.MakeThemToLearnHaskell.Exercise.Record
+  exposed-modules:      Education.MakeMistakesToLearnHaskell
+                      , Education.MakeMistakesToLearnHaskell.Env
+                      , Education.MakeMistakesToLearnHaskell.Evaluator.Types
+                      , Education.MakeMistakesToLearnHaskell.Exercise
+                      , Education.MakeMistakesToLearnHaskell.Exercise.Types
+  other-modules:        Paths_makeMistakesToLearnHaskell
+                      , Education.MakeMistakesToLearnHaskell.Diagnosis
+                      , Education.MakeMistakesToLearnHaskell.Error
+                      , Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell
+                      , Education.MakeMistakesToLearnHaskell.Evaluator.Util
+                      , Education.MakeMistakesToLearnHaskell.Exercise.Record
   -- ghc-options:          -Wno-unused-imports
   -- ^ Why doesn't -Wno-unused-imports work?
   build-depends:        base >= 4.7 && < 5
@@ -58,24 +58,24 @@ library
                       , DeriveDataTypeable
                       , OverloadedStrings
 
-executable mtlh
+executable mmlh
   hs-source-dirs:       app
   main-is:              Main.hs
   ghc-options:          -threaded -rtsopts -with-rtsopts=-N
   build-depends:        base
-                      , makeThemToLearnHaskell
+                      , makeMistakesToLearnHaskell
   default-language:     Haskell2010
 
-test-suite makeThemToLearnHaskell-test
+test-suite makeMistakesToLearnHaskell-test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test
   main-is:             Spec.hs
-  other-modules:       Paths_makeThemToLearnHaskell
-                     , Education.MakeThemToLearnHaskellSpec
-                     , Education.MakeThemToLearnHaskell.Exercise1Spec
-                     , Education.MakeThemToLearnHaskell.SpecEnv
+  other-modules:       Paths_makeMistakesToLearnHaskell
+                     , Education.MakeMistakesToLearnHaskellSpec
+                     , Education.MakeMistakesToLearnHaskell.Exercise1Spec
+                     , Education.MakeMistakesToLearnHaskell.SpecEnv
   build-depends:       base
-                     , makeThemToLearnHaskell
+                     , makeMistakesToLearnHaskell
                      , bytestring
                      , directory
                      , filepath
@@ -91,4 +91,4 @@ test-suite makeThemToLearnHaskell-test
 
 source-repository head
   type:     git
-  location: https://gitlab.com/igrep/makeThemToLearnHaskell
+  location: https://gitlab.com/igrep/makeMistakesToLearnHaskell.git

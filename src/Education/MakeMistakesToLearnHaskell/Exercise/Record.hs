@@ -1,15 +1,15 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
-module Education.MakeThemToLearnHaskell.Exercise.Record
+module Education.MakeMistakesToLearnHaskell.Exercise.Record
   ( loadLastShownId
   , saveLastShownId
   ) where
 
 #include <imports/external.hs>
 
-import           Education.MakeThemToLearnHaskell.Env
-import           Education.MakeThemToLearnHaskell.Exercise.Types
-import           Education.MakeThemToLearnHaskell.Error
+import           Education.MakeMistakesToLearnHaskell.Env
+import           Education.MakeMistakesToLearnHaskell.Exercise.Types
+import           Education.MakeMistakesToLearnHaskell.Error
 
 
 loadLastShownId :: Env -> IO ExerciseId

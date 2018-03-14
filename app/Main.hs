@@ -1,8 +1,8 @@
 module Main where
 
 
-import qualified Education.MakeThemToLearnHaskell
+import qualified Education.MakeMistakesToLearnHaskell
 
 
 main :: IO ()
-main = Education.MakeThemToLearnHaskell.main
+main = Education.MakeMistakesToLearnHaskell.main

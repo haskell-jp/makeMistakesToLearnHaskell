@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
-module Education.MakeThemToLearnHaskell.Exercise
+module Education.MakeMistakesToLearnHaskell.Exercise
   ( Exercise(verify)
   , ExerciseId
   , Result(..)
@@ -16,15 +16,15 @@ module Education.MakeThemToLearnHaskell.Exercise
 
 #include <imports/external.hs>
 
-import qualified Paths_makeThemToLearnHaskell
+import qualified Paths_makeMistakesToLearnHaskell
 
-import           Education.MakeThemToLearnHaskell.Diagnosis
-import           Education.MakeThemToLearnHaskell.Env
-import qualified Education.MakeThemToLearnHaskell.Evaluator.RunHaskell as RunHaskell
-import           Education.MakeThemToLearnHaskell.Evaluator.Util
-import           Education.MakeThemToLearnHaskell.Exercise.Record
-import           Education.MakeThemToLearnHaskell.Exercise.Types
-import           Education.MakeThemToLearnHaskell.Error
+import           Education.MakeMistakesToLearnHaskell.Diagnosis
+import           Education.MakeMistakesToLearnHaskell.Env
+import qualified Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell as RunHaskell
+import           Education.MakeMistakesToLearnHaskell.Evaluator.Util
+import           Education.MakeMistakesToLearnHaskell.Exercise.Record
+import           Education.MakeMistakesToLearnHaskell.Exercise.Types
+import           Education.MakeMistakesToLearnHaskell.Error
 
 
 exercises :: Vector Exercise
@@ -85,7 +85,7 @@ loadExampleSolution = loadWithExtension ".hs"
 
 loadWithExtension :: String -> Exercise -> IO Text
 loadWithExtension ext ex =
-  Paths_makeThemToLearnHaskell.getDataFileName ("assets/" ++ exerciseName ex ++ ext)
+  Paths_makeMistakesToLearnHaskell.getDataFileName ("assets/" ++ exerciseName ex ++ ext)
     >>= Text.readFile
 
 

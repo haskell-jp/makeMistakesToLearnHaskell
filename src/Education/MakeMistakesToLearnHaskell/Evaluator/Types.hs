@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
-module Education.MakeThemToLearnHaskell.Evaluator.Types
+module Education.MakeMistakesToLearnHaskell.Evaluator.Types
   ( ErrorCode
   , ErrorMessage
   , RunHaskellError(..)

@@ -1,12 +1,12 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
-module Education.MakeThemToLearnHaskell.Error  where
+module Education.MakeMistakesToLearnHaskell.Error  where
 
 
 #include <imports/external.hs>
 
 
-import           Education.MakeThemToLearnHaskell.Env (appName)
+import           Education.MakeMistakesToLearnHaskell.Env (appName)
 
 
 dieWhenNothing :: String -> Maybe a -> IO a

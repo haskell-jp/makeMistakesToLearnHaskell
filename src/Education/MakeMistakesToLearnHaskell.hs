@@ -1,16 +1,16 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
-module Education.MakeThemToLearnHaskell
+module Education.MakeMistakesToLearnHaskell
   ( main
   ) where
 
 
 #include <imports/external.hs>
 
-import           Education.MakeThemToLearnHaskell.Env
-import qualified Education.MakeThemToLearnHaskell.Exercise as Exercise
-import qualified Education.MakeThemToLearnHaskell.Evaluator.RunHaskell as RunHaskell
-import           Education.MakeThemToLearnHaskell.Error
+import           Education.MakeMistakesToLearnHaskell.Env
+import qualified Education.MakeMistakesToLearnHaskell.Exercise as Exercise
+import qualified Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell as RunHaskell
+import           Education.MakeMistakesToLearnHaskell.Error
 
 
 main :: IO ()
@@ -39,7 +39,7 @@ withMainEnv action = do
 
 printExerciseList :: IO ()
 printExerciseList = do
-  Text.putStrLn "# Make Them to Learn Haskell!"
+  Text.putStrLn "# Make Mistakes to Learn Haskell!"
   Text.putStrLn ""
   Text.putStrLn "## Contents"
 

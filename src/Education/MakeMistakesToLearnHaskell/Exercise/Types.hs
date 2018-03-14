@@ -1,10 +1,10 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
-module Education.MakeThemToLearnHaskell.Exercise.Types where
+module Education.MakeMistakesToLearnHaskell.Exercise.Types where
 
 #include <imports/external.hs>
 
-import           Education.MakeThemToLearnHaskell.Env
+import           Education.MakeMistakesToLearnHaskell.Env
 
 data Exercise =
   Exercise

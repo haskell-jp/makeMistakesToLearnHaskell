@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
-module Education.MakeThemToLearnHaskell.Evaluator.RunHaskell
+module Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell
   ( runFile
   , RunHaskellError(..)
   ) where
@@ -9,8 +9,8 @@ module Education.MakeThemToLearnHaskell.Evaluator.RunHaskell
 #include <imports/external.hs>
 
 
-import           Education.MakeThemToLearnHaskell.Env
-import           Education.MakeThemToLearnHaskell.Evaluator.Types
+import           Education.MakeMistakesToLearnHaskell.Env
+import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 
 
 runFile :: Env -> FilePath -> IO (Either RunHaskellError (ByteString, ByteString))

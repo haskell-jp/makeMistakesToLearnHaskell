@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
-module Education.MakeThemToLearnHaskellSpec (main, spec) where
+module Education.MakeMistakesToLearnHaskellSpec (main, spec) where
 
 #include <test/imports/external.hs>
 
@@ -11,41 +11,41 @@ main :: IO ()
 main = hspec spec
 
 
-newtype TestEnv = TestEnv { mtlhPath :: FilePath }
+newtype TestEnv = TestEnv { mmlhPath :: FilePath }
 
 
 prepareTestEnv :: SpecM a TestEnv
 prepareTestEnv = runIO $ do
-  tmpDir <- (</> "tmp/mtlh") <$> Dir.getCurrentDirectory
-  Env.setEnv "MAKE_THEM_TO_LEARN_HASKELL_HOME" tmpDir
+  tmpDir <- (</> "tmp/mmlh") <$> Dir.getCurrentDirectory
+  Env.setEnv "MAKE_MISTAKES_TO_LEARN_HASKELL_HOME" tmpDir
 
   (result, _) <- readProcess_ "stack path --local-install-root"
   let binPath =
         ByteString.unpack $ ByteString.takeWhile (not . isNewLine) result
 
-  return $ TestEnv $ binPath </> "bin" </> "mtlh"
+  return $ TestEnv $ binPath </> "bin" </> "mmlh"
 
 spec :: Spec
 spec = do
   e <- prepareTestEnv
-  describe "mtlh verify" $
+  describe "mmlh verify" $
     describe "when the user has never shown any exercise" $ do
       it "given the correct answer of exercise 1, show SUCCESS" $ do
-        answerFile <- Paths_makeThemToLearnHaskell.getDataFileName ("assets" </> "1.hs")
-        (code, out, err) <- runMtlh e ["verify", answerFile]
+        answerFile <- Paths_makeMistakesToLearnHaskell.getDataFileName ("assets" </> "1.hs")
+        (code, out, err) <- runMmlh e ["verify", answerFile]
         err `shouldSatisfy` ByteString.null
         out `shouldSatisfy` includes "SUCCESS"
         code `shouldBe` ExitSuccess
 
       it "given an empty answer, show FAIL" $
-        runMtlh e ["verify", "test/assets/common/empty.hs"]
+        runMmlh e ["verify", "test/assets/common/empty.hs"]
           >>= shouldExitWithHints ["HINT: This error indicates you haven't defined main function."]
 
 
-runMtlh :: TestEnv -> [String] -> IO (ExitCode, ByteString, ByteString)
-runMtlh e args =
+runMmlh :: TestEnv -> [String] -> IO (ExitCode, ByteString, ByteString)
+runMmlh e args =
   readProcess $
-    Process.proc (mtlhPath e) args
+    Process.proc (mmlhPath e) args
       & Process.setStdin Process.closed
 
 

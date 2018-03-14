@@ -1,16 +1,16 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
-module Education.MakeThemToLearnHaskell.Exercise1Spec
+module Education.MakeMistakesToLearnHaskell.Exercise1Spec
   ( spec
   , main
   ) where
 
 #include <test/imports/external.hs>
 
-import           Education.MakeThemToLearnHaskell.Env
-import           Education.MakeThemToLearnHaskell.SpecEnv
+import           Education.MakeMistakesToLearnHaskell.Env
+import           Education.MakeMistakesToLearnHaskell.SpecEnv
 
-import qualified Education.MakeThemToLearnHaskell.Exercise as Exercise
+import qualified Education.MakeMistakesToLearnHaskell.Exercise as Exercise
 
 
 -- `main` is here so that this module can be run from GHCi on its own.  It is
@@ -20,7 +20,7 @@ main = hspec spec
 
 spec :: Spec
 spec =
-  describe "Education.MakeThemToLearnHaskell.Exercise 1" $ do
+  describe "Education.MakeMistakesToLearnHaskell.Exercise 1" $ do
     baseEnv <- mkDefaultSpecEnv
     let subject = Exercise.unsafeGetById 1
 

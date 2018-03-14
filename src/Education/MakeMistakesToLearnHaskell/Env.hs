@@ -1,10 +1,10 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
-module Education.MakeThemToLearnHaskell.Env where
+module Education.MakeMistakesToLearnHaskell.Env where
 
 #include <imports/external.hs>
 
-import           Education.MakeThemToLearnHaskell.Evaluator.Types
+import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 
 data Env =
   Env
@@ -19,7 +19,7 @@ appName = "mmlh"
 
 
 homePathEnvVarName :: String
-homePathEnvVarName = "MAKE_THEM_TO_LEARN_HASKELL_HOME"
+homePathEnvVarName = "MAKE_MISTAKES_TO_LEARN_HASKELL_HOME"
 
 
 avoidCodingError :: IO ()

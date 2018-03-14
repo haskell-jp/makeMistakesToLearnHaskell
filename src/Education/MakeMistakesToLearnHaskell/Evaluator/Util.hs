@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
-module Education.MakeThemToLearnHaskell.Evaluator.Util
+module Education.MakeMistakesToLearnHaskell.Evaluator.Util
   ( canonicalizeOutput
   ) where
 

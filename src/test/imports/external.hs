@@ -1,7 +1,7 @@
 import           Test.Hspec
 import           Test.Hspec.Core.Spec (SpecM)
 
-import qualified Paths_makeThemToLearnHaskell
+import qualified Paths_makeMistakesToLearnHaskell
 
 import           Data.ByteString.Lazy.Char8 (ByteString)
 import qualified Data.ByteString.Lazy.Char8 as ByteString

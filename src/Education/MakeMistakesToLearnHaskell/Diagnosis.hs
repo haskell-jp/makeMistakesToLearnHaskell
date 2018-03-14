@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
-module Education.MakeThemToLearnHaskell.Diagnosis
+module Education.MakeMistakesToLearnHaskell.Diagnosis
   ( appendDiagnosis
   , diagnoseErrorMessage
   ) where
@@ -8,8 +8,8 @@ module Education.MakeThemToLearnHaskell.Diagnosis
 
 #include <imports/external.hs>
 
-import           Education.MakeThemToLearnHaskell.Evaluator.Types
-import           Education.MakeThemToLearnHaskell.Exercise.Types
+import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
+import           Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 import           Debug.Trace
 

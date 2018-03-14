@@ -1,17 +1,17 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
-module Education.MakeThemToLearnHaskell.SpecEnv where
+module Education.MakeMistakesToLearnHaskell.SpecEnv where
 
 
 #include <test/imports/external.hs>
 
-import           Education.MakeThemToLearnHaskell.Env
-import           Education.MakeThemToLearnHaskell.Evaluator.Types
+import           Education.MakeMistakesToLearnHaskell.Env
+import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 
 
 mkDefaultSpecEnv :: SpecM a Env
 mkDefaultSpecEnv = runIO $ do
-  tmpDir <- (</> "tmp/mtlh") <$> Dir.getCurrentDirectory
+  tmpDir <- (</> "tmp/mmlh") <$> Dir.getCurrentDirectory
   return Env
     { logDebug = const $ return ()
     -- { logDebug = ByteString.putStrLn

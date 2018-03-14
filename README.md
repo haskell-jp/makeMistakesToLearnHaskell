@@ -1,4 +1,4 @@
-# Make Them to Learn Haskell!
+# Make Mistakes to Learn Haskell!
 
 作りながら学ぶHaskell入門
 
