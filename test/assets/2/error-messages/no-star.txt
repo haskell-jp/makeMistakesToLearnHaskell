@@ -1,0 +1,79 @@
+[1 of 1] Compiling Main             ( S:\s\makeMistakesToLearnHaskell\test\assets\2\no-star.hs, S:\s\makeMistakesToLearnHaskell\test\assets\2\no-star.o )
+
+S:\s\makeMistakesToLearnHaskell\test\assets\2\no-star.hs:1:8: error:
+    ? Ambiguous type variable Åea0Åf arising from a use of ÅeprintÅf
+      prevents the constraint Åe(Show a0)Åf from being solved.
+      Probable fix: use a type annotation to specify what Åea0Åf should be.
+      These potential instances exist:
+        instance Show Ordering -- Defined in ÅeGHC.ShowÅf
+        instance Show Integer -- Defined in ÅeGHC.ShowÅf
+        instance Show a => Show (Maybe a) -- Defined in ÅeGHC.ShowÅf
+        ...plus 22 others
+        ...plus six instances involving out-of-scope types
+        (use -fprint-potential-instances to see them all)
+    ? In the expression: print (60 / 1.7 1.7)
+      In an equation for ÅemainÅf: main = print (60 / 1.7 1.7)
+  |
+1 | main = print (60 / 1.7 1.7)
+  |        ^^^^^^^^^^^^^^^^^^^^
+
+S:\s\makeMistakesToLearnHaskell\test\assets\2\no-star.hs:1:15: error:
+    ? Ambiguous type variable Åea0Åf arising from the literal Åe60Åf
+      prevents the constraint Åe(Num a0)Åf from being solved.
+      Probable fix: use a type annotation to specify what Åea0Åf should be.
+      These potential instances exist:
+        instance Num Integer -- Defined in ÅeGHC.NumÅf
+        instance Num Double -- Defined in ÅeGHC.FloatÅf
+        instance Num Float -- Defined in ÅeGHC.FloatÅf
+        ...plus two others
+        ...plus one instance involving out-of-scope types
+        (use -fprint-potential-instances to see them all)
+    ? In the first argument of Åe(/)Åf, namely Åe60Åf
+      In the first argument of ÅeprintÅf, namely Åe(60 / 1.7 1.7)Åf
+      In the expression: print (60 / 1.7 1.7)
+  |
+1 | main = print (60 / 1.7 1.7)
+  |               ^^
+
+S:\s\makeMistakesToLearnHaskell\test\assets\2\no-star.hs:1:15: error:
+    ? Ambiguous type variable Åea0Åf arising from a use of Åe/Åf
+      prevents the constraint Åe(Fractional a0)Åf from being solved.
+      Probable fix: use a type annotation to specify what Åea0Åf should be.
+      These potential instances exist:
+        instance Fractional Double -- Defined in ÅeGHC.FloatÅf
+        instance Fractional Float -- Defined in ÅeGHC.FloatÅf
+        ...plus one instance involving out-of-scope types
+        (use -fprint-potential-instances to see them all)
+    ? In the first argument of ÅeprintÅf, namely Åe(60 / 1.7 1.7)Åf
+      In the expression: print (60 / 1.7 1.7)
+      In an equation for ÅemainÅf: main = print (60 / 1.7 1.7)
+  |
+1 | main = print (60 / 1.7 1.7)
+  |               ^^^^^^^^^^^^
+
+S:\s\makeMistakesToLearnHaskell\test\assets\2\no-star.hs:1:20: error:
+    ? No instance for (Fractional (t0 -> a0))
+        arising from the literal Åe1.7Åf
+        (maybe you haven't applied a function to enough arguments?)
+    ? In the expression: 1.7
+      In the second argument of Åe(/)Åf, namely Åe1.7 1.7Åf
+      In the first argument of ÅeprintÅf, namely Åe(60 / 1.7 1.7)Åf
+  |
+1 | main = print (60 / 1.7 1.7)
+  |                    ^^^
+
+S:\s\makeMistakesToLearnHaskell\test\assets\2\no-star.hs:1:24: error:
+    ? Ambiguous type variable Ået0Åf arising from the literal Åe1.7Åf
+      prevents the constraint Åe(Fractional t0)Åf from being solved.
+      Probable fix: use a type annotation to specify what Ået0Åf should be.
+      These potential instances exist:
+        instance Fractional Double -- Defined in ÅeGHC.FloatÅf
+        instance Fractional Float -- Defined in ÅeGHC.FloatÅf
+        ...plus one instance involving out-of-scope types
+        (use -fprint-potential-instances to see them all)
+    ? In the first argument of Åe1.7Åf, namely Åe1.7Åf
+      In the second argument of Åe(/)Åf, namely Åe1.7 1.7Åf
+      In the first argument of ÅeprintÅf, namely Åe(60 / 1.7 1.7)Åf
+  |
+1 | main = print (60 / 1.7 1.7)
+  |                        ^^^

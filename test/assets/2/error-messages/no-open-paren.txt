@@ -1,0 +1,7 @@
+[1 of 1] Compiling Main             ( S:\s\makeMistakesToLearnHaskell\test\assets\2\no-open-paren.hs, S:\s\makeMistakesToLearnHaskell\test\assets\2\no-open-paren.o )
+
+S:\s\makeMistakesToLearnHaskell\test\assets\2\no-open-paren.hs:1:30: error:
+    parse error on input e)f
+  |
+1 | main = print 60 / (1.7 * 1.7))
+  |                              ^

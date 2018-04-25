@@ -1,0 +1,4 @@
+[1 of 1] Compiling Main             ( S:\s\makeMistakesToLearnHaskell\test\assets\2\no-close-paren.hs, S:\s\makeMistakesToLearnHaskell\test\assets\2\no-close-paren.o )
+
+S:\s\makeMistakesToLearnHaskell\test\assets\2\no-close-paren.hs:2:1: error:
+    parse error (possibly incorrect indentation or mismatched brackets)

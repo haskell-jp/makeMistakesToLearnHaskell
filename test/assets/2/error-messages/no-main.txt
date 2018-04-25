@@ -1,0 +1,8 @@
+[1 of 1] Compiling Main             ( S:\s\makeMistakesToLearnHaskell\test\assets\2\no-main.hs, S:\s\makeMistakesToLearnHaskell\test\assets\2\no-main.o )
+
+S:\s\makeMistakesToLearnHaskell\test\assets\2\no-main.hs:1:1: error:
+    Parse error: module header, import declaration
+    or top-level declaration expected.
+  |
+1 | print (60 / (1.7 * 1.7))
+  | ^^^^^^^^^^^^^^^^^^^^^^^^
