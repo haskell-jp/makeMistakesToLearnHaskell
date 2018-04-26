@@ -9,6 +9,7 @@ module Education.MakeMistakesToLearnHaskell.Exercise1Spec
 
 import           Education.MakeMistakesToLearnHaskell.Env
 import           Education.MakeMistakesToLearnHaskell.SpecEnv
+import           Education.MakeMistakesToLearnHaskell.SpecHelper
 
 import qualified Education.MakeMistakesToLearnHaskell.Exercise as Exercise
 
@@ -35,14 +36,3 @@ spec =
       let e = setRunHaskellReturningOutput baseEnv err
       d <- shouldFail =<< Exercise.verify subject e "test/assets/1/typo.hs"
       d `shouldSatisfy` Text.isInfixOf "HINT: you might have misspelled 'putStrLn'."
-
-
-shouldFail :: Exercise.Result -> IO Exercise.Details
-shouldFail r =
-  case r of
-      Exercise.Fail d ->
-        return d
-      Exercise.Success d ->
-        fail $ "Unexpected Success: " ++ show d
-      Exercise.Error d ->
-        fail $ "Unexpected Error: " ++ show d

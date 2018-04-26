@@ -74,6 +74,7 @@ test-suite makeMistakesToLearnHaskell-test
                      , Education.MakeMistakesToLearnHaskellSpec
                      , Education.MakeMistakesToLearnHaskell.Exercise1Spec
                      , Education.MakeMistakesToLearnHaskell.SpecEnv
+                     , Education.MakeMistakesToLearnHaskell.SpecHelper
   build-depends:       base
                      , makeMistakesToLearnHaskell
                      , bytestring
