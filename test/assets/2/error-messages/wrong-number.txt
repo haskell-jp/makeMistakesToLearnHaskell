@@ -1,2 +1,1 @@
-[1 of 1] Compiling Main             ( S:\s\makeMistakesToLearnHaskell\test\assets\2\wrong-number.hs, S:\s\makeMistakesToLearnHaskell\test\assets\2\wrong-number.o )
-Linking S:\s\makeMistakesToLearnHaskell\test\assets\2\wrong-number.exe ...
+6.0

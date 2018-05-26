@@ -73,6 +73,7 @@ test-suite makeMistakesToLearnHaskell-test
   other-modules:       Paths_makeMistakesToLearnHaskell
                      , Education.MakeMistakesToLearnHaskellSpec
                      , Education.MakeMistakesToLearnHaskell.Exercise1Spec
+                     , Education.MakeMistakesToLearnHaskell.Exercise2Spec
                      , Education.MakeMistakesToLearnHaskell.SpecEnv
                      , Education.MakeMistakesToLearnHaskell.SpecHelper
   build-depends:       base

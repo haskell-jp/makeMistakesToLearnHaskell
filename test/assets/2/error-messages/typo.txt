@@ -1,0 +1,8 @@
+[1 of 1] Compiling Main             ( test\assets\2\typo.hs, test\assets\2\typo.o )
+
+test\assets\2\typo.hs:1:8: error:
+    ? Variable not in scope: prit :: Double -> t
+    ? Perhaps you meant eprintf (imported from Prelude)
+  |
+1 | main = prit (60 / (1.7 * 1.7))
+  |        ^^^^
