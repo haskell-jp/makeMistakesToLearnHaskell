@@ -34,5 +34,4 @@ spec =
     it "given an answer with typo, show FAIL" $ do
       err <- ByteString.readFile "test/assets/1/error-messages/typo.txt"
       let e = setRunHaskellReturningOutput baseEnv err
-      d <- shouldFail =<< Exercise.verify subject e "test/assets/1/typo.hs"
-      d `shouldSatisfy` Text.isInfixOf "HINT: you might have misspelled 'putStrLn'."
+      void (shouldFail =<< Exercise.verify subject e "test/assets/1/typo.hs")

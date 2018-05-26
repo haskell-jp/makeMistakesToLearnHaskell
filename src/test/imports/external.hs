@@ -8,6 +8,7 @@ import           Test.Main
 
 import qualified Paths_makeMistakesToLearnHaskell
 
+import           Control.Monad (void)
 import           Control.Exception (try)
 import           Data.ByteString.Lazy.Char8 (ByteString)
 import qualified Data.ByteString.Lazy.Char8 as ByteString
