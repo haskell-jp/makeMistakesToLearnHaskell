@@ -28,13 +28,14 @@ withMainEnv :: (Env -> IO r) -> IO r
 withMainEnv action = do
   d <- Env.getEnv homePathEnvVarName <|> Dir.getXdgDirectory Dir.XdgData appName
   Dir.createDirectoryIfMissing True d
-  IO.withFile (d </> "debug.log") IO.WriteMode $ \h ->
-    action
-      Env
-        { logDebug = ByteString.hPutStr h . (<> "\n")
-        , appHomePath = d
-        , runHaskell = RunHaskell.runFile
-        }
+  IO.withFile (d </> "debug.log") IO.WriteMode $ \h -> do
+    let e =
+          Env
+            { logDebug = ByteString.hPutStr h . (<> "\n")
+            , appHomePath = d
+            , runHaskell = RunHaskell.runFile e
+            }
+    action e
 
 
 printExerciseList :: IO ()

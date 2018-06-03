@@ -10,8 +10,7 @@ data Env =
   Env
     { logDebug :: ByteString -> IO ()
     , appHomePath :: FilePath
-    , runHaskell :: Env -> FilePath -> IO (Either RunHaskellError (ByteString, ByteString))
-    --              ^ TODO 削除
+    , runHaskell :: FilePath -> IO (Either RunHaskellError (ByteString, ByteString))
     }
 
 

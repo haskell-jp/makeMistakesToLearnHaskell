@@ -76,7 +76,7 @@ exercises = Vector.fromList [exercise1, exercise2]
 
 runHaskellExercise :: Diagnosis -> Text -> Env -> FilePath -> IO Result
 runHaskellExercise diag right e prgFile = do
-  result <- runHaskell e e prgFile
+  result <- runHaskell e prgFile
   case result of
       Right (outB, _errB {- TODO: print stderr -}) -> do
         let out = canonicalizeNewlines outB
