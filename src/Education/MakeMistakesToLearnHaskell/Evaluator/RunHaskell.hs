@@ -19,7 +19,6 @@ runFile e src = do
   case cmd of
       [] -> return $ Left RunHaskellNotFound
       (h:left) -> do
-        -- TODO: -fdiagnostics-color=always
         (ecode, out, err) <-
           fixingCodePage e $ readProcess $ Process.proc h $ left ++ [src]
         return $ case ecode of
@@ -31,8 +30,12 @@ resolveInterpreter :: IO [String]
 resolveInterpreter = do
   stack <- Dir.findExecutable "stack"
   case stack of
-      Just p -> return [p, executableName]
-      _ -> maybeToList <$> Dir.findExecutable executableName
+      Just p -> return [p, "exec", executableName, "--", optionAlwaysColor]
+      _ -> maybe [] (: [optionAlwaysColor]) <$> Dir.findExecutable executableName
+
+
+optionAlwaysColor :: String
+optionAlwaysColor = "--ghc-arg=-fdiagnostics-color=always"
 
 
 executableName :: String
