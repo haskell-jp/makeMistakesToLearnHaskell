@@ -21,47 +21,87 @@ import qualified Paths_makeMistakesToLearnHaskell
 import           Education.MakeMistakesToLearnHaskell.Diagnosis
 import           Education.MakeMistakesToLearnHaskell.Env
 import qualified Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell as RunHaskell
-import           Education.MakeMistakesToLearnHaskell.Evaluator.Util
+import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 import           Education.MakeMistakesToLearnHaskell.Exercise.Record
 import           Education.MakeMistakesToLearnHaskell.Exercise.Types
 import           Education.MakeMistakesToLearnHaskell.Error
+import           Education.MakeMistakesToLearnHaskell.Text
+
+import           Debug.NoTrace
 
 
 exercises :: Vector Exercise
-exercises = Vector.fromList [exercise1]
+exercises = Vector.fromList [exercise1, exercise2]
   where
     exercise1 =
-      Exercise "1" $ \e prgFile -> do
-        result <- runHaskell e e prgFile
-        case result of
-            Right (outB, errB) -> do
-              let right = "Hello, world!\n"
-                  out = canonicalizeOutput outB
-              logDebug e $ "Right: " <> errB
-              let err = TextEncoding.decodeUtf8 errB
-                  eMsg =
-                    if Text.null err
-                      then ""
-                      else
-                        Text.unlines
-                          ["Found error message printed on stderr:", err]
-                  msg = Text.unlines
-                        [ Text.replicate 80 "="
-                        , "Your program's output: " <> Text.pack (show out)
-                        , "      Expected output: " <> Text.pack (show right)
-                        ]
-              return $
-                if out == right && Text.null eMsg
-                  then Success $ "Nice output!\n\n" <> msg
-                  else Fail $ "Wrong output!\n\n" <> msg
-            Left err ->
-              case err of
-                  RunHaskell.RunHaskellNotFound ->
-                    return $ Error "runhaskell command is not available.\nInstall stack or Haskell Platform."
-                  RunHaskell.RunHaskellFailure _ msg -> do
-                    logDebug e $ "RunHaskellFailure: " <> msg
-                    code <- Text.readFile prgFile
-                    return $ Fail $ appendDiagnosis code msg
+      Exercise "1" $ runHaskellExercise diag1 "Hello, world!\n"
+
+    diag1 :: Diagnosis
+    diag1 code msg
+      | "parse error on input" `Text.isInfixOf` msg
+          && "'" `Text.isInfixOf` code =
+            "HINT: In Haskell, you must surround string literals with double-quote '\"'. Such as \"Hello, world\"."
+      | "Variable not in scope: main :: IO" `Text.isInfixOf` msg =
+        "HINT: This error indicates you haven't defined main function."
+      | "Variable not in scope:" `Text.isInfixOf` msg =
+        "HINT: you might have misspelled 'putStrLn'."
+      | otherwise = ""
+
+    exercise2 =
+      Exercise "2" $ runHaskellExercise diag2 "20.761245674740486\n"
+
+    diag2 :: Diagnosis
+    diag2 code msg
+      | "parse error" `Text.isInfixOf` msg || "Parse error" `Text.isInfixOf` msg =
+        if "top-level declaration expected." `Text.isInfixOf` msg
+          then
+            "HINT: This error indicates you haven't defined main function."
+          else
+            case compare (Text.count "(" code) (Text.count ")" code) of
+                GT -> "HINT: you might have forgot to write close parenthesis"
+                LT -> "HINT: you might have forgot to write open parenthesis"
+                EQ -> error "EQ" -- TODO: other errors!
+      | "No instance for (Num (t0 -> a0))" `Text.isInfixOf` msg =
+        "HINT: you might have forgot to write multiplication operator '*'"
+      | "No instance for (Fractional (t0 -> a0))" `Text.isInfixOf` msg =
+        "HINT: you might have forgot to write division operator '/'"
+      | "Variable not in scope: main :: IO" `Text.isInfixOf` msg =
+        "HINT: This error indicates you haven't defined main function."
+      | otherwise = ""
+
+
+runHaskellExercise :: Diagnosis -> Text -> Env -> FilePath -> IO Result
+runHaskellExercise diag right e prgFile = do
+  result <- runHaskell e e prgFile
+  case result of
+      Right (outB, errB) -> do
+        let out = canonicalizeNewlines outB
+        logDebug e $ "Right: " <> errB
+        let err = decodeUtf8 errB
+            eMsg =
+              if Text.null err
+                then ""
+                else
+                  Text.unlines
+                    ["Found error message printed on stderr:", err]
+            msg = Text.unlines
+                  [ Text.replicate 80 "="
+                  , "Your program's output: " <> Text.pack (show out)
+                  , "      Expected output: " <> Text.pack (show right)
+                  ]
+        return $
+          if out == right && Text.null eMsg -- TODO: delete Text.null
+            then Success $ "Nice output!\n\n" <> msg
+            else Fail $ "Wrong output!\n\n" <> msg
+      Left err -> do
+        traceM $ "err: " ++ show err
+        case err of
+            RunHaskell.RunHaskellNotFound ->
+              return $ Error "runhaskell command is not available.\nInstall stack or Haskell Platform."
+            RunHaskell.RunHaskellFailure _ msg -> do
+              logDebug e $ "RunHaskellFailure: " <> msg
+              code <- Text.readFile prgFile
+              return $ Fail $ appendDiagnosis diag code msg
 
 
 loadHeaders :: IO [Text]

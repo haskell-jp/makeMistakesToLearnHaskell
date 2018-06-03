@@ -32,8 +32,8 @@ library
                       , Education.MakeMistakesToLearnHaskell.Diagnosis
                       , Education.MakeMistakesToLearnHaskell.Error
                       , Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell
-                      , Education.MakeMistakesToLearnHaskell.Evaluator.Util
                       , Education.MakeMistakesToLearnHaskell.Exercise.Record
+                      , Education.MakeMistakesToLearnHaskell.Text
   -- ghc-options:          -Wno-unused-imports
   -- ^ Why doesn't -Wno-unused-imports work?
   build-depends:        base >= 4.7 && < 5
@@ -45,6 +45,7 @@ library
                       , filepath
                       , hint
                       -- , i18n Use in the future
+                      , NoTrace
                       , safe
                       , text
                       , transformers

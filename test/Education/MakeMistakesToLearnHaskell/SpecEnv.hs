@@ -20,6 +20,11 @@ mkDefaultSpecEnv = runIO $ do
     }
 
 
-setRunHaskellReturningOutput :: Env -> ByteString -> Env
-setRunHaskellReturningOutput e err =
+setRunHaskellFailureWithOutput :: Env -> ByteString -> Env
+setRunHaskellFailureWithOutput e err =
   e { runHaskell = \_env _path -> return $ Left $ RunHaskellFailure 1 err }
+
+
+setRunHaskellSuccessWithStdout :: Env -> ByteString -> Env
+setRunHaskellSuccessWithStdout e out =
+  e { runHaskell = \_env _path -> return $ Right $ (out, "") }

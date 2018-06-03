@@ -25,44 +25,49 @@ spec =
     baseEnv <- mkDefaultSpecEnv
     let subject = Exercise.unsafeGetById 2
 
+    it "given the correct answer, show SUCCESS" $ do
+      out <- ByteString.readFile "test/assets/2/error-messages/correct.txt"
+      let e = setRunHaskellSuccessWithStdout baseEnv out
+      void $ shouldSuccess =<< Exercise.verify subject e "assets/2.hs"
+
     it "given an answer missing close parenthesis, show FAIL" $ do
       err <- ByteString.readFile "test/assets/2/error-messages/no-close-paren.txt"
-      let e = setRunHaskellReturningOutput baseEnv err
+      let e = setRunHaskellFailureWithOutput baseEnv err
       d <- shouldFail =<< Exercise.verify subject e "test/assets/2/no-close-paren.hs"
       d `shouldSatisfy` Text.isInfixOf "HINT: you might have forgot to write close parenthesis"
 
     it "given an answer without main, show FAIL" $ do
       err <- ByteString.readFile "test/assets/2/error-messages/no-main.txt"
-      let e = setRunHaskellReturningOutput baseEnv err
+      let e = setRunHaskellFailureWithOutput baseEnv err
       d <- shouldFail =<< Exercise.verify subject e "test/assets/2/no-main.hs"
-      d `shouldSatisfy` Text.isInfixOf "HINT: This error indicates you haven't defined main function, or misspelled 'main'."
+      d `shouldSatisfy` Text.isInfixOf "HINT: This error indicates you haven't defined main function."
 
     it "given an answer missing open parenthesis, show FAIL" $ do
       err <- ByteString.readFile "test/assets/2/error-messages/no-open-paren.txt"
-      let e = setRunHaskellReturningOutput baseEnv err
+      let e = setRunHaskellFailureWithOutput baseEnv err
       d <- shouldFail =<< Exercise.verify subject e "test/assets/2/no-open-paren.hs"
       d `shouldSatisfy` Text.isInfixOf "HINT: you might have forgot to write open parenthesis"
 
     it "given an answer missing division operator, show FAIL" $ do
       err <- ByteString.readFile "test/assets/2/error-messages/no-slash.txt"
-      let e = setRunHaskellReturningOutput baseEnv err
+      let e = setRunHaskellFailureWithOutput baseEnv err
       d <- shouldFail =<< Exercise.verify subject e "test/assets/2/no-slash.hs"
       d `shouldSatisfy` Text.isInfixOf "HINT: you might have forgot to write division operator '/'"
 
     it "given an answer missing multiplication operator, show FAIL" $ do
       err <- ByteString.readFile "test/assets/2/error-messages/no-star.txt"
-      let e = setRunHaskellReturningOutput baseEnv err
+      let e = setRunHaskellFailureWithOutput baseEnv err
       d <- shouldFail =<< Exercise.verify subject e "test/assets/2/no-star.hs"
       d `shouldSatisfy` Text.isInfixOf "HINT: you might have forgot to write multiplication operator '*'"
 
     it "given an answer with typo, show FAIL" $ do
       err <- ByteString.readFile "test/assets/2/error-messages/typo.txt"
-      let e = setRunHaskellReturningOutput baseEnv err
+      let e = setRunHaskellFailureWithOutput baseEnv err
       void (shouldFail =<< Exercise.verify subject e "test/assets/2/typo.hs")
 
     it "given an answer printing wrong result, show FAIL" $ do
       err <- ByteString.readFile "test/assets/2/error-messages/wrong-number.txt"
-      let e = setRunHaskellReturningOutput baseEnv err
+      let e = setRunHaskellSuccessWithStdout baseEnv err
       d <- shouldFail =<< Exercise.verify subject e "test/assets/2/wrong-number.hs"
-      d `shouldSatisfy` Text.isInfixOf "Your program's output: \"6.0\n\""
-      d `shouldSatisfy` Text.isInfixOf "Expected output: \"20.761245674740486\n\""
+      d `shouldSatisfy` Text.isInfixOf "Your program's output: \"6.0\\n\""
+      d `shouldSatisfy` Text.isInfixOf "Expected output: \"20.761245674740486\\n\""

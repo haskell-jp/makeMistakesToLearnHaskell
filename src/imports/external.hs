@@ -9,6 +9,7 @@ import           Control.Exception
                    , bracket_
                    , catch
                    , throwIO
+                   , throw
                    )
 import           Control.Monad (zipWithM_, void)
 import           Control.Monad.IO.Class (liftIO)
@@ -17,6 +18,7 @@ import           Data.ByteString.Lazy.Char8 (ByteString)
 import qualified Data.ByteString.Lazy.Char8 as ByteString
 import           Data.Maybe (fromMaybe, maybeToList)
 import           Data.Monoid ((<>))
+import qualified Data.Text.Encoding.Error as TextEncoding
 import           Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as Text
 import qualified Data.Text.Lazy.IO as Text
@@ -26,6 +28,7 @@ import           Data.Vector (Vector, (!?), (!))
 import qualified Data.Vector as Vector
 import qualified Data.Yaml as Yaml
 import qualified Data.Yaml.TH as Yaml
+import qualified Debug.Trace as Debug
 import           GHC.Generics (Generic)
 import           Safe (readMay, headMay)
 import qualified System.Directory as Dir

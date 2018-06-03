@@ -4,6 +4,7 @@ module Education.MakeMistakesToLearnHaskell.Exercise.Types where
 
 #include <imports/external.hs>
 
+import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 import           Education.MakeMistakesToLearnHaskell.Env
 
 data Exercise =
@@ -29,3 +30,5 @@ type Details = Text
 type SourceCode = Text
 
 type ExerciseId = Int
+
+type Diagnosis = SourceCode -> Details -> Details
