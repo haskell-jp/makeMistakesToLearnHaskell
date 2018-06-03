@@ -60,7 +60,7 @@ exercises = Vector.fromList [exercise1, exercise2]
             case compare (Text.count "(" code) (Text.count ")" code) of
                 GT -> "HINT: you might have forgot to write close parenthesis"
                 LT -> "HINT: you might have forgot to write open parenthesis"
-                EQ -> error "EQ" -- TODO: other errors!
+                EQ -> ""
       | "No instance for (Fractional (IO ()))" `Text.isInfixOf` msg || "No instance for (Num (IO ()))" `Text.isInfixOf` msg =
         "HINT: you might have forgot to write parentheses"
       | "No instance for (Show (a0 -> a0))" `Text.isInfixOf` msg =
@@ -78,23 +78,16 @@ runHaskellExercise :: Diagnosis -> Text -> Env -> FilePath -> IO Result
 runHaskellExercise diag right e prgFile = do
   result <- runHaskell e e prgFile
   case result of
-      Right (outB, errB) -> do
+      Right (outB, _errB {- TODO: print stderr -}) -> do
         let out = canonicalizeNewlines outB
-        logDebug e $ "Right: " <> errB
-        let err = decodeUtf8 errB
-            eMsg =
-              if Text.null err
-                then ""
-                else
-                  Text.unlines
-                    ["Found error message printed on stderr:", err]
-            msg = Text.unlines
-                  [ Text.replicate 80 "="
-                  , "Your program's output: " <> Text.pack (show out)
-                  , "      Expected output: " <> Text.pack (show right)
-                  ]
+            msg =
+              Text.unlines
+                [ Text.replicate 80 "="
+                , "Your program's output: " <> Text.pack (show out)
+                , "      Expected output: " <> Text.pack (show right)
+                ]
         return $
-          if out == right && Text.null eMsg -- TODO: delete Text.null
+          if out == right
             then Success $ "Nice output!\n\n" <> msg
             else Fail $ "Wrong output!\n\n" <> msg
       Left err -> do
