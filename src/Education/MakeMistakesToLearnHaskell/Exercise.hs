@@ -61,6 +61,10 @@ exercises = Vector.fromList [exercise1, exercise2]
                 GT -> "HINT: you might have forgot to write close parenthesis"
                 LT -> "HINT: you might have forgot to write open parenthesis"
                 EQ -> error "EQ" -- TODO: other errors!
+      | "No instance for (Fractional (IO ()))" `Text.isInfixOf` msg || "No instance for (Num (IO ()))" `Text.isInfixOf` msg =
+        "HINT: you might have forgot to write parentheses"
+      | "No instance for (Show (a0 -> a0))" `Text.isInfixOf` msg =
+        "HINT: you might have forgot to write some numbers between operators ('*', '/' etc.)."
       | "No instance for (Num (t0 -> a0))" `Text.isInfixOf` msg =
         "HINT: you might have forgot to write multiplication operator '*'"
       | "No instance for (Fractional (t0 -> a0))" `Text.isInfixOf` msg =

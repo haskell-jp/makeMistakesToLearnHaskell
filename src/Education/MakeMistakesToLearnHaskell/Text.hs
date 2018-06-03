@@ -10,8 +10,7 @@ module Education.MakeMistakesToLearnHaskell.Text
 
 
 canonicalizeNewlines :: ByteString -> Text
-canonicalizeNewlines =
-  Text.replace "\r\n" "\n" . decodeUtf8
+canonicalizeNewlines = Text.replace "\r\n" "\n" . decodeUtf8
 
 
 decodeUtf8 :: ByteString -> Text

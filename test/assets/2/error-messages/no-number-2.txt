@@ -1,0 +1,64 @@
+[1 of 1] Compiling Main             ( S:\s\makeMistakesToLearnHaskell\test\assets\2\no-number-2.hs, S:\s\makeMistakesToLearnHaskell\test\assets\2\no-number-2.o )
+
+S:\s\makeMistakesToLearnHaskell\test\assets\2\no-number-2.hs:1:8: error:
+    ? No instance for (Show (a0 -> a0)) arising from a use of ÅeprintÅf
+        (maybe you haven't applied a function to enough arguments?)
+    ? In the expression: print (60 / (* 1.7))
+      In an equation for ÅemainÅf: main = print (60 / (* 1.7))
+  |
+1 | main = print (60 / ( * 1.7))
+  |        ^^^^^^^^^^^^^^^^^^^^^
+
+S:\s\makeMistakesToLearnHaskell\test\assets\2\no-number-2.hs:1:15: error:
+    ? No instance for (Num (a0 -> a0)) arising from the literal Åe60Åf
+        (maybe you haven't applied a function to enough arguments?)
+    ? In the first argument of Åe(/)Åf, namely Åe60Åf
+      In the first argument of ÅeprintÅf, namely Åe(60 / (* 1.7))Åf
+      In the expression: print (60 / (* 1.7))
+  |
+1 | main = print (60 / ( * 1.7))
+  |               ^^
+
+S:\s\makeMistakesToLearnHaskell\test\assets\2\no-number-2.hs:1:15: error:
+    ? No instance for (Fractional (a0 -> a0)) arising from a use of Åe/Åf
+        (maybe you haven't applied a function to enough arguments?)
+    ? In the first argument of ÅeprintÅf, namely Åe(60 / (* 1.7))Åf
+      In the expression: print (60 / (* 1.7))
+      In an equation for ÅemainÅf: main = print (60 / (* 1.7))
+  |
+1 | main = print (60 / ( * 1.7))
+  |               ^^^^^^^^^^^^^
+
+S:\s\makeMistakesToLearnHaskell\test\assets\2\no-number-2.hs:1:22: error:
+    ? Ambiguous type variable Åea0Åf arising from a use of Åe*Åf
+      prevents the constraint Åe(Num a0)Åf from being solved.
+      Probable fix: use a type annotation to specify what Åea0Åf should be.
+      These potential instances exist:
+        instance Num Integer -- Defined in ÅeGHC.NumÅf
+        instance Num Double -- Defined in ÅeGHC.FloatÅf
+        instance Num Float -- Defined in ÅeGHC.FloatÅf
+        ...plus two others
+        ...plus one instance involving out-of-scope types
+        (use -fprint-potential-instances to see them all)
+    ? In the second argument of Åe(/)Åf, namely Åe(* 1.7)Åf
+      In the first argument of ÅeprintÅf, namely Åe(60 / (* 1.7))Åf
+      In the expression: print (60 / (* 1.7))
+  |
+1 | main = print (60 / ( * 1.7))
+  |                      ^^^^^
+
+S:\s\makeMistakesToLearnHaskell\test\assets\2\no-number-2.hs:1:24: error:
+    ? Ambiguous type variable Åea0Åf arising from the literal Åe1.7Åf
+      prevents the constraint Åe(Fractional a0)Åf from being solved.
+      Probable fix: use a type annotation to specify what Åea0Åf should be.
+      These potential instances exist:
+        instance Fractional Double -- Defined in ÅeGHC.FloatÅf
+        instance Fractional Float -- Defined in ÅeGHC.FloatÅf
+        ...plus one instance involving out-of-scope types
+        (use -fprint-potential-instances to see them all)
+    ? In the second argument of Åe(*)Åf, namely Åe1.7Åf
+      In the second argument of Åe(/)Åf, namely Åe(* 1.7)Åf
+      In the first argument of ÅeprintÅf, namely Åe(60 / (* 1.7))Åf
+  |
+1 | main = print (60 / ( * 1.7))
+  |                        ^^^

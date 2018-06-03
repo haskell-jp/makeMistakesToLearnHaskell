@@ -30,6 +30,30 @@ spec =
       let e = setRunHaskellSuccessWithStdout baseEnv out
       void $ shouldSuccess =<< Exercise.verify subject e "assets/2.hs"
 
+    it "given an answer missing number before slash, show FAIL" $ do
+      err <- ByteString.readFile "test/assets/2/error-messages/no-number-1.txt"
+      let e = setRunHaskellFailureWithOutput baseEnv err
+      d <- shouldFail =<< Exercise.verify subject e "test/assets/2/no-number-1.hs"
+      d `shouldSatisfy` Text.isInfixOf "HINT: you might have forgot to write some numbers between operators ('*', '/' etc.)."
+
+    it "given an answer missing number before slash, show FAIL" $ do
+      err <- ByteString.readFile "test/assets/2/error-messages/no-number-2.txt"
+      let e = setRunHaskellFailureWithOutput baseEnv err
+      d <- shouldFail =<< Exercise.verify subject e "test/assets/2/no-number-2.hs"
+      d `shouldSatisfy` Text.isInfixOf "HINT: you might have forgot to write some numbers between operators ('*', '/' etc.)."
+
+    it "given an answer missing number before slash, show FAIL" $ do
+      err <- ByteString.readFile "test/assets/2/error-messages/no-number-3.txt"
+      let e = setRunHaskellFailureWithOutput baseEnv err
+      d <- shouldFail =<< Exercise.verify subject e "test/assets/2/no-number-3.hs"
+      d `shouldSatisfy` Text.isInfixOf "HINT: you might have forgot to write some numbers between operators ('*', '/' etc.)."
+
+    it "given an answer missing parentheses, show FAIL" $ do
+      err <- ByteString.readFile "test/assets/2/error-messages/no-paren.txt"
+      let e = setRunHaskellFailureWithOutput baseEnv err
+      d <- shouldFail =<< Exercise.verify subject e "test/assets/2/no-paren.hs"
+      d `shouldSatisfy` Text.isInfixOf "HINT: you might have forgot to write parentheses"
+
     it "given an answer missing close parenthesis, show FAIL" $ do
       err <- ByteString.readFile "test/assets/2/error-messages/no-close-paren.txt"
       let e = setRunHaskellFailureWithOutput baseEnv err
