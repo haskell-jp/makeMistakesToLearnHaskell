@@ -47,18 +47,6 @@ spec = do
     d <- shouldFail =<< Exercise.verify subject e "test/assets/3/single-quote.hs"
     d `shouldSatisfy` Text.isInfixOf "HINT: In Haskell, you must surround string literals with double-quote '\"'. Such as \"Hello, world\"."
 
-  it "given an answer missing parentheses, show FAIL" $ do
-    err <- ByteString.readFile "test/assets/3/error-messages/no-paren.txt"
-    let e = setRunHaskellFailureWithOutput baseEnv err
-    d <- shouldFail =<< Exercise.verify subject e "test/assets/3/no-paren.hs"
-    d `shouldSatisfy` Text.isInfixOf "HINT: you might have forgot to write parentheses"
-
-  it "given an answer missing close parenthesis, show FAIL" $ do
-    err <- ByteString.readFile "test/assets/3/error-messages/no-close-paren.txt"
-    let e = setRunHaskellFailureWithOutput baseEnv err
-    d <- shouldFail =<< Exercise.verify subject e "test/assets/3/no-close-paren.hs"
-    d `shouldSatisfy` Text.isInfixOf "HINT: you might have forgot to write close parenthesis"
-
   it "given an answer with typo, show FAIL" $ do
     err <- ByteString.readFile "test/assets/3/error-messages/typo.txt"
     let e = setRunHaskellFailureWithOutput baseEnv err
