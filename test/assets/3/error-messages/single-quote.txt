@@ -1,0 +1,7 @@
+[1 of 1] Compiling Main             ( S:\prj\makeMistakesToLearnHaskell\test\assets\3\single-quote.hs, S:\prj\makeMistakesToLearnHaskell\test\assets\3\single-quote.o )
+
+S:\prj\makeMistakesToLearnHaskell\test\assets\3\single-quote.hs:2:13: error:
+    parse error on input ‘#’
+  |
+2 |   putStrLn '#     # ####### #       #        #####'
+  |             ^

@@ -1,0 +1,56 @@
+[1 of 1] Compiling Main             ( S:\prj\makeMistakesToLearnHaskell\test\assets\3\no-do.hs, S:\prj\makeMistakesToLearnHaskell\test\assets\3\no-do.o )
+
+S:\prj\makeMistakesToLearnHaskell\test\assets\3\no-do.hs:2:3: error:
+    • Couldn't match expected type ‘(String -> IO ())
+                                    -> [Char]
+                                    -> (String -> IO ())
+                                    -> [Char]
+                                    -> (String -> IO ())
+                                    -> [Char]
+                                    -> (String -> IO ())
+                                    -> [Char]
+                                    -> (String -> IO ())
+                                    -> [Char]
+                                    -> (String -> IO ())
+                                    -> [Char]
+                                    -> t’
+                  with actual type ‘IO ()’
+    • The function ‘putStrLn’ is applied to 13 arguments,
+      but its type ‘String -> IO ()’ has only one
+      In the expression:
+        putStrLn
+          "#     # ####### #       #        #####"
+          putStrLn
+          "#     # #       #       #       #     #"
+          putStrLn
+          "#     # #       #       #       #     #"
+          putStrLn
+          "####### #####   #       #       #     #"
+          putStrLn
+          "#     # #       #       #       #     #"
+          putStrLn
+          "#     # #       #       #       #     #"
+          putStrLn
+          "#     # ####### ####### #######  #####"
+      In an equation for ‘main’:
+          main
+            = putStrLn
+                "#     # ####### #       #        #####"
+                putStrLn
+                "#     # #       #       #       #     #"
+                putStrLn
+                "#     # #       #       #       #     #"
+                putStrLn
+                "####### #####   #       #       #     #"
+                putStrLn
+                "#     # #       #       #       #     #"
+                putStrLn
+                "#     # #       #       #       #     #"
+                putStrLn
+                "#     # ####### ####### #######  #####"
+    • Relevant bindings include
+        main :: t
+          (bound at S:\prj\makeMistakesToLearnHaskell\test\assets\3\no-do.hs:1:1)
+  |
+2 |   putStrLn "#     # ####### #       #        #####"
+  |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^...

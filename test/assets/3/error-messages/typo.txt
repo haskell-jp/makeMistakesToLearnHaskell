@@ -1,0 +1,10 @@
+[1 of 1] Compiling Main             ( S:\prj\makeMistakesToLearnHaskell\test\assets\3\typo.hs, S:\prj\makeMistakesToLearnHaskell\test\assets\3\typo.o )
+
+S:\prj\makeMistakesToLearnHaskell\test\assets\3\typo.hs:3:3: error:
+    • Variable not in scope: putStrL :: [Char] -> IO a0
+    • Perhaps you meant one of these:
+        ‘putStrLn’ (imported from Prelude),
+        ‘putStr’ (imported from Prelude)
+  |
+3 |   putStrL "#     # #       #       #       #     #"
+  |   ^^^^^^^

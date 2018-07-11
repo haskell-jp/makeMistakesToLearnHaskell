@@ -1,0 +1,25 @@
+[1 of 1] Compiling Main             ( S:\prj\makeMistakesToLearnHaskell\test\assets\3\incornsistent-indent.hs, S:\prj\makeMistakesToLearnHaskell\test\assets\3\incornsistent-indent.o )
+
+S:\prj\makeMistakesToLearnHaskell\test\assets\3\incornsistent-indent.hs:2:3: error:
+    • Couldn't match expected type ‘(String -> IO ())
+                                    -> [Char] -> IO a0’
+                  with actual type ‘IO ()’
+    • The function ‘putStrLn’ is applied to three arguments,
+      but its type ‘String -> IO ()’ has only one
+      In a stmt of a 'do' block:
+        putStrLn
+          "#     # ####### #       #        #####"
+          putStrLn
+          "#     # #       #       #       #     #"
+      In the expression:
+        do putStrLn
+             "#     # ####### #       #        #####"
+             putStrLn
+             "#     # #       #       #       #     #"
+           putStrLn "#     # #       #       #       #     #"
+           putStrLn "####### #####   #       #       #     #"
+           putStrLn "#     # #       #       #       #     #"
+           ....
+  |
+2 |   putStrLn "#     # ####### #       #        #####"
+  |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^...
