@@ -31,7 +31,7 @@ import           Debug.NoTrace
 
 
 exercises :: Vector Exercise
-exercises = Vector.fromList [exercise1, exercise2]
+exercises = Vector.fromList [exercise1, exercise2, exercise3]
   where
     exercise1 =
       Exercise "1" $ runHaskellExercise diag1 "Hello, world!\n"
@@ -71,6 +71,32 @@ exercises = Vector.fromList [exercise1, exercise2]
         "HINT: you might have forgot to write division operator '/'"
       | "Variable not in scope: main :: IO" `Text.isInfixOf` msg =
         "HINT: This error indicates you haven't defined main function."
+      | otherwise = ""
+
+    exercise3 =
+      Exercise "3" $ runHaskellExercise diag3 $ Text.unlines $
+        [ "#     # ####### #       #        #####"
+        , "#     # #       #       #       #     #"
+        , "#     # #       #       #       #     #"
+        , "####### #####   #       #       #     #"
+        , "#     # #       #       #       #     #"
+        , "#     # #       #       #       #     #"
+        , "#     # ####### ####### #######  #####"
+        ]
+
+    diag3 :: Diagnosis
+    diag3 code msg
+      | "parse error on input" `Text.isInfixOf` msg
+          && "'" `Text.isInfixOf` code =
+            "HINT: In Haskell, you must surround string literals with double-quote '\"'. Such as \"Hello, world\"."
+      | "Variable not in scope: main :: IO" `Text.isInfixOf` msg =
+        "HINT: This error indicates you haven't defined main function."
+      | "Variable not in scope:" `Text.isInfixOf` msg =
+        "HINT: you might have misspelled 'putStrLn'."
+      | "Couldn't match expected type ‘(String -> IO ())" `Text.isInfixOf` msg =
+        if "do" `elem` Text.words code
+          then "HINT: instructions in a `do` must be in a consistent width. "
+          else "HINT: You seem to forget to write `do`. `do` must be put before listing `putStrLn`s."
       | otherwise = ""
 
 
