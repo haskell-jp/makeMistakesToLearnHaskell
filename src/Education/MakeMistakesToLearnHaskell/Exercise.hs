@@ -109,7 +109,7 @@ runHaskellExercise diag right e prgFile = do
             msg =
               Text.unlines
                 [ Text.replicate 80 "="
-                , "Your program's output: " <> Text.pack (show out)
+                , "Your program's output: " <> Text.pack (show out) -- TODO: pretty print
                 , "      Expected output: " <> Text.pack (show right)
                 ]
         return $
