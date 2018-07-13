@@ -32,8 +32,8 @@ spec = do
   it "given an answer with incornsistentindent, show FAIL" $ do
     err <- ByteString.readFile "test/assets/3/error-messages/incornsistent-indent.txt"
     let e = setRunHaskellFailureWithOutput baseEnv err
-    d <- shouldFail =<< Exercise.verify subject e "test/assets/3/incornsistent-indent.txt.hs"
-    d `shouldSatisfy` Text.isInfixOf "HINT: instructions in a `do` must be in a consisten width. "
+    d <- shouldFail =<< Exercise.verify subject e "test/assets/3/incornsistent-indent.hs"
+    d `shouldSatisfy` Text.isInfixOf "HINT: instructions in a `do` must be in a consistent width. "
 
   it "given an answer without do, show FAIL" $ do
     err <- ByteString.readFile "test/assets/3/error-messages/no-do.txt"
