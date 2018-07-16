@@ -1,0 +1,7 @@
+[1 of 1] Compiling Main             ( test\assets\4\no-open-paren1.hs, test\assets\4\no-open-paren1.o )
+
+test\assets\4\no-open-paren1.hs:3:41: error:
+    parse error on input ‘)’
+  |
+3 |   putStr unlines (reverse (lines input)))
+  |                                         ^

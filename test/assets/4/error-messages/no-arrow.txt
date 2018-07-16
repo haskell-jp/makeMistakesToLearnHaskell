@@ -1,0 +1,13 @@
+[1 of 1] Compiling Main             ( test\assets\4\no-arrow.hs, test\assets\4\no-arrow.o )
+
+test\assets\4\no-arrow.hs:2:35: error:
+    • Couldn't match type ‘IO String’ with ‘[Char]’
+      Expected type: String
+        Actual type: IO String
+    • In the first argument of ‘lines’, namely ‘getContents’
+      In the first argument of ‘reverse’, namely ‘(lines getContents)’
+      In the first argument of ‘unlines’, namely
+        ‘(reverse (lines getContents))’
+  |
+2 |   putStr (unlines (reverse (lines getContents)))
+  |                                   ^^^^^^^^^^^

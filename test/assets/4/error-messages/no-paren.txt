@@ -1,0 +1,31 @@
+[1 of 1] Compiling Main             ( test\assets\4\no-paren.hs, test\assets\4\no-paren.o )
+
+test\assets\4\no-paren.hs:3:3: error:
+    • Couldn't match expected type ‘([a0] -> [a0])
+                                    -> (String -> [String]) -> String -> IO b’
+                  with actual type ‘IO ()’
+    • The function ‘putStr’ is applied to four arguments,
+      but its type ‘String -> IO ()’ has only one
+      In a stmt of a 'do' block: putStr unlines reverse lines input
+      In the expression:
+        do input <- getContents
+           putStr unlines reverse lines input
+    • Relevant bindings include
+        main :: IO b (bound at test\assets\4\no-paren.hs:1:1)
+  |
+3 |   putStr unlines reverse lines input
+  |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test\assets\4\no-paren.hs:3:10: error:
+    • Couldn't match type ‘[String] -> String’ with ‘[Char]’
+      Expected type: String
+        Actual type: [String] -> String
+    • Probable cause: ‘unlines’ is applied to too few arguments
+      In the first argument of ‘putStr’, namely ‘unlines’
+      In a stmt of a 'do' block: putStr unlines reverse lines input
+      In the expression:
+        do input <- getContents
+           putStr unlines reverse lines input
+  |
+3 |   putStr unlines reverse lines input
+  |          ^^^^^^^

@@ -1,0 +1,8 @@
+[1 of 1] Compiling Main             ( test\assets\4\no-main.hs, test\assets\4\no-main.o )
+
+test\assets\4\no-main.hs:1:7: error:
+    parse error on input ‘<-’
+    Perhaps this statement should be within a 'do' block?
+  |
+1 | input <- getContents
+  |       ^^

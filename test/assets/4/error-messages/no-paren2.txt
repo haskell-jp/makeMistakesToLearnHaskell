@@ -1,0 +1,25 @@
+[1 of 1] Compiling Main             ( test\assets\4\no-paren2.hs, test\assets\4\no-paren2.o )
+
+test\assets\4\no-paren2.hs:3:11: error:
+    • Couldn't match expected type ‘[String] -> String’
+                  with actual type ‘[Char]’
+    • The function ‘unlines’ is applied to two arguments,
+      but its type ‘[String] -> [Char]’ has only one
+      In the first argument of ‘putStr’, namely
+        ‘(unlines reverse (lines input))’
+      In a stmt of a 'do' block: putStr (unlines reverse (lines input))
+  |
+3 |   putStr (unlines reverse (lines input))
+  |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test\assets\4\no-paren2.hs:3:19: error:
+    • Couldn't match expected type ‘[String]’
+                  with actual type ‘[a0] -> [a0]’
+    • Probable cause: ‘reverse’ is applied to too few arguments
+      In the first argument of ‘unlines’, namely ‘reverse’
+      In the first argument of ‘putStr’, namely
+        ‘(unlines reverse (lines input))’
+      In a stmt of a 'do' block: putStr (unlines reverse (lines input))
+  |
+3 |   putStr (unlines reverse (lines input))
+  |                   ^^^^^^^

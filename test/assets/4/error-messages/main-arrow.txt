@@ -1,0 +1,8 @@
+[1 of 1] Compiling Main             ( test\assets\4\main-arrow.hs, test\assets\4\main-arrow.o )
+
+test\assets\4\main-arrow.hs:1:6: error:
+    parse error on input ‘<-’
+    Perhaps this statement should be within a 'do' block?
+  |
+1 | main <- do
+  |      ^^

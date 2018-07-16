@@ -1,0 +1,8 @@
+[1 of 1] Compiling Main             ( test\assets\4\incornsistent-indent1.hs, test\assets\4\incornsistent-indent1.o )
+
+test\assets\4\incornsistent-indent1.hs:2:2: error:
+    The last statement in a 'do' block must be an expression
+      input <- getContents putStr (unlines (reverse (lines input)))
+  |
+2 |  input <- getContents
+  |  ^^^^^^^^^^^^^^^^^^^^...

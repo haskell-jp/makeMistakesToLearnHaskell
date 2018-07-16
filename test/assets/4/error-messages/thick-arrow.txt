@@ -1,0 +1,27 @@
+[1 of 1] Compiling Main             ( test\assets\4\thick-arrow.hs, test\assets\4\thick-arrow.o )
+
+test\assets\4\thick-arrow.hs:2:3: error:
+    Variable not in scope: input :: IO String
+  |
+2 |   input <= getContents
+  |   ^^^^^
+
+test\assets\4\thick-arrow.hs:2:3: error:
+    • Couldn't match expected type ‘IO a0’ with actual type ‘Bool’
+    • In a stmt of a 'do' block: input <= getContents
+      In the expression:
+        do input <= getContents
+           putStr (unlines (reverse (lines input)))
+      In an equation for ‘main’:
+          main
+            = do input <= getContents
+                 putStr (unlines (reverse (lines input)))
+  |
+2 |   input <= getContents
+  |   ^^^^^^^^^^^^^^^^^^^^
+
+test\assets\4\thick-arrow.hs:3:35: error:
+    Variable not in scope: input :: String
+  |
+3 |   putStr (unlines (reverse (lines input)))
+  |                                   ^^^^^

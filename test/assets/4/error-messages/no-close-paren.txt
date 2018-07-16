@@ -1,0 +1,4 @@
+[1 of 1] Compiling Main             ( test\assets\4\no-close-paren.hs, test\assets\4\no-close-paren.o )
+
+test\assets\4\no-close-paren.hs:4:1: error:
+    parse error (possibly incorrect indentation or mismatched brackets)
