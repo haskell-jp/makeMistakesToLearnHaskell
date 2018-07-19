@@ -76,6 +76,7 @@ test-suite makeMistakesToLearnHaskell-test
                      , Education.MakeMistakesToLearnHaskell.Exercise1Spec
                      , Education.MakeMistakesToLearnHaskell.Exercise2Spec
                      , Education.MakeMistakesToLearnHaskell.Exercise3Spec
+                     , Education.MakeMistakesToLearnHaskell.Exercise4Spec
                      , Education.MakeMistakesToLearnHaskell.SpecEnv
                      , Education.MakeMistakesToLearnHaskell.SpecHelper
   build-depends:       base
