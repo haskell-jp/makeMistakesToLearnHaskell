@@ -31,4 +31,6 @@ type SourceCode = Text
 
 type ExerciseId = Int
 
+type Name = String -- TODO: Replace ExerciseId
+
 type Diagnosis = SourceCode -> Details -> Details

@@ -21,16 +21,8 @@ main = hspec spec
 
 spec :: Spec
 spec = do
-  baseEnv <- mkDefaultSpecEnv
-  let subject = Exercise.unsafeGetById 1
-
-  it "given an answer whose 'Hello, world!' is singlequoted, show FAIL" $ do
-    err <- ByteString.readFile "test/assets/1/error-messages/single-quote.txt"
-    let e = setRunHaskellFailureWithOutput baseEnv err
-    d <- shouldFail =<< Exercise.verify subject e "test/assets/1/single-quote.hs"
-    d `shouldSatisfy` Text.isInfixOf "HINT: In Haskell, you must surround string literals with double-quote '\"'. Such as \"Hello, world\"."
-
-  it "given an answer with typo, show FAIL" $ do
-    err <- ByteString.readFile "test/assets/1/error-messages/typo.txt"
-    let e = setRunHaskellFailureWithOutput baseEnv err
-    void (shouldFail =<< Exercise.verify subject e "test/assets/1/typo.hs")
+  itShouldFailForCaseWithMessage
+    "1"
+    "single-quote"
+    ["HINT: In Haskell, you must surround string literals with double-quote '\"'. Such as \"Hello, world\"."]
+  itShouldFailForCaseWithMessage "1" "typo" []

@@ -13,6 +13,7 @@ import           Control.Exception (try)
 import           Data.ByteString.Lazy.Char8 (ByteString)
 import qualified Data.ByteString.Lazy.Char8 as ByteString
 import qualified Data.ByteString.Char8 as ByteString'
+import           Data.Foldable (for_)
 import           Data.Function ((&))
 import qualified Data.Text.Lazy as Text
 import qualified System.Directory as Dir

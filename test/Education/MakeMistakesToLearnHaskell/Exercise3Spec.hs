@@ -29,28 +29,22 @@ spec = do
     let e = setRunHaskellSuccessWithStdout baseEnv out
     void $ shouldSuccess =<< Exercise.verify subject e "assets/3.hs"
 
-  it "given an answer with incornsistentindent, show FAIL" $ do
-    err <- ByteString.readFile "test/assets/3/error-messages/incornsistent-indent.txt"
-    let e = setRunHaskellFailureWithOutput baseEnv err
-    d <- shouldFail =<< Exercise.verify subject e "test/assets/3/incornsistent-indent.hs"
-    d `shouldSatisfy` Text.isInfixOf "HINT: instructions in a `do` must be in a consistent width. "
+  itShouldFailForCaseWithMessage
+    "3"
+    "incornsistent-indent"
+    ["HINT: instructions in a `do` must be in a consistent width. "]
 
-  it "given an answer without do, show FAIL" $ do
-    err <- ByteString.readFile "test/assets/3/error-messages/no-do.txt"
-    let e = setRunHaskellFailureWithOutput baseEnv err
-    d <- shouldFail =<< Exercise.verify subject e "test/assets/3/no-do.hs"
-    d `shouldSatisfy` Text.isInfixOf "HINT: You seem to forget to write `do`. `do` must be put before listing `putStrLn`s."
+  itShouldFailForCaseWithMessage
+    "3"
+    "no-do"
+    ["HINT: You seem to forget to write `do`. `do` must be put before listing `putStrLn`s."]
 
-  it "given an answer whose 'Hello, world!' is singlequoted, show FAIL" $ do
-    err <- ByteString.readFile "test/assets/3/error-messages/single-quote.txt"
-    let e = setRunHaskellFailureWithOutput baseEnv err
-    d <- shouldFail =<< Exercise.verify subject e "test/assets/3/single-quote.hs"
-    d `shouldSatisfy` Text.isInfixOf "HINT: In Haskell, you must surround string literals with double-quote '\"'. Such as \"Hello, world\"."
+  itShouldFailForCaseWithMessage
+    "3"
+    "single-quote"
+    ["HINT: In Haskell, you must surround string literals with double-quote '\"'. Such as \"Hello, world\"."]
 
-  it "given an answer with typo, show FAIL" $ do
-    err <- ByteString.readFile "test/assets/3/error-messages/typo.txt"
-    let e = setRunHaskellFailureWithOutput baseEnv err
-    void (shouldFail =<< Exercise.verify subject e "test/assets/3/typo.hs")
+  itShouldFailForCaseWithMessage "3" "typo" []
 
   it "given an answer printing wrong result, show FAIL" $ do
     err <- ByteString.readFile "test/assets/3/error-messages/wrong-output.txt"

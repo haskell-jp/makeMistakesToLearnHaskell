@@ -3,6 +3,7 @@
 module Education.MakeMistakesToLearnHaskell.Exercise
   ( Exercise(verify)
   , ExerciseId
+  , Name
   , Result(..)
   , Details
   , loadHeaders
