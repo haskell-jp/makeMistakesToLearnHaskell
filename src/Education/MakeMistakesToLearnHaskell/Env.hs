@@ -1,17 +1,33 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
-module Education.MakeMistakesToLearnHaskell.Env where
+module Education.MakeMistakesToLearnHaskell.Env
+  ( Env (..)
+  , RunHaskellParameters(runHaskellParametersArgs, runHaskellParametersStdin)
+  , defaultRunHaskellParameters
+  , appName
+  , homePathEnvVarName
+  , avoidCodingError
+  )
+where
 
 #include <imports/external.hs>
 
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 
+data RunHaskellParameters = RunHaskellParameters
+  { runHaskellParametersArgs :: ![String]
+  , runHaskellParametersStdin :: !ByteString
+  }
+
 data Env =
   Env
     { logDebug :: ByteString -> IO ()
     , appHomePath :: FilePath
-    , runHaskell :: FilePath -> IO (Either RunHaskellError (ByteString, ByteString))
+    , runHaskell :: RunHaskellParameters -> IO (Either RunHaskellError (ByteString, ByteString))
     }
+
+defaultRunHaskellParameters :: RunHaskellParameters
+defaultRunHaskellParameters = RunHaskellParameters [] ""
 
 
 appName :: String

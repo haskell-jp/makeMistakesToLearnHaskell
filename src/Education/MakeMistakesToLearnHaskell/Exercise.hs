@@ -103,7 +103,7 @@ exercises = Vector.fromList [exercise1, exercise2, exercise3]
 
 runHaskellExercise :: Diagnosis -> Text -> Env -> FilePath -> IO Result
 runHaskellExercise diag right e prgFile = do
-  result <- runHaskell e prgFile
+  result <- runHaskell e defaultRunHaskellParameters { runHaskellParametersArgs = [prgFile] }
   case result of
       Right (outB, _errB {- TODO: print stderr -}) -> do
         let out = canonicalizeNewlines outB

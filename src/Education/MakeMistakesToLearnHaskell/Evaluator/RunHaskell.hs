@@ -13,14 +13,17 @@ import           Education.MakeMistakesToLearnHaskell.Env
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 
 
-runFile :: Env -> FilePath -> IO (Either RunHaskellError (ByteString, ByteString))
-runFile e src = do
+runFile :: Env -> RunHaskellParameters -> IO (Either RunHaskellError (ByteString, ByteString))
+runFile e rhp = do
   cmd <- resolveInterpreter
   case cmd of
       [] -> return $ Left RunHaskellNotFound
       (h:left) -> do
-        (ecode, out, err) <-
-          fixingCodePage e $ readProcess $ Process.proc h $ left ++ [src]
+        let prc =
+              Process.setStdin (Process.byteStringInput $ runHaskellParametersStdin rhp)
+                $ Process.proc h
+                $ left ++ runHaskellParametersArgs rhp
+        (ecode, out, err) <- fixingCodePage e $ readProcess prc
         return $ case ecode of
             ExitSuccess -> Right (out, err)
             ExitFailure i -> Left $ RunHaskellFailure i err
@@ -47,6 +50,7 @@ fixingCodePage :: Env -> IO a -> IO a
 fixingCodePage e action = do
   cpInSave <- Win32.getConsoleCP
   cpOutSave <- Win32.getConsoleOutputCP
+  -- TODO: delete to independent from Env
   logDebug e $ "Fixing ConsoleCP from " <> ByteString.pack (show cpInSave)
   logDebug e $ "Fixing ConsoleOutputCP from " <> ByteString.pack (show cpOutSave)
 
