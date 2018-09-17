@@ -75,7 +75,7 @@ exercises = Vector.fromList [exercise1, exercise2, exercise3]
       | otherwise = ""
 
     exercise3 =
-      Exercise "3" $ runHaskellExercise diag3 $ Text.unlines $
+      Exercise "3" $ runHaskellExercise diag3 $ Text.unlines
         [ "#     # ####### #       #        #####"
         , "#     # #       #       #       #     #"
         , "#     # #       #       #       #     #"
