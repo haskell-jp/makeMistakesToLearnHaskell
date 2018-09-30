@@ -1,0 +1,7 @@
+[1 of 1] Compiling Main             ( test\assets\3\incornsistent-indent2.hs, test\assets\3\incornsistent-indent2.o )
+
+test\assets\3\incornsistent-indent2.hs:3:3: error:
+    parse error on input ‘putStrLn’
+  |
+3 |   putStrLn "#     # ####### #       #        #####"
+  |   ^^^^^^^^

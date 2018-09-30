@@ -31,8 +31,13 @@ spec = do
 
   itShouldFailForCaseWithMessage
     "3"
-    "incornsistent-indent"
-    ["HINT: instructions in a `do` must be in a consistent width. "]
+    "incornsistent-indent1"
+    ["HINT: instructions in a `do` must be in a consistent width."]
+
+  itShouldFailForCaseWithMessage
+    "3"
+    "incornsistent-indent2"
+    ["HINT: instructions in a `do` must be in a consistent width."]
 
   itShouldFailForCaseWithMessage
     "3"
