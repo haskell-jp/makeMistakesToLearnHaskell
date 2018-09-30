@@ -1,0 +1,9 @@
+[1 of 1] Compiling Main             ( test\assets\4\equal-no-space.hs, test\assets\4\equal-no-space.o )
+
+test\assets\4\equal-no-space.hs:2:8: error:
+    parse error on input ‘=’
+    Perhaps you need a 'let' in a 'do' block?
+    e.g. 'let x = 5' instead of 'x = 5'
+  |
+2 |   input=getContents
+  |        ^

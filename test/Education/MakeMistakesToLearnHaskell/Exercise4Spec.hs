@@ -21,23 +21,26 @@ main = hspec spec
 
 spec :: Spec
 spec = do
-  baseEnv <- mkDefaultSpecEnv
-  let subject = Exercise.unsafeGetById 4
-
-  it "given the correct answer, show SUCCESS" $ do
-    out <- ByteString.readFile "test/assets/4/error-messages/correct.txt"
-    let e = setRunHaskellSuccessWithStdout baseEnv out
-    void $ shouldSuccess =<< Exercise.verify subject e "assets/4.hs"
+  -- NOTE: SUCCESS case for exercise 4 is in the integration test
+  -- to cover Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell.runFile with stdin.
+  -- See Education.MakeMistakesToLearnHaskellSpec.
 
   itShouldFailForCaseWithMessage
     "4"
     "no-do"
     ["HINT: You seem to forget to write `do`. `do` must be put before listing `putStr`s and `getContents`."]
 
+  let useLeftThinArrow = "HINT: Don't assign the result of `getContents` with `=`. Use `<-` instead."
+
   itShouldFailForCaseWithMessage
     "4"
     "equal"
-    ["HINT: Don't assign the result of `getContents` with `=`. Use `<-` instead."]
+    [useLeftThinArrow]
+
+  itShouldFailForCaseWithMessage
+    "4"
+    "equal-no-space"
+    [useLeftThinArrow]
 
   itShouldFailForCaseWithMessage
     "4"

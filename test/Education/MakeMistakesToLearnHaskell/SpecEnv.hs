@@ -27,4 +27,9 @@ setRunHaskellFailureWithOutput e err =
 
 setRunHaskellSuccessWithStdout :: Env -> ByteString -> Env
 setRunHaskellSuccessWithStdout e out =
-  e { runHaskell = \_path -> return $ Right $ (out, "") }
+  e { runHaskell = \_path -> return $ Right (out, "") }
+
+
+setRunHaskellSuccessWithStdinFunction :: Env -> (ByteString -> ByteString) -> Env
+setRunHaskellSuccessWithStdinFunction e func =
+  e { runHaskell = \rhp -> return $ Right (func $ runHaskellParametersStdin rhp, "") }
