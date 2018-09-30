@@ -61,9 +61,7 @@ spec = do
   itShouldFailForCaseWithMessage
     "4"
     "no-arrow"
-    [ "HINT: Unfortunately, you have to assign the result of `getContents` with `<-` operator."
-    , "HINT: You seem to forget to write `do`. `do` must be put before listing `putStr`s and `getContents`."
-    ]
+    ["HINT: Unfortunately, you have to assign the result of `getContents` with `<-` operator."]
 
   itShouldFailForCaseWithMessage
     "4"
