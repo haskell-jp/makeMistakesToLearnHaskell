@@ -3,7 +3,8 @@ import           Test.Hspec.Core.Spec (SpecM)
 import           Test.Main
                    ( captureProcessResult
                    , withArgs
-                   , ProcessResult(ProcessResult, prStdout, prStderr, prExitCode)
+                   , withEnv
+                   , ProcessResult(ProcessResult, prStdout, prStderr, prExitCode, prException)
                    )
 
 import qualified Paths_makeMistakesToLearnHaskell
