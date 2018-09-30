@@ -25,7 +25,7 @@ type TestCaseId = String
 itShouldFailForCaseWithMessage :: Exercise.Name -> TestCaseId -> [Exercise.Details] -> SpecM () ()
 itShouldFailForCaseWithMessage ename tcid messages = do
   baseEnv <- mkDefaultSpecEnv
-  it (ename ++ " / " ++ tcid) $ do
+  it (ename ++ "::" ++ tcid) $ do
     let subject = Exercise.unsafeGetById (read ename)
     err <- ByteString.readFile $ "test/assets/" ++ ename ++ "/error-messages/" ++ tcid ++ ".txt"
     let e = setRunHaskellFailureWithOutput baseEnv err
