@@ -21,7 +21,7 @@ main = hspec spec
 
 spec :: Spec
 spec = do
-  -- NOTE: SUCCESS case for exercise 4 is in the integration test
+  -- NOTE: SUCCESS and wrong-output case for exercise 4 is in the integration test
   -- to cover Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell.runFile with stdin.
   -- See Education.MakeMistakesToLearnHaskellSpec.
 
@@ -31,6 +31,7 @@ spec = do
     ["HINT: You seem to forget to write `do`. `do` must be put before listing `putStr`s and `getContents`."]
 
   let useLeftThinArrow = "HINT: Don't assign the result of `getContents` with `=`. Use `<-` instead."
+  -- ^ TODO: Collect common error messages
 
   itShouldFailForCaseWithMessage
     "4"
@@ -118,8 +119,3 @@ spec = do
     "4"
     "thick-arrow"
     ["HINT: Close! Don't assign the result of `getContents` with `<=`, but `<-`!"]
-
-  itShouldFailForCaseWithMessage -- TODO: better error message
-    "4"
-    "wrong-output"
-    ["Your program's output:", "Expected output:"]
