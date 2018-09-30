@@ -70,11 +70,6 @@ spec = do
 
   itShouldFailForCaseWithMessage
     "4"
-    "no-dash"
-    ["HINT: So close! Don't assign the result of `getContents` with `<`, but `<-`!"]
-
-  itShouldFailForCaseWithMessage
-    "4"
     "no-main"
     ["HINT: This error indicates you haven't defined main function."]
 
@@ -112,8 +107,3 @@ spec = do
     "4"
     "no-paren3"
     ["HINT: You might have forgot to surround `lines` and its argument with parentheses."]
-
-  itShouldFailForCaseWithMessage
-    "4"
-    "thick-arrow"
-    ["HINT: Close! Don't assign the result of `getContents` with `<=`, but `<-`!"]
