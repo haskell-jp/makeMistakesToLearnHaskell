@@ -21,14 +21,14 @@ stack install
    mmlh list
    ```
 1. 課題1の内容を表示する  
-  ```
-  mmlh show 1
-  ```
+   ```
+   mmlh show 1
+   ```
 1. 課題の回答をテストする  
-  ※最後に表示した課題のテストをします。  
-  ```
-  mmlh verify your_answer.hs
-  ```
+   （最後に`mmlh show`した課題のテストをする）  
+   ```
+   mmlh verify your_answer.hs
+   ```
 
 ## 開発に協力していただける方へ
 
