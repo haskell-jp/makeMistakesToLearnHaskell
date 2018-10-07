@@ -16,13 +16,21 @@ import           Control.Monad.IO.Class (liftIO)
 import qualified Control.Monad.Trans.Maybe as MaybeT
 import           Data.ByteString.Lazy.Char8 (ByteString)
 import qualified Data.ByteString.Lazy.Char8 as ByteString
-import           Data.Maybe (fromMaybe, maybeToList)
+import qualified Data.Char as Char
+import qualified Data.List as List
+import           Data.Maybe (fromMaybe, maybeToList, isJust)
+import           Data.IORef
+                   ( newIORef
+                   , readIORef
+                   , writeIORef
+                   )
 import           Data.Monoid ((<>))
 import qualified Data.Text.Encoding.Error as TextEncoding
 import           Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as Text
 import qualified Data.Text.Lazy.IO as Text
 import qualified Data.Text.Lazy.Encoding as TextEncoding
+import qualified Data.Text as TextS
 import           Data.Typeable (Typeable)
 import           Data.Vector (Vector, (!?), (!))
 import qualified Data.Vector as Vector
@@ -30,6 +38,7 @@ import qualified Data.Yaml as Yaml
 import qualified Data.Yaml.TH as Yaml
 import qualified Debug.Trace as Debug
 import           GHC.Generics (Generic)
+import qualified GHC.SyntaxHighlighter as GHC
 import           Safe (readMay, headMay)
 import qualified System.Directory as Dir
 import qualified System.Environment as Env
@@ -39,6 +48,9 @@ import           System.FilePath ((</>))
 import qualified System.IO as IO
 import           System.Process.Typed (readProcess)
 import qualified System.Process.Typed as Process
+import qualified Test.QuickCheck as QuickCheck
+import           Test.QuickCheck (quickCheckWithResult)
+import qualified Text.Regex.Applicative as Regex
 #ifdef mingw32_HOST_OS
 import qualified System.Win32.Console as Win32
 import GHC.IO.Encoding.CodePage (mkLocaleEncoding)
