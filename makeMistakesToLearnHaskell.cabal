@@ -43,9 +43,12 @@ library
                       , directory
                       , errors
                       , filepath
+                      , ghc-syntax-highlighter
                       , hint
                       -- , i18n Use in the future
                       , NoTrace
+                      , QuickCheck
+                      , regex-applicative
                       , safe
                       , text
                       , transformers
