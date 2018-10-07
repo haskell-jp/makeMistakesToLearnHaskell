@@ -54,9 +54,9 @@ library
                       , transformers
                       , typed-process
                       , vector
-                      if os(windows)
-                        , Win32
                       , yaml
+  if os(windows)
+    build-depends:      Win32
   default-language:     Haskell2010
   default-extensions:   CPP
                       , DeriveGeneric
