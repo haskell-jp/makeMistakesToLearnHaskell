@@ -43,6 +43,9 @@ exercises = Vector.fromList [exercise1, exercise2, exercise3, exercise4]
       | "parse error on input" `Text.isInfixOf` msg
           && "'" `Text.isInfixOf` code =
             "HINT: In Haskell, you must surround string literals with double-quote '\"'. Such as \"Hello, world\"."
+      | ("parse error" `Text.isInfixOf` msg || "Parse error" `Text.isInfixOf` msg)
+          && "top-level declaration expected." `Text.isInfixOf` msg =
+            "HINT: This error indicates you haven't defined main function."
       | "Variable not in scope: main :: IO" `Text.isInfixOf` msg =
         "HINT: This error indicates you haven't defined main function."
       | "Variable not in scope:" `Text.isInfixOf` msg =
@@ -93,6 +96,9 @@ exercises = Vector.fromList [exercise1, exercise2, exercise3, exercise4]
       | "parse error on input" `Text.isInfixOf` msg
           && "'" `Text.isInfixOf` code =
             "HINT: In Haskell, you must surround string literals with double-quote '\"'. Such as \"Hello, world\"."
+      | ("parse error" `Text.isInfixOf` msg || "Parse error" `Text.isInfixOf` msg)
+          && "top-level declaration expected." `Text.isInfixOf` msg =
+            "HINT: This error indicates you haven't defined main function."
       | "Variable not in scope: main :: IO" `Text.isInfixOf` msg =
         "HINT: This error indicates you haven't defined main function."
       | "Variable not in scope:" `Text.isInfixOf` msg =
