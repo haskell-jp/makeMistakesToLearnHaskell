@@ -1,0 +1,7 @@
+putStrLn "#     # ####### #       #        #####"
+putStrLn "#     # #       #       #       #     #"
+putStrLn "#     # #       #       #       #     #"
+putStrLn "####### #####   #       #       #     #"
+putStrLn "#     # #       #       #       #     #"
+putStrLn "#     # #       #       #       #     #"
+putStrLn "#     # ####### ####### #######  #####"

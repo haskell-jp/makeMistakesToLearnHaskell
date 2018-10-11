@@ -31,6 +31,11 @@ spec = do
 
   itShouldFailForCaseWithMessage
     "3"
+    "no-main"
+    ["HINT: This error indicates you haven't defined main function."]
+
+  itShouldFailForCaseWithMessage
+    "3"
     "incornsistent-indent1"
     ["HINT: instructions in a `do` must be in a consistent width."]
 

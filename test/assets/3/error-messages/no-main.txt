@@ -1,0 +1,8 @@
+[1 of 1] Compiling Main             ( S:\s\makeMistakesToLearnHaskell\test\assets\3\no-main.hs, S:\s\makeMistakesToLearnHaskell\test\assets\3\no-main.o )
+
+S:\s\makeMistakesToLearnHaskell\test\assets\3\no-main.hs:1:1: error:
+    Parse error: module header, import declaration
+    or top-level declaration expected.
+  |
+1 | putStrLn "#     # ####### #       #        #####"
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
