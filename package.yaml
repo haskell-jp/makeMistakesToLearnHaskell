@@ -8,12 +8,17 @@ copyright: 2017 Yuji Yamamoto
 license: Apache-2.0
 homepage: https://gitlab.com/igrep/makeMistakesToLearnHaskell#readme
 git: https://gitlab.com/igrep/makeMistakesToLearnHaskell.git
+data-files:
+- assets/*.md
+- assets/*.hs
 extra-source-files:
 - README.md
 - src/imports/*.hs
 - src/test/imports/*.hs
+# test data here. see https://stackoverflow.com/questions/29361413/including-data-files-only-in-cabal-test-suites
 - test/assets/1/*.hs
 - test/assets/common/*.hs
+
 library:
   source-dirs: src
   default-extensions:
@@ -29,8 +34,11 @@ library:
   - Education.MakeMistakesToLearnHaskell.Evaluator.Types
   - Education.MakeMistakesToLearnHaskell.Exercise
   - Education.MakeMistakesToLearnHaskell.Exercise.Types
+  # ghc-options:          -Wno-unused-imports
+  # Why doesn't -Wno-unused-imports work?
   dependencies:
   - base >=4.7 && <5
+  # TODO: Decide version
   - QuickCheck
   - bytestring
   - directory
@@ -38,6 +46,7 @@ library:
   - filepath
   - ghc-syntax-highlighter
   - hint
+  # - i18n Use in the future
   - NoTrace
   - QuickCheck
   - regex-applicative
@@ -51,6 +60,7 @@ library:
   - condition: os(windows)
     dependencies:
     - Win32
+
 executables:
   mmlh:
     main: Main.hs
@@ -62,6 +72,7 @@ executables:
     dependencies:
     - base
     - makeMistakesToLearnHaskell
+
 tests:
   makeMistakesToLearnHaskell-test:
     main: Spec.hs
@@ -84,6 +95,3 @@ tests:
     - main-tester >=0.2
     - QuickCheck
     - text
-data-files:
-- assets/*.md
-- assets/*.hs
