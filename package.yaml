@@ -6,8 +6,8 @@ author: Yuji Yamamoto
 maintainer: whosekiteneverfly@gmail.com
 copyright: 2017 Yuji Yamamoto
 license: Apache-2.0
-homepage: https://gitlab.com/igrep/makeMistakesToLearnHaskell#readme
-git: https://gitlab.com/igrep/makeMistakesToLearnHaskell.git
+homepage: https://github.com/haskell-jp/makeMistakesToLearnHaskell#readme
+git: https://github.com/haskell-jp/makeMistakesToLearnHaskell.git
 data-files:
 - assets/*.md
 - assets/*.hs
