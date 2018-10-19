@@ -5,3 +5,4 @@ cabal-helper*.build
 *.exe
 *.o
 *.hi
+*.cabal

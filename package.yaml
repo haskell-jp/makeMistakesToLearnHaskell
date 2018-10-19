@@ -1,0 +1,89 @@
+name: makeMistakesToLearnHaskell
+version: '0.1.0.0'
+synopsis: Make mistakes to learn Haskell!
+category: Education
+author: Yuji Yamamoto
+maintainer: whosekiteneverfly@gmail.com
+copyright: 2017 Yuji Yamamoto
+license: Apache-2.0
+homepage: https://gitlab.com/igrep/makeMistakesToLearnHaskell#readme
+git: https://gitlab.com/igrep/makeMistakesToLearnHaskell.git
+extra-source-files:
+- README.md
+- src/imports/*.hs
+- src/test/imports/*.hs
+- test/assets/1/*.hs
+- test/assets/common/*.hs
+library:
+  source-dirs: src
+  default-extensions:
+  - CPP
+  - DeriveGeneric
+  - DeriveDataTypeable
+  - OverloadedStrings
+  include-dirs:
+  - src
+  exposed-modules:
+  - Education.MakeMistakesToLearnHaskell
+  - Education.MakeMistakesToLearnHaskell.Env
+  - Education.MakeMistakesToLearnHaskell.Evaluator.Types
+  - Education.MakeMistakesToLearnHaskell.Exercise
+  - Education.MakeMistakesToLearnHaskell.Exercise.Types
+  dependencies:
+  - base >=4.7 && <5
+  - QuickCheck
+  - bytestring
+  - directory
+  - errors
+  - filepath
+  - ghc-syntax-highlighter
+  - hint
+  - NoTrace
+  - QuickCheck
+  - regex-applicative
+  - safe
+  - text
+  - transformers
+  - typed-process
+  - vector
+  - yaml
+  when:
+  - condition: os(windows)
+    dependencies:
+    - Win32
+executables:
+  mmlh:
+    main: Main.hs
+    source-dirs: app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - base
+    - makeMistakesToLearnHaskell
+tests:
+  makeMistakesToLearnHaskell-test:
+    main: Spec.hs
+    source-dirs: test
+    default-extensions:
+    - CPP
+    - OverloadedStrings
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - base
+    - makeMistakesToLearnHaskell
+    - bytestring
+    - directory
+    - filepath
+    - hspec
+    - hspec-core
+    - main-tester >=0.2
+    - QuickCheck
+    - text
+data-files:
+- assets/*.md
+- assets/*.hs
