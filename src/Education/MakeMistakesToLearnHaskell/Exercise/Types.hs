@@ -9,17 +9,26 @@ import           Education.MakeMistakesToLearnHaskell.Env
 
 data Exercise =
   Exercise
-    { exerciseName :: !String
+    { exerciseName :: !Name
+    -- ^ The name of the exercise.
     , verify :: Env -> String -> IO Result
+    -- ^ The function to verify the source file, project directory,
+    --   or any string pointing to the user's answer.
+    --   So, the second argument's @String@ is something
+    --   pointing to the user's answer.
     }
 
 
 data Result =
-  Error !Details | Fail !Details | Success !Details deriving (Eq, Show)
+    Error !Details
+  | Fail !Details
+  | Success !Details
+  | NotVerified
+  deriving (Eq, Show)
 
 newtype Record =
   Record
-    { lastShownId :: ExerciseId
+    { lastShownName :: Name
     } deriving Generic
 
 instance Yaml.FromJSON Record
@@ -29,8 +38,6 @@ type Details = Text
 
 type SourceCode = Text
 
-type ExerciseId = Int
-
-type Name = String -- TODO: Replace ExerciseId
+type Name = String
 
 type Diagnosis = SourceCode -> Details -> Details

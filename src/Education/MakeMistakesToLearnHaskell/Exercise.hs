@@ -2,16 +2,15 @@
 
 module Education.MakeMistakesToLearnHaskell.Exercise
   ( Exercise(verify)
-  , ExerciseId
   , Name
   , Result(..)
   , Details
   , loadHeaders
-  , loadDescriptionById
+  , loadDescriptionByName
   , loadExampleSolution
   , loadLastShown
-  , saveLastShownId
-  , unsafeGetById
+  , saveLastShownName
+  , unsafeGetByName
   ) where
 
 
@@ -33,8 +32,10 @@ import           Education.MakeMistakesToLearnHaskell.Text
 import           Debug.NoTrace
 
 
-exercises :: Vector Exercise
-exercises = Vector.fromList [exercise1, exercise2, exercise3, exercise4]
+exercises :: InsOrdHashMap Name Exercise
+exercises =
+  InsOrdHashMap.fromList
+    $ map (\e -> (exerciseName e, e)) [exercise1, exercise2, exercise2_5, exercise3, exercise4]
   where
     exercise1 =
       Exercise "1" $ runHaskellExercise diag1 "Hello, world!\n"
@@ -79,6 +80,8 @@ exercises = Vector.fromList [exercise1, exercise2, exercise3, exercise4]
       | "Variable not in scope: main :: IO" `Text.isInfixOf` msg =
         "HINT: This error indicates you haven't defined main function."
       | otherwise = ""
+
+    exercise2_5 = Exercise "2.5" noVeirificationExercise
 
     exercise3 =
       Exercise "3" $ runHaskellExercise diag3 $ Text.unlines
@@ -267,15 +270,24 @@ resultForUser diag code _messageFooter _calcRight _minput (Left (RunHaskell.RunH
   Fail $ appendDiagnosis diag code msg
 
 
+noVeirificationExercise :: Env -> String -> IO Result
+noVeirificationExercise _ _ = return NotVerified
+
+
 loadHeaders :: IO [Text]
-loadHeaders = mapM loadHeader $ Vector.toList exercises
+loadHeaders = mapM loadHeader $ InsOrdHashMap.elems exercises
   where
     loadHeader ex = extractHeader ex =<< loadDescription ex
+
     extractHeader ex desc =
       dieWhenNothing ("The description of exercise '" ++ exerciseName ex ++ "' is empty!")
-        $ cutHash <$> headMay (Text.lines desc)
+        $ appendName ex . cutHash <$> headMay (Text.lines desc)
+
     cutHash h =
       Text.strip $ fromMaybe h $ Text.stripPrefix "# " h
+
+    appendName ex h =
+      Text.pack (exerciseName ex) <> ": " <> h
 
 
 loadDescription :: Exercise -> IO Text
@@ -292,23 +304,23 @@ loadWithExtension ext ex =
     >>= Text.readFile
 
 
-loadDescriptionById :: ExerciseId -> IO (Maybe Text)
-loadDescriptionById n = MaybeT.runMaybeT $ do
-  ex <- Error.hoistMaybe $ getById n
+loadDescriptionByName :: Name -> IO (Maybe Text)
+loadDescriptionByName n = MaybeT.runMaybeT $ do
+  ex <- Error.hoistMaybe $ getByName n
   liftIO $ loadDescription ex
 
 
 -- Handle error internally.
--- Because lastShownId is usually saved internally.
+-- Because lastShownName is usually saved internally.
 loadLastShown :: Env -> IO Exercise
 loadLastShown e =
-  loadLastShownId e >>=
-    dieWhenNothing "Assertion failure: Invalid lastShownId saved! " . getById
+  loadLastShownName e >>=
+    dieWhenNothing "Assertion failure: Invalid lastShownName saved! " . getByName
 
 
-getById :: ExerciseId -> Maybe Exercise
-getById n = exercises !? (n - 1)
+getByName :: Name -> Maybe Exercise
+getByName n = InsOrdHashMap.lookup n exercises
 
 
-unsafeGetById :: ExerciseId -> Exercise
-unsafeGetById n = exercises ! (n - 1)
+unsafeGetByName :: Name -> Exercise
+unsafeGetByName = fromMaybe (error "unsafeGetByName: No exercise found!") . getByName

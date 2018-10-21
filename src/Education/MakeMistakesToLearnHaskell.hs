@@ -44,8 +44,8 @@ printExerciseList = do
   Text.putStrLn ""
   Text.putStrLn "## Contents"
 
-  let printHeader n h = Text.putStrLn $ Text.pack (show n) <> ". " <> h
-  zipWithM_ printHeader ([1..] :: [Int]) =<< Exercise.loadHeaders
+  let printHeader h = Text.putStrLn $ "- " <> h
+  mapM_ printHeader =<< Exercise.loadHeaders
 
   Text.putStrLn $ "\nRun `" <> Text.pack appName <> " show <the exercise number>` to try the exercise."
 
@@ -68,13 +68,15 @@ verifySource e (file : _) = do
       Exercise.Error details -> do
         Error.errLn $ Text.toStrict $ details <> "\n\n"
         die "An unexpected error occurred when evaluating your solution."
+      Exercise.NotVerified -> do
+        Text.putStrLn "[NOT VERIFIED] This exercise has no test. Go ahead!"
+        Exit.exitSuccess
 
 
 showExercise :: Env -> [String] -> IO ()
 showExercise _ [] = die "Specify an exercise number to show"
-showExercise e (nStr : _) = do
-  n <- dieWhenNothing ("Invalid exercise id: '" ++ nStr ++ "'") (readMay nStr)
-  d <- Exercise.loadDescriptionById n
-        >>= dieWhenNothing ("Exercise id " ++ nStr ++ " not found!")
-  Exercise.saveLastShownId e n
+showExercise e (n : _) = do
+  d <- Exercise.loadDescriptionByName n
+        >>= dieWhenNothing ("Exercise id " ++ n ++ " not found!")
+  Exercise.saveLastShownName e n
   Text.putStr d
