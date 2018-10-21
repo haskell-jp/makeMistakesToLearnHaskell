@@ -66,44 +66,47 @@ spec = do
   itShouldFailForCaseWithMessage
     "4"
     "no-close-paren"
-    ["HINT: you might have forgot to write close parenthesis"]
+    ["HINT: The open parenthesis between putStr and unlines is not closed."]
 
   itShouldFailForCaseWithMessage
     "4"
     "no-main"
-    ["HINT: This error indicates you haven't defined main function."]
+    ["HINT: Your source code dosn't have `main` function!"]
 
   itShouldFailForCaseWithMessage
     "4"
     "no-open-paren1"
-    ["HINT: Close! You might have forgot to write open parenthesis between `putStr` and `unlines`."]
+    ["HINT: No parentheses between putStr and unlines."]
 
   itShouldFailForCaseWithMessage
     "4"
     "no-open-paren2"
-    ["HINT: Close! You might have forgot to write open parenthesis between `unlines` and `reverse`."]
+    ["HINT: No parentheses between unlines and reverse."]
 
   itShouldFailForCaseWithMessage
     "4"
     "no-open-paren3"
-    ["HINT: Close! You might have forgot to write open parenthesis between `reverse` and `lines`."]
+    ["HINT: No parentheses between reverse and lines."]
 
   itShouldFailForCaseWithMessage
     "4"
     "no-paren"
-    ["HINT: Unfortunately, you have to surround each function calls with parentheses! E.g. (func1 (func2 input))"]
+    [ "HINT: No parentheses between putStr and unlines"
+    , "HINT: No parentheses between unlines and reverse."
+    , "HINT: No parentheses between reverse and lines."
+    ]
 
   itShouldFailForCaseWithMessage
     "4"
     "no-paren1"
-    ["HINT: You might have forgot to surround `unlines` and its argument with parentheses."]
+    ["HINT: No parentheses between putStr and unlines."]
 
   itShouldFailForCaseWithMessage
     "4"
     "no-paren2"
-    ["HINT: You might have forgot to surround `reverse` and its argument with parentheses."]
+    ["HINT: No parentheses between unlines and reverse."]
 
   itShouldFailForCaseWithMessage
     "4"
     "no-paren3"
-    ["HINT: You might have forgot to surround `lines` and its argument with parentheses."]
+    ["HINT: No parentheses between reverse and lines."]

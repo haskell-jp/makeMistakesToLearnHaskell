@@ -24,6 +24,7 @@ import           Education.MakeMistakesToLearnHaskell.Env
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Regex
 import qualified Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell as RunHaskell
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
+import           Education.MakeMistakesToLearnHaskell.Exercise.FormatMessage
 import           Education.MakeMistakesToLearnHaskell.Exercise.Record
 import           Education.MakeMistakesToLearnHaskell.Exercise.Types
 import           Education.MakeMistakesToLearnHaskell.Error
@@ -128,19 +129,17 @@ exercises = Vector.fromList [exercise1, exercise2, exercise3, exercise4]
       | "Couldn't match type ‘IO String’ with ‘[Char]’" `Text.isInfixOf` msg
         && "In the first argument of ‘lines’" `Text.isInfixOf` msg =
           "HINT: Unfortunately, you have to assign the result of `getContents` with `<-` operator."
-      | otherwise = error "TODO"
-
-      where
-        matchParentheses :: SourceCode -> Details
-        matchParentheses code =
-          let mToks = filter ((/= GHC.SpaceTok) . fst) . dropWhile (/= openParen) <$> GHC.tokenizeHaskell (Text.toStrict code)
-          in
-            case mToks of
-                Just toks -> error "TODO"
-                _ -> ""
-
-        openParen :: (GHC.Token, TextS.Text)
-        openParen = (GHC.SymbolTok, "(")
+      | otherwise =
+        let mtoks = GHC.tokenizeHaskell (Text.toStrict code)
+            tokPutStr = (GHC.VariableTok, "putStr")
+            putStrThenSpace =
+              Regex.sym tokPutStr <* optional (Regex.psym ((== GHC.SpaceTok) . fst))
+            msafa =
+              matchSub (singleArgFunApp 5) . (tokPutStr :) . dropUntilFirst putStrThenSpace =<< mtoks
+        in
+          case msafa of
+              Just safa -> Text.unlines $ formatSingleArgFunApp safa
+              _ -> ""
 
 
     detailsForgetToWriteDo :: Text -> Details
@@ -197,9 +196,6 @@ hasNoMainFirst src =
   case Text.words src of
       [] -> True
       (h : _) -> not $ "main" `Text.isPrefixOf` h
-
-
-
 
 
 -- TODO: refactor with resultForUser
