@@ -1,7 +1,7 @@
 -- Common import statements for external libraries.
 -- Intended to include by CPP.
 
-import           Control.Applicative ((<|>))
+import           Control.Applicative ((<|>), optional)
 import qualified Control.Error as Error
 import           Control.Exception
                    ( Exception
@@ -14,9 +14,11 @@ import           Control.Exception
 import           Control.Monad (zipWithM_, void)
 import           Control.Monad.IO.Class (liftIO)
 import qualified Control.Monad.Trans.Maybe as MaybeT
+import           Data.Bool (bool)
 import           Data.ByteString.Lazy.Char8 (ByteString)
 import qualified Data.ByteString.Lazy.Char8 as ByteString
 import qualified Data.Char as Char
+import           Data.Functor (($>))
 import qualified Data.List as List
 import           Data.Maybe (fromMaybe, maybeToList, isJust)
 import           Data.IORef
@@ -39,6 +41,7 @@ import qualified Data.Yaml.TH as Yaml
 import qualified Debug.Trace as Debug
 import           GHC.Generics (Generic)
 import qualified GHC.SyntaxHighlighter as GHC
+import           Numeric.Natural (Natural)
 import           Safe (readMay, headMay)
 import qualified System.Directory as Dir
 import qualified System.Environment as Env
