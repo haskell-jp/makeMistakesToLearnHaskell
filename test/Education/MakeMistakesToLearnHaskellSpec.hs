@@ -27,6 +27,10 @@ spec =
       runMmlh ["verify", "test/assets/common/empty.hs"]
         >>= shouldExitWithHints ["HINT: This error indicates you haven't defined main function."]
 
+    it "given non-existing answer of exercise 2.5, show NOT VERIFIED" $ do
+      void $ runMmlh ["show", "2.5"]
+      runMmlh ["verify", "non-existing"] >>= shouldPrintNotVerified
+
     it "given the correct answer of exercise 4, show SUCCESS" $ do
       answerFile <- Paths_makeMistakesToLearnHaskell.getDataFileName ("assets" </> "4.hs")
       void $ runMmlh ["show", "4"]
@@ -71,4 +75,12 @@ shouldVerifySuccess (ProcessResult out err code ex) = do
   fmap show ex `shouldBe` Nothing
   err `shouldSatisfy` ByteString'.null
   out `shouldSatisfy` includes "SUCCESS"
+  code `shouldBe` ExitSuccess
+
+
+shouldPrintNotVerified :: ProcessResult -> IO ()
+shouldPrintNotVerified (ProcessResult out err code ex) = do
+  fmap show ex `shouldBe` Nothing
+  err `shouldSatisfy` ByteString'.null
+  out `shouldSatisfy` includes "NOT VERIFIED"
   code `shouldBe` ExitSuccess

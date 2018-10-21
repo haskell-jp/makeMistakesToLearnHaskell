@@ -11,7 +11,7 @@ import           Control.Exception
                    , throwIO
                    , throw
                    )
-import           Control.Monad (zipWithM_, void)
+import           Control.Monad (void)
 import           Control.Monad.IO.Class (liftIO)
 import qualified Control.Monad.Trans.Maybe as MaybeT
 import           Data.Bool (bool)
@@ -19,6 +19,8 @@ import           Data.ByteString.Lazy.Char8 (ByteString)
 import qualified Data.ByteString.Lazy.Char8 as ByteString
 import qualified Data.Char as Char
 import           Data.Functor (($>))
+import           Data.HashMap.Strict.InsOrd (InsOrdHashMap)
+import qualified Data.HashMap.Strict.InsOrd as InsOrdHashMap
 import qualified Data.List as List
 import           Data.Maybe (fromMaybe, maybeToList, isJust)
 import           Data.IORef
@@ -34,15 +36,13 @@ import qualified Data.Text.Lazy.IO as Text
 import qualified Data.Text.Lazy.Encoding as TextEncoding
 import qualified Data.Text as TextS
 import           Data.Typeable (Typeable)
-import           Data.Vector (Vector, (!?), (!))
-import qualified Data.Vector as Vector
 import qualified Data.Yaml as Yaml
 import qualified Data.Yaml.TH as Yaml
 import qualified Debug.Trace as Debug
 import           GHC.Generics (Generic)
 import qualified GHC.SyntaxHighlighter as GHC
 import           Numeric.Natural (Natural)
-import           Safe (readMay, headMay)
+import           Safe (headMay)
 import qualified System.Directory as Dir
 import qualified System.Environment as Env
 import qualified System.Exit as Exit

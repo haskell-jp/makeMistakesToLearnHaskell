@@ -22,7 +22,7 @@ main = hspec spec
 spec :: Spec
 spec = do
   baseEnv <- mkDefaultSpecEnv
-  let subject = Exercise.unsafeGetById 2
+  let subject = Exercise.unsafeGetByName "2"
 
   it "given the correct answer, show SUCCESS" $ do
     out <- ByteString.readFile "test/assets/2/error-messages/correct.txt"

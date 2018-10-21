@@ -1,8 +1,8 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
 module Education.MakeMistakesToLearnHaskell.Exercise.Record
-  ( loadLastShownId
-  , saveLastShownId
+  ( loadLastShownName
+  , saveLastShownName
   ) where
 
 #include <imports/external.hs>
@@ -12,19 +12,19 @@ import           Education.MakeMistakesToLearnHaskell.Exercise.Types
 import           Education.MakeMistakesToLearnHaskell.Error
 
 
-loadLastShownId :: Env -> IO ExerciseId
-loadLastShownId e = do
+loadLastShownName :: Env -> IO Name
+loadLastShownName e = do
   path <- prepareRecordFilePath e
   exists <- Dir.doesFileExist path
   if exists
     then
-      lastShownId <$> (throwWhenLeft =<< Yaml.decodeFileEither path)
+      lastShownName <$> (throwWhenLeft =<< Yaml.decodeFileEither path)
     else
-      return 1
+      return "1"
 
 
-saveLastShownId :: Env -> ExerciseId -> IO ()
-saveLastShownId e n = do
+saveLastShownName :: Env -> Name -> IO ()
+saveLastShownName e n = do
   path <- prepareRecordFilePath e
   Yaml.encodeFile path $ Record n
 

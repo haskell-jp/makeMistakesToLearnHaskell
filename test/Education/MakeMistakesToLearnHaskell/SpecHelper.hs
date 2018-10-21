@@ -12,12 +12,14 @@ shouldFail :: Exercise.Result -> IO Exercise.Details
 shouldFail (Exercise.Fail d) = return d
 shouldFail (Exercise.Success d) = fail $ "Unexpected Success: " ++ show d
 shouldFail (Exercise.Error d) = fail $ "Unexpected Error: " ++ show d
+shouldFail Exercise.NotVerified = fail "Unexpected Not verified."
 
 
 shouldSuccess :: Exercise.Result -> IO Exercise.Details
 shouldSuccess (Exercise.Fail d) = fail $ "Unexpected Fail: " ++ show d
 shouldSuccess (Exercise.Success d) = return d
 shouldSuccess (Exercise.Error d) = fail $ "Unexpected Error: " ++ show d
+shouldSuccess Exercise.NotVerified = fail "Unexpected Not verified."
 
 
 type TestCaseId = String
@@ -26,7 +28,7 @@ itShouldFailForCaseWithMessage :: Exercise.Name -> TestCaseId -> [Exercise.Detai
 itShouldFailForCaseWithMessage ename tcid messages = do
   baseEnv <- mkDefaultSpecEnv
   it (ename ++ "::" ++ tcid) $ do
-    let subject = Exercise.unsafeGetById (read ename)
+    let subject = Exercise.unsafeGetByName ename
     err <- ByteString.readFile $ "test/assets/" ++ ename ++ "/error-messages/" ++ tcid ++ ".txt"
     let e = setRunHaskellFailureWithOutput baseEnv err
     d <- shouldFail =<< Exercise.verify subject e ("test/assets/" ++ ename ++ "/" ++ tcid ++ ".hs")
