@@ -225,7 +225,7 @@ runHaskellExercise diag right e prgFile = do
               return $ Error "runhaskell command is not available.\nInstall stack or Haskell Platform."
             RunHaskell.RunHaskellFailure _ msg -> do
               logDebug e $ "RunHaskellFailure: " <> msg
-              code <- Text.readFile prgFile
+              code <- readUtf8File prgFile
               return $ Fail $ appendDiagnosis diag code msg
 
 
@@ -239,7 +239,7 @@ runHaskellExerciseWithStdin diag calcRight e prgFile = do
             { runHaskellParametersArgs = [prgFile]
             , runHaskellParametersStdin = TextEncoding.encodeUtf8 input
             }
-      code <- Text.readFile prgFile
+      code <- readUtf8File prgFile
       result <- resultForUser diag code ["            For input: " <> Text.pack (show input)] calcRight input <$> runHaskell e params
       writeIORef resultRef result
       return $
@@ -301,7 +301,7 @@ loadExampleSolution = loadWithExtension ".hs"
 loadWithExtension :: String -> Exercise -> IO Text
 loadWithExtension ext ex =
   Paths_makeMistakesToLearnHaskell.getDataFileName ("assets/" ++ exerciseName ex ++ ext)
-    >>= Text.readFile
+    >>= readUtf8File
 
 
 loadDescriptionByName :: Name -> IO (Maybe Text)
