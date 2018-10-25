@@ -35,7 +35,7 @@ import           Debug.NoTrace
 exercises :: InsOrdHashMap Name Exercise
 exercises =
   InsOrdHashMap.fromList
-    $ map (\e -> (exerciseName e, e)) [exercise1, exercise2, exercise2_5, exercise3, exercise4]
+    $ map (\e -> (exerciseName e, e)) [exercise1, exercise2, exercise2_5, exercise3, exercise4, exercise5]
   where
     exercise1 =
       Exercise "1" $ runHaskellExercise diag1 "Hello, world!\n"
@@ -143,6 +143,8 @@ exercises =
           case msafa of
               Just safa -> Text.unlines $ formatSingleArgFunApp safa
               _ -> ""
+
+    exercise5 = Exercise "5" notYetImplementedVeirificationExercise
 
 
     detailsForgetToWriteDo :: Text -> Details
@@ -272,6 +274,10 @@ resultForUser diag code _messageFooter _calcRight _minput (Left (RunHaskell.RunH
 
 noVeirificationExercise :: Env -> String -> IO Result
 noVeirificationExercise _ _ = return NotVerified
+
+
+notYetImplementedVeirificationExercise :: Env -> String -> IO Result
+notYetImplementedVeirificationExercise _ _ = return NotYetImplemented
 
 
 loadHeaders :: IO [Text]

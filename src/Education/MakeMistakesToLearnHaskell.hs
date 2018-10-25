@@ -59,7 +59,7 @@ verifySource e (file : _) = do
       Exercise.Success details -> do
         Text.putStrLn details
         putStrLn "\n\nSUCCESS: Congratulations! Your solution got compiled and ran correctly!"
-        putStrLn "Here's an example solution of this exercise:"
+        putStrLn "Here's an example solution of this exercise:\n"
         Text.putStr =<< Exercise.loadExampleSolution currentExercise
         Exit.exitSuccess
       Exercise.Fail details -> do
@@ -70,6 +70,11 @@ verifySource e (file : _) = do
         die "An unexpected error occurred when evaluating your solution."
       Exercise.NotVerified -> do
         Text.putStrLn "[NOT VERIFIED] This exercise has no test. Go ahead!"
+        Exit.exitSuccess
+      Exercise.NotYetImplemented -> do
+        Text.putStrLn "[NOT YET IMPLEMENTED] Sorry, this exercise's test is not yet implemented. Check by yourself!"
+        putStrLn "Here's an example solution of this exercise:\n"
+        Text.putStr =<< Exercise.loadExampleSolution currentExercise
         Exit.exitSuccess
 
 

@@ -24,6 +24,7 @@ data Result =
   | Fail !Details
   | Success !Details
   | NotVerified
+  | NotYetImplemented
   deriving (Eq, Show)
 
 newtype Record =
