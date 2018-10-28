@@ -7,3 +7,18 @@ extra-deps:
 flags: {}
 extra-package-dbs: []
 
+# docker configuration
+docker:
+  enable: false
+  auto-pull: false
+  container-name: "mmlh"
+
+image:
+  container:
+    name: mmlh
+    base: mmlh-run
+    add:
+      assets: /app/assets
+      test/assets: /app/test/assets
+      scripts/docker: /usr/local/bin/
+    entrypoints: ["entrypoint.sh"]
