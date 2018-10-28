@@ -1,4 +1,5 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
+{-# LANGUAGE LambdaCase #-}
 
 module Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell
   ( runFile
@@ -14,8 +15,10 @@ import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 
 
 runFile :: Env -> RunHaskellParameters -> IO (Either RunHaskellError (ByteString, ByteString))
-runFile e rhp = do
-  cmd <- resolveInterpreter
+runFile env rhp = do
+  cmd <- if isDocker env
+         then resolveInterpreterInDocker
+         else resolveInterpreter
   case cmd of
       [] -> return $ Left RunHaskellNotFound
       (h:left) -> do
@@ -23,11 +26,10 @@ runFile e rhp = do
               Process.setStdin (Process.byteStringInput $ runHaskellParametersStdin rhp)
                 $ Process.proc h
                 $ left ++ runHaskellParametersArgs rhp
-        (ecode, out, err) <- fixingCodePage e $ readProcess prc
+        (ecode, out, err) <- fixingCodePage env $ readProcess prc
         return $ case ecode of
             ExitSuccess -> Right (out, err)
             ExitFailure i -> Left $ RunHaskellFailure i err
-
 
 resolveInterpreter :: IO [String]
 resolveInterpreter = do
@@ -36,6 +38,11 @@ resolveInterpreter = do
       Just p -> return [p, "exec", executableName, "--", optionAlwaysColor]
       _ -> maybe [] (: [optionAlwaysColor]) <$> Dir.findExecutable executableName
 
+resolveInterpreterInDocker :: IO [String]
+resolveInterpreterInDocker =
+  Dir.findExecutable "runhaskell" >>= \case
+    Nothing -> error "Not found runhaskell program"
+    Just p -> return [executableName, "--", optionAlwaysColor]
 
 optionAlwaysColor :: String
 optionAlwaysColor = "--ghc-arg=-fdiagnostics-color=always"
