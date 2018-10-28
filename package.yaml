@@ -73,6 +73,11 @@ executables:
     dependencies:
     - base
     - makeMistakesToLearnHaskell
+    when:
+    - condition: flag(static)
+      ld-options:
+      - -static
+      - -pthread
 
 tests:
   makeMistakesToLearnHaskell-test:
@@ -96,3 +101,9 @@ tests:
     - main-tester >=0.2
     - QuickCheck
     - text
+
+flags:
+  static:
+    description: Pass -static/-pthread to ghc when linking the stack binary.
+    manual: true
+    default: false
