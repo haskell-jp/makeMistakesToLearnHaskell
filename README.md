@@ -86,3 +86,31 @@ $ stack install --flag makeMistakesToLearnHaskell:static
 - 他のHaskell入門書を読んでみたが、Haskellでプログラムを書く方法がわからない。
     - TODO: にしては今の内容はちょっと初歩的すぎるかもしれないので、このターゲット自体かexerciseの内容を改めよう
 - Haskellがどんな言語か、どうやってプログラムを作るのか、軽く知りたい。
+
+## Docker
+
+### ベースイメージの作成
+
+```shell
+shell> cd scripts/docker
+shell> docker build -t mmlh-run .
+```
+
+### Docker イメージの作成
+
+```shell
+shell> stack build --flag makeMistakesToLearnHaskell:static
+shell> stack image container --no-build
+```
+
+### 実行方法
+
+`$(pwd)/ans` に答えのファイルを保存する場合の例。
+
+```shell
+shell> docker run --rm -it -v $(pwd)/ans:/app/ans mmlh-entrypoint.sh bash
+
+# または
+shell> docker run --rm -it -v $(pwd)/ans:/app/ans mmlh-entrypoint.sh -- mmlh verify ans/A.hs
+```
+
