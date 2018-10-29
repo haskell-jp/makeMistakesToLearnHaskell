@@ -41,12 +41,12 @@ library:
   # TODO: Decide version
   - QuickCheck
   - bytestring
+  - containers
   - directory
   - errors
   - filepath
   - ghc-syntax-highlighter
   - hint
-  - insert-ordered-containers
   # - i18n Use in the future
   - QuickCheck
   - regex-applicative
