@@ -48,7 +48,6 @@ library:
   - hint
   - insert-ordered-containers
   # - i18n Use in the future
-  - NoTrace
   - QuickCheck
   - regex-applicative
   - safe
