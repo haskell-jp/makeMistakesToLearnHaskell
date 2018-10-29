@@ -219,7 +219,6 @@ runHaskellExercise diag right e prgFile = do
             then Success $ "Nice output!\n\n" <> msg
             else Fail $ "Wrong output!\n\n" <> msg
       Left err -> do
-        Debug.traceM $ "err: " ++ show err
         case err of
             RunHaskell.RunHaskellNotFound ->
               return $ Error "runhaskell command is not available.\nInstall stack or Haskell Platform."
