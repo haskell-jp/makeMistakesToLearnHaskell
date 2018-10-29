@@ -29,8 +29,6 @@ import           Education.MakeMistakesToLearnHaskell.Exercise.Types
 import           Education.MakeMistakesToLearnHaskell.Error
 import           Education.MakeMistakesToLearnHaskell.Text
 
-import           Debug.NoTrace
-
 
 exercises :: InsOrdHashMap Name Exercise
 exercises =
@@ -221,7 +219,7 @@ runHaskellExercise diag right e prgFile = do
             then Success $ "Nice output!\n\n" <> msg
             else Fail $ "Wrong output!\n\n" <> msg
       Left err -> do
-        traceM $ "err: " ++ show err
+        Debug.traceM $ "err: " ++ show err
         case err of
             RunHaskell.RunHaskellNotFound ->
               return $ Error "runhaskell command is not available.\nInstall stack or Haskell Platform."
