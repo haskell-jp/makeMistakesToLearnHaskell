@@ -41,7 +41,6 @@ library:
   # TODO: Decide version
   - QuickCheck
   - bytestring
-  - containers
   - directory
   - errors
   - filepath

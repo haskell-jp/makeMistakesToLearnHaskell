@@ -20,8 +20,6 @@ import qualified Data.ByteString.Lazy.Char8 as ByteString
 import qualified Data.Char as Char
 import           Data.Functor (($>))
 import qualified Data.List as List
-import           Data.Map (Map)
-import qualified Data.Map as Map
 import           Data.Maybe (fromMaybe, maybeToList, isJust)
 import           Data.IORef
                    ( newIORef

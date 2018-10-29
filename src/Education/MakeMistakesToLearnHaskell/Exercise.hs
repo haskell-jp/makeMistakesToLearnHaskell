@@ -30,10 +30,15 @@ import           Education.MakeMistakesToLearnHaskell.Error
 import           Education.MakeMistakesToLearnHaskell.Text
 
 
-exercises :: Map Name Exercise
-exercises =
-  Map.fromList
-    $ map (\e -> (exerciseName e, e)) [exercise1, exercise2, exercise2_5, exercise3, exercise4, exercise5]
+exercises :: [(Name, Exercise)]
+exercises = map (\e -> (exerciseName e, e))
+    [ exercise1
+    , exercise2
+    , exercise2_5
+    , exercise3
+    , exercise4
+    , exercise5
+    ]
   where
     exercise1 =
       Exercise "1" $ runHaskellExercise diag1 "Hello, world!\n"
@@ -278,7 +283,7 @@ notYetImplementedVeirificationExercise _ _ = return NotYetImplemented
 
 
 loadHeaders :: IO [Text]
-loadHeaders = mapM loadHeader $ Map.elems exercises
+loadHeaders = mapM (loadHeader . snd) exercises
   where
     loadHeader ex = extractHeader ex =<< loadDescription ex
 
@@ -322,7 +327,7 @@ loadLastShown e =
 
 
 getByName :: Name -> Maybe Exercise
-getByName n = Map.lookup n exercises
+getByName n = lookup n exercises
 
 
 unsafeGetByName :: Name -> Exercise
