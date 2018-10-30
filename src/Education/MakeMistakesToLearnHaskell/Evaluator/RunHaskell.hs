@@ -33,12 +33,17 @@ resolveInterpreter :: IO [String]
 resolveInterpreter = do
   stack <- Dir.findExecutable "stack"
   case stack of
-      Just p -> return [p, "exec", executableName, "--", optionAlwaysColor]
-      _ -> maybe [] (: [optionAlwaysColor]) <$> Dir.findExecutable executableName
+      Just p -> return $ [p, "exec", executableName, "--"] ++ optionsAlwaysColor
+      _ -> maybe [] (: optionsAlwaysColor) <$> Dir.findExecutable executableName
 
 
-optionAlwaysColor :: String
-optionAlwaysColor = "--ghc-arg=-fdiagnostics-color=always"
+optionsAlwaysColor :: [String]
+#ifdef mingw32_HOST_OS
+-- FIXME: Command Prompt can't handle -fdiagnostics-color=always properly.
+optionsAlwaysColor = []
+#else
+optionsAlwaysColor = ["--ghc-arg=-fdiagnostics-color=always"]
+#endif
 
 
 executableName :: String
