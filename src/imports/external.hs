@@ -54,6 +54,7 @@ import qualified System.Process.Typed as Process
 import qualified Test.QuickCheck as QuickCheck
 import           Test.QuickCheck (quickCheckWithResult)
 import qualified Text.Regex.Applicative as Regex
+import qualified Web.Browser as Browser
 #ifdef mingw32_HOST_OS
 import qualified System.Win32.Console as Win32
 import GHC.IO.Encoding.CodePage (mkLocaleEncoding)

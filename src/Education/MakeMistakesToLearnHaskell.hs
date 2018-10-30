@@ -93,3 +93,10 @@ showMarkdown md n = do
   path <- mkHtmlPath <$> Dir.getTemporaryDirectory
 
   TextS.writeFile path htmlContent
+
+  isSuccess <- Browser.openBrowser path
+
+  if isSuccess then
+    return ()
+  else
+    error "error: openBrowser is Failure."
