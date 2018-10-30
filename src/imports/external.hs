@@ -19,8 +19,6 @@ import           Data.ByteString.Lazy.Char8 (ByteString)
 import qualified Data.ByteString.Lazy.Char8 as ByteString
 import qualified Data.Char as Char
 import           Data.Functor (($>))
-import           Data.HashMap.Strict.InsOrd (InsOrdHashMap)
-import qualified Data.HashMap.Strict.InsOrd as InsOrdHashMap
 import qualified Data.List as List
 import           Data.Maybe (fromMaybe, maybeToList, isJust)
 import           Data.IORef
