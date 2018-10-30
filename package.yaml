@@ -41,6 +41,7 @@ library:
   # TODO: Decide version
   - QuickCheck
   - bytestring
+  - cmark
   - directory
   - errors
   - filepath
