@@ -12,7 +12,8 @@ import Data.Traversable (for)
 import System.Environment (getArgs)
 import System.IO (BufferMode(..), hSetBuffering, stdout)
 
-type Entry = (String, Int)
+data Entry =
+  Entry { category :: String, price :: Integer } deriving (Eq, Show)
 
 main :: IO ()
 main = do
@@ -20,10 +21,13 @@ main = do
   entries <-
     for files (\path -> do
       contents <- readFile path
-      return (parseEntries contents)
+      return (map toTuple (parseEntries contents))
     )
   let summary = Map.fromListWith (\x y -> x + y) (concat entries)
   putStr (formatSummry summary)
+
+toTuple :: Entry -> (String, Integer)
+toTuple entry = (category entry, price entry)
 
 parseEntries :: String -> [Entry]
 parseEntries s = map parseEntry (lines s)
@@ -31,11 +35,11 @@ parseEntries s = map parseEntry (lines s)
 parseEntry :: String -> Entry
 parseEntry s =
   case splitOn "\t" s of
-    [c, sv] -> (c, read sv)
+    [c, sv] -> Entry c (read sv)
     _ -> error ("Invalid entry: " ++ show s)
 
-formatSummry :: Map String Int -> String
+formatSummry :: Map String Integer -> String
 formatSummry summary = unlines (map formatSummaryItem (Map.toList summary))
 
-formatSummaryItem :: (String, Int) -> String
+formatSummaryItem :: (String, Integer) -> String
 formatSummaryItem (cat, total) = cat ++ "\t" ++ show total
