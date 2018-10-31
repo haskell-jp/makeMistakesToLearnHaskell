@@ -205,11 +205,25 @@ hasNoMainFirst src =
       [] -> True
       (h : _) -> not $ "main" `Text.isPrefixOf` h
 
+runHaskellExercise
+  :: Diagnosis
+  -> Text
+  -> Env
+  -> FilePath
+  -> IO Result
+runHaskellExercise = runHaskellExercise' Nothing
 
 -- TODO: refactor with resultForUser
-runHaskellExercise :: Diagnosis -> Text -> Env -> FilePath -> IO Result
-runHaskellExercise diag right e prgFile = do
-  result <- runHaskell e defaultRunHaskellParameters { runHaskellParametersArgs = [prgFile] }
+runHaskellExercise'
+  :: Maybe RunHaskellParameters
+  -> Diagnosis
+  -> Text
+  -> Env
+  -> FilePath
+  -> IO Result
+runHaskellExercise' mParam diag right e prgFile = do
+  let rhp = fromMaybe defaultRunHaskellParameters mParam
+  result <- runHaskell e $ rhp { runHaskellParametersArgs = [prgFile] }
   case result of
       Right (outB, _errB {- TODO: print stderr -}) -> do
         let out = canonicalizeNewlines outB
