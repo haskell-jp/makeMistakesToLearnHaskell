@@ -99,4 +99,5 @@ showMarkdown md n = do
   if isSuccess then
     return ()
   else
-    error "error: openBrowser is Failure."
+    -- ブラウザの起動に失敗した場合はコンソールに出力する
+    Text.putStr md
