@@ -147,7 +147,14 @@ exercises = map (\e -> (exerciseName e, e))
               Just safa -> Text.unlines $ formatSingleArgFunApp safa
               _ -> ""
 
-    exercise5 = Exercise "5" notYetImplementedVeirificationExercise
+    exercise5 = Exercise "5" $ runHaskellExercise' param5 diag5 "102.01\n"
+
+    diag5 :: Diagnosis
+    diag5 code msg = ""
+
+    param5 :: Maybe RunHaskellParameters
+    param5 = Just $ defaultRunHaskellParameters
+                      { runHaskellParametersStdin = "100\n1\n2" }
 
 
     detailsForgetToWriteDo :: Text -> Details
