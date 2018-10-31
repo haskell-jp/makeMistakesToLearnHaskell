@@ -84,4 +84,20 @@ showExercise e (n : _) = do
   d <- Exercise.loadDescriptionByName n
         >>= dieWhenNothing ("Exercise id " ++ n ++ " not found!")
   Exercise.saveLastShownName e n
-  Text.putStr d
+  showMarkdown d n
+
+showMarkdown :: Text -> String -> IO ()
+showMarkdown md n = do
+  let htmlContent = CMark.commonmarkToHtml [CMark.optSafe] $ Text.toStrict md
+      mkHtmlPath dir = dir <> "/" <> "mmlh-ex" <> n <> ".html"
+  path <- mkHtmlPath <$> Dir.getTemporaryDirectory
+
+  TextS.writeFile path htmlContent
+
+  isSuccess <- Browser.openBrowser path
+
+  if isSuccess then
+    return ()
+  else
+    -- ブラウザの起動に失敗した場合はコンソールに出力する
+    Text.putStr md

@@ -1,6 +1,7 @@
 -- Common import statements for external libraries.
 -- Intended to include by CPP.
 
+import qualified CMark
 import           Control.Applicative ((<|>), optional)
 import qualified Control.Error as Error
 import           Control.Exception
@@ -33,6 +34,7 @@ import qualified Data.Text.Lazy as Text
 import qualified Data.Text.Lazy.IO as Text
 import qualified Data.Text.Lazy.Encoding as TextEncoding
 import qualified Data.Text as TextS
+import qualified Data.Text.IO as TextS
 import           Data.Typeable (Typeable)
 import qualified Data.Yaml as Yaml
 import qualified Data.Yaml.TH as Yaml
@@ -52,6 +54,7 @@ import qualified System.Process.Typed as Process
 import qualified Test.QuickCheck as QuickCheck
 import           Test.QuickCheck (quickCheckWithResult)
 import qualified Text.Regex.Applicative as Regex
+import qualified Web.Browser as Browser
 #ifdef mingw32_HOST_OS
 import qualified System.Win32.Console as Win32
 import GHC.IO.Encoding.CodePage (mkLocaleEncoding)
