@@ -156,6 +156,9 @@ exercises = map (\e -> (exerciseName e, e))
     diag5 :: Diagnosis
     diag5 code msg = ""
 
+    -- gen5 :: Gen [String]
+    -- gen5 = arbitrary
+
     param5 :: Maybe RunHaskellParameters
     param5 = Just $ defaultRunHaskellParameters
                       { runHaskellParametersStdin = "100\n1\n2" }
@@ -265,26 +268,29 @@ runHaskellExerciseWithStdin
   -> Env
   -> FilePath
   -> IO Result
-runHaskellExerciseWithStdin diag (gen, getString) calcRight e prgFile = do
+runHaskellExerciseWithStdin diag (gen, getString) calcRight env prgFile = do
   let qcArgs = QuickCheck.stdArgs { QuickCheck.chatty = True }
+      maxSuccessSize = envQcMaxSuccessSize env
 
   resultRef <- newIORef $ error "Assertion failure: no result written after QuickCheck"
   qr <- quickCheckWithResult qcArgs $
+
     QuickCheck.forAll gen $ \ls ->
-  qr <- quickCheckWithResult QuickCheck.stdArgs { QuickCheck.chatty = True } $ \ls ->
-    QuickCheck.ioProperty $ do
+
+      QuickCheck.withMaxSuccess maxSuccessSize $
+        QuickCheck.ioProperty $ do
           let input = Text.pack $ unlines $ map getString ls
-          params = defaultRunHaskellParameters
-            { runHaskellParametersArgs = [prgFile]
-            , runHaskellParametersStdin = TextEncoding.encodeUtf8 input
-            }
-      code <- readUtf8File prgFile
+              params = defaultRunHaskellParameters
+                { runHaskellParametersArgs = [prgFile]
+                , runHaskellParametersStdin = TextEncoding.encodeUtf8 input
+                }
+          code <- readUtf8File prgFile
           result <- resultForUser diag code ["            For input: " <> Text.pack (show input)] calcRight input <$> runHaskell env params
-      writeIORef resultRef result
-      return $
-        case result of
-            Success _ -> True
-            _other -> False
+          writeIORef resultRef result
+          return $
+            case result of
+                Success _ -> True
+                _other -> False
   logDebug env $ ByteString.pack $ "QuickCheck result: " ++ show qr
   readIORef resultRef
 

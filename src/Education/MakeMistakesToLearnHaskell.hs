@@ -34,6 +34,7 @@ withMainEnv action = do
             { logDebug = ByteString.hPutStr h . (<> "\n")
             , appHomePath = d
             , runHaskell = RunHaskell.runFile e
+            , envQcMaxSuccessSize = 20
             }
     action e
 
