@@ -114,8 +114,12 @@ exercises = map (\e -> (exerciseName e, e))
           detailsForgetToWriteDo "`putStrLn`s"
       | otherwise = ""
 
-    exercise4 =
-      Exercise "4" $ runHaskellExerciseWithStdin diag4 (Text.pack . unlines . reverse . lines . Text.unpack)
+    exercise4 = Exercise "4"
+              $ runHaskellExerciseWithStdin diag4 gen4
+              $ (Text.pack . unlines . reverse . lines . Text.unpack)
+
+    gen4 :: (Gen [PrintableString], PrintableString -> String)
+    gen4 = (arbitrary, QuickCheck.getPrintableString)
 
     diag4 :: Diagnosis
     diag4 code msg
@@ -253,25 +257,35 @@ runHaskellExercise' mParam diag right e prgFile = do
               code <- readUtf8File prgFile
               return $ Fail $ appendDiagnosis diag code msg
 
+runHaskellExerciseWithStdin
+  :: Show a
+  => Diagnosis
+  -> (Gen [a], a -> String)
+  -> (Text -> Text)
+  -> Env
+  -> FilePath
+  -> IO Result
+runHaskellExerciseWithStdin diag (gen, getString) calcRight e prgFile = do
+  let qcArgs = QuickCheck.stdArgs { QuickCheck.chatty = True }
 
-runHaskellExerciseWithStdin :: Diagnosis -> (Text -> Text) -> Env -> FilePath -> IO Result
-runHaskellExerciseWithStdin diag calcRight e prgFile = do
   resultRef <- newIORef $ error "Assertion failure: no result written after QuickCheck"
+  qr <- quickCheckWithResult qcArgs $
+    QuickCheck.forAll gen $ \ls ->
   qr <- quickCheckWithResult QuickCheck.stdArgs { QuickCheck.chatty = True } $ \ls ->
     QuickCheck.ioProperty $ do
-      let input = Text.pack $ unlines ls
+          let input = Text.pack $ unlines $ map getString ls
           params = defaultRunHaskellParameters
             { runHaskellParametersArgs = [prgFile]
             , runHaskellParametersStdin = TextEncoding.encodeUtf8 input
             }
       code <- readUtf8File prgFile
-      result <- resultForUser diag code ["            For input: " <> Text.pack (show input)] calcRight input <$> runHaskell e params
+          result <- resultForUser diag code ["            For input: " <> Text.pack (show input)] calcRight input <$> runHaskell env params
       writeIORef resultRef result
       return $
         case result of
             Success _ -> True
             _other -> False
-  logDebug e $ ByteString.pack $ "QuickCheck result: " ++ show qr
+  logDebug env $ ByteString.pack $ "QuickCheck result: " ++ show qr
   readIORef resultRef
 
 
