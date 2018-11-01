@@ -236,7 +236,7 @@ runHaskellExercise diag right e prgFile = do
 runHaskellExerciseWithStdin :: Diagnosis -> (Text -> Text) -> Env -> FilePath -> IO Result
 runHaskellExerciseWithStdin diag calcRight e prgFile = do
   resultRef <- newIORef $ error "Assertion failure: no result written after QuickCheck"
-  qr <- quickCheckWithResult QuickCheck.stdArgs { QuickCheck.chatty = False } $ \ls ->
+  qr <- quickCheckWithResult QuickCheck.stdArgs { QuickCheck.chatty = True } $ \ls ->
     QuickCheck.ioProperty $ do
       let input = Text.pack $ unlines ls
           params = defaultRunHaskellParameters
