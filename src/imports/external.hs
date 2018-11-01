@@ -50,7 +50,7 @@ import qualified System.IO as IO
 import           System.Process.Typed (readProcess)
 import qualified System.Process.Typed as Process
 import qualified Test.QuickCheck as QuickCheck
-import           Test.QuickCheck (Gen, PrintableString, quickCheckWithResult, arbitrary)
+import           Test.QuickCheck (Arbitrary, Gen, PrintableString, Positive, quickCheckWithResult, arbitrary)
 import qualified Text.Regex.Applicative as Regex
 import qualified Web.Browser as Browser
 #ifdef mingw32_HOST_OS

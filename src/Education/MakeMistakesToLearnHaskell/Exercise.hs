@@ -151,18 +151,20 @@ exercises = map (\e -> (exerciseName e, e))
               Just safa -> Text.unlines $ formatSingleArgFunApp safa
               _ -> ""
 
-    exercise5 = Exercise "5" $ runHaskellExercise' param5 diag5 "102.01\n"
+    exercise5 = Exercise "5"
+              $ runHaskellExerciseWithStdin diag5 gen5 ans5
 
     diag5 :: Diagnosis
     diag5 code msg = ""
 
-    -- gen5 :: Gen [String]
-    -- gen5 = arbitrary
+    gen5 :: (Gen Exercise5, Exercise5 -> [String])
+    gen5 = (arbitrary, ex5ToString)
 
-    param5 :: Maybe RunHaskellParameters
-    param5 = Just $ defaultRunHaskellParameters
-                      { runHaskellParametersStdin = "100\n1\n2" }
-
+    ans5 :: Text -> Text
+    ans5 input = Text.pack $ show body <> "\n"
+      where
+        [principal, interestRate, years] = lines $ Text.unpack input
+        body = read principal * (1 + read interestRate / 100) ^ read years
 
     detailsForgetToWriteDo :: Text -> Details
     detailsForgetToWriteDo funcNames =
@@ -172,6 +174,21 @@ exercises = map (\e -> (exerciseName e, e))
     detailsDoConsistentWidth :: Details
     detailsDoConsistentWidth = "HINT: instructions in a `do` must be in a consistent width."
 
+data Exercise5 = Exercise5 Double Double (Positive Int)
+  deriving Show
+
+instance Arbitrary Exercise5 where
+  arbitrary = Exercise5
+           <$> (arbitrary :: Gen Double)
+           <*> (arbitrary :: Gen Double)
+           <*> (arbitrary :: Gen (Positive Int))
+
+ex5ToString :: Exercise5 -> [String]
+ex5ToString (Exercise5 a b c) =
+  [ show a
+  , show b
+  , show $ QuickCheck.getPositive c
+  ]
 
 -- TODO: Incomplete implementaion! Use regex or ghc tokenizer!
 containsSequence :: SourceCode -> [Text] -> Bool
