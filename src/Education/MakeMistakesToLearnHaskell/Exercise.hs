@@ -118,8 +118,8 @@ exercises = map (\e -> (exerciseName e, e))
               $ runHaskellExerciseWithStdin diag4 gen4
               $ (Text.pack . unlines . reverse . lines . Text.unpack)
 
-    gen4 :: (Gen [PrintableString], PrintableString -> String)
-    gen4 = (arbitrary, QuickCheck.getPrintableString)
+    gen4 :: (Gen [PrintableString], [PrintableString] -> [String])
+    gen4 = (arbitrary, map QuickCheck.getPrintableString)
 
     diag4 :: Diagnosis
     diag4 code msg
@@ -263,23 +263,21 @@ runHaskellExercise' mParam diag right e prgFile = do
 runHaskellExerciseWithStdin
   :: Show a
   => Diagnosis
-  -> (Gen [a], a -> String)
+  -> (Gen a, a -> [String])
   -> (Text -> Text)
   -> Env
   -> FilePath
   -> IO Result
-runHaskellExerciseWithStdin diag (gen, getString) calcRight env prgFile = do
+runHaskellExerciseWithStdin diag (gen, toInputString) calcRight env prgFile = do
   let qcArgs = QuickCheck.stdArgs { QuickCheck.chatty = True }
       maxSuccessSize = envQcMaxSuccessSize env
 
   resultRef <- newIORef $ error "Assertion failure: no result written after QuickCheck"
   qr <- quickCheckWithResult qcArgs $
-
-    QuickCheck.forAll gen $ \ls ->
-
+    QuickCheck.forAll gen $ \inputArgs ->
       QuickCheck.withMaxSuccess maxSuccessSize $
         QuickCheck.ioProperty $ do
-          let input = Text.pack $ unlines $ map getString ls
+          let input = Text.pack $ unlines $ toInputString inputArgs
               params = defaultRunHaskellParameters
                 { runHaskellParametersArgs = [prgFile]
                 , runHaskellParametersStdin = TextEncoding.encodeUtf8 input
