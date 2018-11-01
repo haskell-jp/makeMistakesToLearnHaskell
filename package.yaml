@@ -46,7 +46,6 @@ library:
   - errors
   - filepath
   - ghc-syntax-highlighter
-  - hint
   # - i18n Use in the future
   - open-browser
   - QuickCheck
@@ -55,8 +54,6 @@ library:
   - text
   - transformers
   - typed-process
-  - vector
-  - yaml
   when:
   - condition: os(windows)
     dependencies:

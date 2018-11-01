@@ -16,17 +16,16 @@ loadLastShownName :: Env -> IO Name
 loadLastShownName e = do
   path <- prepareRecordFilePath e
   exists <- Dir.doesFileExist path
-  if exists
-    then
-      lastShownName <$> (throwWhenLeft =<< Yaml.decodeFileEither path)
-    else
-      return "1"
+  if exists then
+    fmap (lastShownName . read) $ readFile path
+  else
+    return "1"
 
 
 saveLastShownName :: Env -> Name -> IO ()
 saveLastShownName e n = do
   path <- prepareRecordFilePath e
-  Yaml.encodeFile path $ Record n
+  writeFile path $ show $ Record n
 
 
 prepareRecordFilePath :: Env -> IO FilePath

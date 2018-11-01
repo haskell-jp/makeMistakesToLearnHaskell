@@ -27,13 +27,9 @@ data Result =
   | NotYetImplemented
   deriving (Eq, Show)
 
-newtype Record =
-  Record
-    { lastShownName :: Name
-    } deriving Generic
-
-instance Yaml.FromJSON Record
-instance Yaml.ToJSON Record
+newtype Record = Record
+  { lastShownName :: Name
+  } deriving (Show, Read)
 
 type Details = Text
 
