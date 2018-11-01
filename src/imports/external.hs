@@ -36,8 +36,6 @@ import qualified Data.Text.Lazy.Encoding as TextEncoding
 import qualified Data.Text as TextS
 import qualified Data.Text.IO as TextS
 import           Data.Typeable (Typeable)
-import qualified Data.Yaml as Yaml
-import qualified Data.Yaml.TH as Yaml
 import qualified Debug.Trace as Debug
 import           GHC.Generics (Generic)
 import qualified GHC.SyntaxHighlighter as GHC
