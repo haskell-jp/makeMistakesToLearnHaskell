@@ -28,13 +28,13 @@ withMainEnv :: (Env -> IO r) -> IO r
 withMainEnv action = do
   d <- Env.getEnv homePathEnvVarName <|> Dir.getXdgDirectory Dir.XdgData appName
   Dir.createDirectoryIfMissing True d
-  loc <- maybe Browser read <$> Env.lookupEnv markdownOutputEnvVarName
+  loc <- maybe Browser read <$> Env.lookupEnv showExerciseOutputEnvVarName
   IO.withFile (d </> "debug.log") IO.WriteMode $ \h -> do
     let e = defaultEnv
               { logDebug = ByteString.hPutStr h . (<> "\n")
               , appHomePath = d
               , runHaskell = RunHaskell.runFile e
-              , envVerifyOutputLocation = loc
+              , envShowExerciseOutputLocation = loc
               }
     action e
 
@@ -96,7 +96,7 @@ showMarkdown env md n = do
   TextS.writeFile path htmlContent
 
   isSuccess <-
-    if envVerifyOutputLocation env == Browser then
+    if envShowExerciseOutputLocation env == Browser then
       Browser.openBrowser path
     else
       return False

@@ -3,12 +3,12 @@
 module Education.MakeMistakesToLearnHaskell.Env
   ( Env (..)
   , defaultEnv
-  , VerifyCmdOutputLocation (..)
+  , ShowExerciseOutputLocation (..)
   , RunHaskellParameters(runHaskellParametersArgs, runHaskellParametersStdin)
   , defaultRunHaskellParameters
   , appName
   , homePathEnvVarName
-  , markdownOutputEnvVarName
+  , showExerciseOutputEnvVarName
   , avoidCodingError
   )
 where
@@ -30,10 +30,10 @@ data Env = Env
   , appHomePath :: FilePath
   , runHaskell :: RunHaskellParameters -> IO (Either RunHaskellError (ByteString, ByteString))
   , envQcMaxSuccessSize :: Int
-  , envVerifyOutputLocation :: VerifyCmdOutputLocation -- ^ verify コマンドの出力先
+  , envShowExerciseOutputLocation :: ShowExerciseOutputLocation -- ^ mmlh show コマンドの出力先
   }
 
-data VerifyCmdOutputLocation
+data ShowExerciseOutputLocation
   = Browser
   | Terminal
   deriving (Eq, Show, Read)
@@ -44,7 +44,7 @@ defaultEnv = Env
   , appHomePath = error "Set appHomePath to defaultEnv"
   , runHaskell = error "Set runHaskell to defaultEnv"
   , envQcMaxSuccessSize = 20
-  , envVerifyOutputLocation = Browser
+  , envShowExerciseOutputLocation = Browser
   }
 
 appName :: String
@@ -54,8 +54,8 @@ appName = "mmlh"
 homePathEnvVarName :: String
 homePathEnvVarName = "MAKE_MISTAKES_TO_LEARN_HASKELL_HOME"
 
-markdownOutputEnvVarName :: String
-markdownOutputEnvVarName = "MAKE_MISTAKES_TO_LEARN_HASKELL_MARKDOWN_OUTPUT_LOCATION"
+showExerciseOutputEnvVarName :: String
+showExerciseOutputEnvVarName = "MAKE_MISTAKES_TO_LEARN_HASKELL_SHOW_EXERCISE_OUTPUT_LOCATION"
 
 
 avoidCodingError :: IO ()
