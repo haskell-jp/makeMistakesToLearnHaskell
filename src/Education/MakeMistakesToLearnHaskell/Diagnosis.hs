@@ -13,6 +13,11 @@ import           Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 
 appendDiagnosis :: Diagnosis -> SourceCode -> ErrorMessage -> Details
-appendDiagnosis d c m =
-  let m' = decodeUtf8 m
-  in m' <> "\n" <> d c m'
+appendDiagnosis diagFunc srcCode errMsg = Text.intercalate "\n" $
+    [ errMsg'
+    , "==================== mmlh HINT output ===================="
+    , ""
+    , diagFunc srcCode errMsg'
+    ]
+  where
+    errMsg' = decodeUtf8 errMsg

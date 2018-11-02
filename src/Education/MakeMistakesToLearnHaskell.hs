@@ -57,6 +57,7 @@ verifySource _ [] = die "Specify the Haskell source file to veirfy!"
 verifySource e (file : _) = do
   currentExercise <- Exercise.loadLastShown e
   result <- Exercise.verify currentExercise e file
+  putStrLn "==================== GHC output ===================="
   case result of
       Exercise.Success details -> do
         Text.putStrLn details
@@ -65,7 +66,12 @@ verifySource e (file : _) = do
         Text.putStr =<< Exercise.loadExampleSolution currentExercise
         Exit.exitSuccess
       Exercise.Fail details -> do
-        Text.putStrLn $ details <> "\n\nFAIL: Your solution didn't pass. Try again!"
+        mapM_ Text.putStrLn
+          [ details
+          , ""
+          , "FAIL: Your solution didn't pass. Try again!"
+          , ""
+          ]
         Exit.exitFailure
       Exercise.Error details -> do
         Error.errLn $ Text.toStrict $ details <> "\n\n"
