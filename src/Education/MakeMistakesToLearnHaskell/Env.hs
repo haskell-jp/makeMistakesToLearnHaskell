@@ -2,6 +2,8 @@
 
 module Education.MakeMistakesToLearnHaskell.Env
   ( Env (..)
+  , VerifyCmdOutputLocation (..)
+  , isBrowser
   , RunHaskellParameters(runHaskellParametersArgs, runHaskellParametersStdin)
   , defaultRunHaskellParameters
   , appName
@@ -19,6 +21,9 @@ data RunHaskellParameters = RunHaskellParameters
   , runHaskellParametersStdin :: !ByteString
   }
 
+defaultRunHaskellParameters :: RunHaskellParameters
+defaultRunHaskellParameters = RunHaskellParameters [] ""
+
 data Env =
   Env
     { logDebug :: ByteString -> IO ()
@@ -27,8 +32,14 @@ data Env =
     , envQcMaxSuccessSize :: Int
     }
 
-defaultRunHaskellParameters :: RunHaskellParameters
-defaultRunHaskellParameters = RunHaskellParameters [] ""
+data VerifyCmdOutputLocation
+  = Browser
+  | Terminal
+  deriving (Eq, Show, Read)
+
+isBrowser :: VerifyCmdOutputLocation -> Bool
+isBrowser Browser = True
+isBrowser _ = False
 
 
 appName :: String
