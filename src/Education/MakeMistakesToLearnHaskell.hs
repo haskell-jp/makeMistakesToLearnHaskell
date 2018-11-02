@@ -11,6 +11,7 @@ import           Education.MakeMistakesToLearnHaskell.Env
 import qualified Education.MakeMistakesToLearnHaskell.Exercise as Exercise
 import qualified Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell as RunHaskell
 import           Education.MakeMistakesToLearnHaskell.Error
+import           Education.MakeMistakesToLearnHaskell.Text
 
 
 main :: IO ()
@@ -105,4 +106,4 @@ showMarkdown env md n = do
     return ()
   else
     -- ブラウザの起動に失敗した場合はコンソールに出力する
-    Text.putStr md
+    Text.putStr $ removeAllTrailingSpace md
