@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-unused-imports #-}
+
 module Education.MakeMistakesToLearnHaskell.Exercise.Ex01
   ( exercise1
   ) where

@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-unused-imports #-}
+
 module Education.MakeMistakesToLearnHaskell.Exercise.Ex05
   ( exercise5
   ) where
@@ -21,16 +23,16 @@ exercise5 = Exercise "5"
           $ runHaskellExerciseWithStdin diag generator answer
 
 diag :: Diagnosis
-diag code msg = ""
+diag _code _msg = "" -- TODO: Not implemented
 
 generator :: (Gen Exercise5, Exercise5 -> [String])
 generator = (arbitrary, gen2string)
 
 answer :: Text -> Text
-answer input = Text.pack $ show body <> "\n"
+answer input = Text.pack $ show (body :: Double) <> "\n"
   where
     [principal, interestRate, years] = lines $ Text.unpack input
-    body = read principal * (1 + read interestRate / 100) ^ read years
+    body = read principal * (1 + read interestRate / 100) ^ (read years :: Integer)
 
 gen2string :: Exercise5 -> [String]
 gen2string (Exercise5 a b c) =
