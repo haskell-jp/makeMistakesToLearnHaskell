@@ -8,7 +8,7 @@ module Education.MakeMistakesToLearnHaskell.Env
   , defaultRunHaskellParameters
   , appName
   , homePathEnvVarName
-  , terminalOutputEnvVarName
+  , markdownOutputEnvVarName
   , avoidCodingError
   )
 where
@@ -54,8 +54,8 @@ appName = "mmlh"
 homePathEnvVarName :: String
 homePathEnvVarName = "MAKE_MISTAKES_TO_LEARN_HASKELL_HOME"
 
-terminalOutputEnvVarName :: String
-terminalOutputEnvVarName = "MAKE_MISTAKES_TO_LEARN_HASKELL_TERMINAL_OUTPUT_LOCATION"
+markdownOutputEnvVarName :: String
+markdownOutputEnvVarName = "MAKE_MISTAKES_TO_LEARN_HASKELL_MARKDOWN_OUTPUT_LOCATION"
 
 
 avoidCodingError :: IO ()

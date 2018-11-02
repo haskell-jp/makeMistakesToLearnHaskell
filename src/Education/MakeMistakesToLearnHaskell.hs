@@ -28,7 +28,7 @@ withMainEnv :: (Env -> IO r) -> IO r
 withMainEnv action = do
   d <- Env.getEnv homePathEnvVarName <|> Dir.getXdgDirectory Dir.XdgData appName
   Dir.createDirectoryIfMissing True d
-  loc <- maybe Browser read <$> Env.lookupEnv terminalOutputEnvVarName
+  loc <- maybe Browser read <$> Env.lookupEnv markdownOutputEnvVarName
   IO.withFile (d </> "debug.log") IO.WriteMode $ \h -> do
     let e = defaultEnv
               { logDebug = ByteString.hPutStr h . (<> "\n")

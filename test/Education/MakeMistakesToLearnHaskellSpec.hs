@@ -54,7 +54,7 @@ runMmlh :: [String] -> IO ProcessResult
 runMmlh args = do
   Dir.createDirectoryIfMissing False "./tmp/"
   let env = [ (homePathEnvVarName, Just "./tmp/")
-            , (terminalOutputEnvVarName, Just (show Terminal))
+            , (markdownOutputEnvVarName, Just (show Terminal))
             ]
   withArgs args
     $ withEnv env
