@@ -2,6 +2,7 @@
 
 module Education.MakeMistakesToLearnHaskell.Env
   ( Env (..)
+  , defaultEnv
   , VerifyCmdOutputLocation (..)
   , isBrowser
   , RunHaskellParameters(runHaskellParametersArgs, runHaskellParametersStdin)
@@ -41,6 +42,14 @@ isBrowser :: VerifyCmdOutputLocation -> Bool
 isBrowser Browser = True
 isBrowser _ = False
 
+defaultEnv :: Env
+defaultEnv = Env
+  { logDebug = error "Set logDebug to defaultEnv"
+  , appHomePath = error "Set appHomePath to defaultEnv"
+  , runHaskell = error "Set runHaskell to defaultEnv"
+  , envQcMaxSuccessSize = 20
+  , envVerifyOutputLocation = Browser
+  }
 
 appName :: String
 appName = "mmlh"

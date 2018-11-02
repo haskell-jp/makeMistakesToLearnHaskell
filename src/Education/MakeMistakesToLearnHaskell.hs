@@ -29,8 +29,7 @@ withMainEnv action = do
   d <- Env.getEnv homePathEnvVarName <|> Dir.getXdgDirectory Dir.XdgData appName
   Dir.createDirectoryIfMissing True d
   IO.withFile (d </> "debug.log") IO.WriteMode $ \h -> do
-    let e =
-          Env
+    let e = defaultEnv
             { logDebug = ByteString.hPutStr h . (<> "\n")
             , appHomePath = d
             , runHaskell = RunHaskell.runFile e

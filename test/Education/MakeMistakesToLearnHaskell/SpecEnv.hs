@@ -12,7 +12,7 @@ import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 mkDefaultSpecEnv :: SpecM a Env
 mkDefaultSpecEnv = runIO $ do
   tmpDir <- (</> "tmp/mmlh") <$> Dir.getCurrentDirectory
-  return Env
+  return $ defaultEnv
     { logDebug = const $ return ()
     -- { logDebug = ByteString.putStrLn
     , appHomePath = tmpDir
