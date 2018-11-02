@@ -4,6 +4,7 @@ module Education.MakeMistakesToLearnHaskell.Text
   ( canonicalizeNewlines
   , decodeUtf8
   , readUtf8File
+  , removeAllTrailingSpace
   ) where
 
 
@@ -27,3 +28,6 @@ readUtf8File path = do
   hd <- IO.openFile path IO.ReadMode
   IO.hSetEncoding hd IO.utf8
   Text.hGetContents hd
+
+removeAllTrailingSpace :: Text -> Text
+removeAllTrailingSpace = Text.unlines . map Text.stripEnd . Text.lines
