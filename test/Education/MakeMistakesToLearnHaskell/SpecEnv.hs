@@ -17,6 +17,7 @@ mkDefaultSpecEnv = runIO $ do
     -- { logDebug = ByteString.putStrLn
     , appHomePath = tmpDir
     , runHaskell = error "Set runHaskell to defaultTestEnv!"
+    , envQcMaxSuccessSize = 20
     }
 
 

@@ -24,6 +24,7 @@ data Env =
     { logDebug :: ByteString -> IO ()
     , appHomePath :: FilePath
     , runHaskell :: RunHaskellParameters -> IO (Either RunHaskellError (ByteString, ByteString))
+    , envQcMaxSuccessSize :: Int
     }
 
 defaultRunHaskellParameters :: RunHaskellParameters

@@ -1,0 +1,35 @@
+module Education.MakeMistakesToLearnHaskell.Exercise.Ex02
+  ( exercise2
+  ) where
+
+#include <imports/external.hs>
+
+import Education.MakeMistakesToLearnHaskell.Exercise.Core
+import Education.MakeMistakesToLearnHaskell.Exercise.Types
+
+exercise2 :: Exercise
+exercise2 = Exercise "2" $ runHaskellExercise diag2 "20.761245674740486\n"
+
+diag2 :: Diagnosis
+diag2 code msg
+  | "parse error" `Text.isInfixOf` msg || "Parse error" `Text.isInfixOf` msg =
+    if "top-level declaration expected." `Text.isInfixOf` msg
+      then
+        "HINT: This error indicates you haven't defined main function."
+      else
+        -- TODO: Use regex or ghc tokenizer
+        case compare (Text.count "(" code) (Text.count ")" code) of
+            GT -> "HINT: you might have forgot to write close parenthesis"
+            LT -> "HINT: you might have forgot to write open parenthesis"
+            EQ -> ""
+  | "No instance for (Fractional (IO ()))" `Text.isInfixOf` msg || "No instance for (Num (IO ()))" `Text.isInfixOf` msg =
+    "HINT: you might have forgot to write parentheses"
+  | "No instance for (Show (a0 -> a0))" `Text.isInfixOf` msg =
+    "HINT: you might have forgot to write some numbers between operators ('*', '/' etc.)."
+  | "No instance for (Num (t0 -> a0))" `Text.isInfixOf` msg =
+    "HINT: you might have forgot to write multiplication operator '*'"
+  | "No instance for (Fractional (t0 -> a0))" `Text.isInfixOf` msg =
+    "HINT: you might have forgot to write division operator '/'"
+  | "Variable not in scope: main :: IO" `Text.isInfixOf` msg =
+    "HINT: This error indicates you haven't defined main function."
+  | otherwise = ""
