@@ -98,9 +98,8 @@ showMarkdown env md n = do
   isSuccess <-
     if isBrowser (envVerifyOutputLocation env) then
       Browser.openBrowser path
-    else do
-      Text.putStr md
-      return True
+    else
+      return False
 
   if isSuccess then
     return ()
