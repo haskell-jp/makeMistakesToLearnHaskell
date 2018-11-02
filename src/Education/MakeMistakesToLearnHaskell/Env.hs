@@ -24,12 +24,12 @@ data RunHaskellParameters = RunHaskellParameters
 defaultRunHaskellParameters :: RunHaskellParameters
 defaultRunHaskellParameters = RunHaskellParameters [] ""
 
-data Env =
-  Env
+data Env = Env
     { logDebug :: ByteString -> IO ()
     , appHomePath :: FilePath
     , runHaskell :: RunHaskellParameters -> IO (Either RunHaskellError (ByteString, ByteString))
     , envQcMaxSuccessSize :: Int
+  , envVerifyOutputLocation :: VerifyCmdOutputLocation -- ^ verify コマンドの出力先
     }
 
 data VerifyCmdOutputLocation
