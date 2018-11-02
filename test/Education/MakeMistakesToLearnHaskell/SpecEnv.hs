@@ -12,13 +12,12 @@ import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 mkDefaultSpecEnv :: SpecM a Env
 mkDefaultSpecEnv = runIO $ do
   tmpDir <- (</> "tmp/mmlh") <$> Dir.getCurrentDirectory
-  return Env
-    { logDebug = const $ return ()
-    -- { logDebug = ByteString.putStrLn
-    , appHomePath = tmpDir
-    , runHaskell = error "Set runHaskell to defaultTestEnv!"
-    , envQcMaxSuccessSize = 20
-    }
+  return $ defaultEnv
+            { logDebug = const $ return ()
+            -- { logDebug = ByteString.putStrLn
+            , appHomePath = tmpDir
+            , envShowExerciseOutputLocation = Terminal
+            }
 
 
 setRunHaskellFailureWithOutput :: Env -> ByteString -> Env

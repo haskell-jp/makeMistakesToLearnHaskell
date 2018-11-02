@@ -28,14 +28,14 @@ withMainEnv :: (Env -> IO r) -> IO r
 withMainEnv action = do
   d <- Env.getEnv homePathEnvVarName <|> Dir.getXdgDirectory Dir.XdgData appName
   Dir.createDirectoryIfMissing True d
+  loc <- maybe Browser read <$> Env.lookupEnv showExerciseOutputEnvVarName
   IO.withFile (d </> "debug.log") IO.WriteMode $ \h -> do
-    let e =
-          Env
-            { logDebug = ByteString.hPutStr h . (<> "\n")
-            , appHomePath = d
-            , runHaskell = RunHaskell.runFile e
-            , envQcMaxSuccessSize = 20
-            }
+    let e = defaultEnv
+              { logDebug = ByteString.hPutStr h . (<> "\n")
+              , appHomePath = d
+              , runHaskell = RunHaskell.runFile e
+              , envShowExerciseOutputLocation = loc
+              }
     action e
 
 
@@ -81,21 +81,25 @@ verifySource e (file : _) = do
 
 showExercise :: Env -> [String] -> IO ()
 showExercise _ [] = die "Specify an exercise number to show"
-showExercise e (n : _) = do
+showExercise env (n : _) = do
   d <- Exercise.loadDescriptionByName n
         >>= dieWhenNothing ("Exercise id " ++ n ++ " not found!")
-  Exercise.saveLastShownName e n
-  showMarkdown d n
+  Exercise.saveLastShownName env n
+  showMarkdown env d n
 
-showMarkdown :: Text -> String -> IO ()
-showMarkdown md n = do
+showMarkdown :: Env -> Text -> String -> IO ()
+showMarkdown env md n = do
   let htmlContent = CMark.commonmarkToHtml [CMark.optSafe] $ Text.toStrict md
       mkHtmlPath dir = dir <> "/" <> "mmlh-ex" <> n <> ".html"
   path <- mkHtmlPath <$> Dir.getTemporaryDirectory
 
   TextS.writeFile path htmlContent
 
-  isSuccess <- Browser.openBrowser path
+  isSuccess <-
+    if envShowExerciseOutputLocation env == Browser then
+      Browser.openBrowser path
+    else
+      return False
 
   if isSuccess then
     return ()

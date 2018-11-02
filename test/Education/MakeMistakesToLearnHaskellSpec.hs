@@ -5,7 +5,7 @@ module Education.MakeMistakesToLearnHaskellSpec (main, spec) where
 #include <test/imports/external.hs>
 
 import qualified Education.MakeMistakesToLearnHaskell
-import           Education.MakeMistakesToLearnHaskell.Env (homePathEnvVarName)
+import           Education.MakeMistakesToLearnHaskell.Env
 
 
 -- `main` is here so that this module can be run from GHCi on its own.  It is
@@ -53,8 +53,11 @@ spec =
 runMmlh :: [String] -> IO ProcessResult
 runMmlh args = do
   Dir.createDirectoryIfMissing False "./tmp/"
+  let env = [ (homePathEnvVarName, Just "./tmp/")
+            , (showExerciseOutputEnvVarName, Just (show Terminal))
+            ]
   withArgs args
-    $ withEnv [(homePathEnvVarName, Just "./tmp/")]
+    $ withEnv env
     $ captureProcessResult Education.MakeMistakesToLearnHaskell.main
 
 
