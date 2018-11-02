@@ -4,7 +4,6 @@ module Education.MakeMistakesToLearnHaskell.Env
   ( Env (..)
   , defaultEnv
   , VerifyCmdOutputLocation (..)
-  , isBrowser
   , RunHaskellParameters(runHaskellParametersArgs, runHaskellParametersStdin)
   , defaultRunHaskellParameters
   , appName
@@ -38,10 +37,6 @@ data VerifyCmdOutputLocation
   = Browser
   | Terminal
   deriving (Eq, Show, Read)
-
-isBrowser :: VerifyCmdOutputLocation -> Bool
-isBrowser Browser = True
-isBrowser _ = False
 
 defaultEnv :: Env
 defaultEnv = Env

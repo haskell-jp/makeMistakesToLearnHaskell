@@ -96,7 +96,7 @@ showMarkdown env md n = do
   TextS.writeFile path htmlContent
 
   isSuccess <-
-    if isBrowser (envVerifyOutputLocation env) then
+    if envVerifyOutputLocation env == Browser then
       Browser.openBrowser path
     else
       return False
