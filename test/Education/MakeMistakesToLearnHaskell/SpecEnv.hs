@@ -13,12 +13,11 @@ mkDefaultSpecEnv :: SpecM a Env
 mkDefaultSpecEnv = runIO $ do
   tmpDir <- (</> "tmp/mmlh") <$> Dir.getCurrentDirectory
   return $ defaultEnv
-    { logDebug = const $ return ()
-    -- { logDebug = ByteString.putStrLn
-    , appHomePath = tmpDir
-    , runHaskell = error "Set runHaskell to defaultTestEnv!"
-    , envQcMaxSuccessSize = 20
-    }
+            { logDebug = const $ return ()
+            -- { logDebug = ByteString.putStrLn
+            , appHomePath = tmpDir
+            , envVerifyOutputLocation = Terminal
+            }
 
 
 setRunHaskellFailureWithOutput :: Env -> ByteString -> Env

@@ -28,13 +28,14 @@ withMainEnv :: (Env -> IO r) -> IO r
 withMainEnv action = do
   d <- Env.getEnv homePathEnvVarName <|> Dir.getXdgDirectory Dir.XdgData appName
   Dir.createDirectoryIfMissing True d
+  loc <- Env.getEnv terminalOutputEnvVarName
   IO.withFile (d </> "debug.log") IO.WriteMode $ \h -> do
     let e = defaultEnv
-            { logDebug = ByteString.hPutStr h . (<> "\n")
-            , appHomePath = d
-            , runHaskell = RunHaskell.runFile e
-            , envQcMaxSuccessSize = 20
-            }
+              { logDebug = ByteString.hPutStr h . (<> "\n")
+              , appHomePath = d
+              , runHaskell = RunHaskell.runFile e
+              , envVerifyOutputLocation = read loc
+              }
     action e
 
 

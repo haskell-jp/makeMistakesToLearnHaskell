@@ -9,6 +9,7 @@ module Education.MakeMistakesToLearnHaskell.Env
   , defaultRunHaskellParameters
   , appName
   , homePathEnvVarName
+  , terminalOutputEnvVarName
   , avoidCodingError
   )
 where
@@ -26,12 +27,12 @@ defaultRunHaskellParameters :: RunHaskellParameters
 defaultRunHaskellParameters = RunHaskellParameters [] ""
 
 data Env = Env
-    { logDebug :: ByteString -> IO ()
-    , appHomePath :: FilePath
-    , runHaskell :: RunHaskellParameters -> IO (Either RunHaskellError (ByteString, ByteString))
-    , envQcMaxSuccessSize :: Int
+  { logDebug :: ByteString -> IO ()
+  , appHomePath :: FilePath
+  , runHaskell :: RunHaskellParameters -> IO (Either RunHaskellError (ByteString, ByteString))
+  , envQcMaxSuccessSize :: Int
   , envVerifyOutputLocation :: VerifyCmdOutputLocation -- ^ verify コマンドの出力先
-    }
+  }
 
 data VerifyCmdOutputLocation
   = Browser
@@ -57,6 +58,9 @@ appName = "mmlh"
 
 homePathEnvVarName :: String
 homePathEnvVarName = "MAKE_MISTAKES_TO_LEARN_HASKELL_HOME"
+
+terminalOutputEnvVarName :: String
+terminalOutputEnvVarName = "MAKE_MISTAKES_TO_LEARN_HASKELL_TERMINAL_OUTPUT_LOCATION"
 
 
 avoidCodingError :: IO ()
