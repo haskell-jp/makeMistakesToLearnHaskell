@@ -55,6 +55,18 @@ cd makeMistakesToLearnHaskell
 stack install
 ```
 
+### 「Make Mistakes to Learn Haskell!」自体のアップデート方法
+
+現状、当入門はまだまだ完成度が低いため、今後も度々更新することとなります。  
+アップデートが必要な場合は、👆の手順で`git clone`したディレクトリーに移動した上で、
+
+```
+git pull
+stack install
+```
+
+を実行してください。
+
 ## 使い方
 
 1. 課題の一覧を表示する（特に引数を与えなければ一覧が表示されます）  
