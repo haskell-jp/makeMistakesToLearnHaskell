@@ -7,27 +7,27 @@
 現状はHackageにまだ公開していないので👇の方法で。
 
 ```
-git clone https://github.com/haskell-jp/makeMistakesToLearnHaskell
+shell> git clone https://github.com/haskell-jp/makeMistakesToLearnHaskell
 # あるいは git clone git://github.com/haskell-jp/makeMistakesToLearnHaskell
 
-cd makeMistakesToLearnHaskell
-stack install
+shell> cd makeMistakesToLearnHaskell
+shell> stack install
 ```
 
 ## 使い方
 
 1. 課題の一覧を表示する（特に引数を与えなければ一覧が表示されます）  
    ```
-   mmlh
+   shell> mmlh
    ```
 1. 課題1の内容を表示する  
    ```
-   mmlh show 1
+   shell> mmlh show 1
    ```
 1. 課題の回答をテストする  
    （最後に`mmlh show`した課題のテストをする）  
    ```
-   mmlh verify your_answer.hs
+   shell> mmlh verify your_answer.hs
    ```
 
 ## 開発に協力していただける方へ
@@ -41,6 +41,13 @@ stack install
     - 「そのために以下の課題を解いて、Haskellの初歩を身につけましょう」以降に書いた各課題とその判定処理を実装します。
     - 時間がなさそうなので、すべての課題を作り切ることを優先させるつもりはありません（でも課題の数を増やさないとハンズオンの当日に時間が余る恐れがあるのでそこは考慮しよう。最悪別のスライドで穴埋めする）。
 - その他[Issues](https://github.com/haskell-jp/makeMistakesToLearnHaskell/issues)をご覧ください。
+
+#### 課題のプロンプト表記について
+
+- GHCi に対する入力は `ghci>`
+- シェルに対する入力は `shell>`
+
+と書き、そのことを先頭に近い部分に明記する。
 
 #### 特に私 igrepが行いたいこと
 
