@@ -12,13 +12,13 @@
 #### Mac OS XやLinux, FreeBSDなどのUnix系OSをお使いの方:
 
 ```
-shell> curl -sSL https://get.haskellstack.org/ | sh
+curl -sSL https://get.haskellstack.org/ | sh
 ```
 
 あるいは、
 
 ```
-shell> wget -qO- https://get.haskellstack.org/ | sh
+wget -qO- https://get.haskellstack.org/ | sh
 ```
 
 #### Windowsをお使いの方
@@ -28,7 +28,7 @@ shell> wget -qO- https://get.haskellstack.org/ | sh
 [Chocolatey](https://chocolatey.org/)をお使いの方は、
 
 ```
-shell> choco install haskell-stack
+choco install haskell-stack
 ```
 
 でもインストールできます。
@@ -48,27 +48,27 @@ shell> choco install haskell-stack
 現状はHackageにまだ公開していないので👇の方法で。
 
 ```
-shell> git clone https://github.com/haskell-jp/makeMistakesToLearnHaskell
+git clone https://github.com/haskell-jp/makeMistakesToLearnHaskell
 # あるいは git clone git://github.com/haskell-jp/makeMistakesToLearnHaskell
 
-shell> cd makeMistakesToLearnHaskell
-shell> stack install
+cd makeMistakesToLearnHaskell
+stack install
 ```
 
 ## 使い方
 
 1. 課題の一覧を表示する（特に引数を与えなければ一覧が表示されます）  
    ```
-   shell> mmlh
+   mmlh
    ```
 1. 課題1の内容を表示する  
    ```
-   shell> mmlh show 1
+   mmlh show 1
    ```
 1. 課題の回答をテストする  
    （最後に`mmlh show`した課題のテストをする）  
    ```
-   shell> mmlh verify your_answer.hs
+   mmlh verify your_answer.hs
    ```
 
 ## 開発に協力していただける方へ
@@ -83,12 +83,12 @@ shell> stack install
     - 時間がなさそうなので、すべての課題を作り切ることを優先させるつもりはありません（でも課題の数を増やさないとハンズオンの当日に時間が余る恐れがあるのでそこは考慮しよう。最悪別のスライドで穴埋めする）。
 - その他[Issues](https://github.com/haskell-jp/makeMistakesToLearnHaskell/issues)をご覧ください。
 
-#### 課題のプロンプト表記について
+#### 課題におけるプロンプト表記について
 
 - GHCi に対する入力は `ghci>`
 - シェルに対する入力は `shell>`
 
-と書き、そのことを先頭に近い部分に明記する。
+と書きましょう。
 
 #### 特に私 igrepが行いたいこと
 
