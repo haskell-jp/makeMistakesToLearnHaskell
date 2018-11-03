@@ -4,6 +4,47 @@
 
 ## インストール方法
 
+### まだ[Stack](https://haskellstack.org)や[Haskell Platform](https://www.haskell.org/platform/)をインストールしていない場合は
+
+[Stack](https://haskellstack.org)のインストールを推奨します。  
+下記のいずれかの方法でインストールしてください。
+
+#### Mac OS XやLinux, FreeBSDなどのUnix系OSをお使いの方:
+
+```
+shell> curl -sSL https://get.haskellstack.org/ | sh
+```
+
+あるいは、
+
+```
+shell> wget -qO- https://get.haskellstack.org/ | sh
+```
+
+#### Windowsをお使いの方
+
+[64bit版のWindowsをお使いの方はこちら](https://get.haskellstack.org/stable/windows-x86_64-installer.exe)、[32bit版のWindowsをお使いの方はこちら](https://get.haskellstack.org/stable/windows-i386-installer.exe)からインストーラーをダウンロードして、インストールしてください（よくわからなければ、とりあえず64bit版を試してみてください）。  
+
+[Chocolatey](https://chocolatey.org/)をお使いの方は、
+
+```
+shell> choco install haskell-stack
+```
+
+でもインストールできます。
+
+#### トラブルが発生したら:
+
+インストール中などに何か困ったことが発生した場合、下記のいずれかのウェブサービスで質問してみてください。
+
+- [teratailのHaskellタグ](https://teratail.com/tags/Haskell)
+- [スタック・オーバーフローのHaskellタグ](https://ja.stackoverflow.com/questions/tagged/haskell)
+- [日本Haskellユーザーグループ (a.k.a. Haskell-jp)の公式Slack Workspaceにおける、questionsチャンネル](https://haskell-jp.slack.com/messages/C5666B6BB/)
+    - [登録はこちらから](https://join.slack.com/t/haskell-jp/shared_invite/enQtNDY4Njc1MTA5MDQxLTAzZGNkZDlkMWYxZDRlODI3NmNlNTQ1ZDc3MjQxNzg3OTg4YzUzNmUyNmU5YWVkMjFmMjFjYzk1OTE3Yzg4ZTM)
+- [Redditのr/haskell\_jp](https://www.reddit.com/r/haskell_jp/)
+
+### 「Make Mistakes to Learn Haskell!」自体のインストール方法
+
 現状はHackageにまだ公開していないので👇の方法で。
 
 ```
