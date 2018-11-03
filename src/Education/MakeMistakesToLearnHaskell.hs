@@ -102,8 +102,5 @@ showMarkdown env md n = do
     else
       return False
 
-  if browserLaunched then
-    return ()
-  else
-    -- ブラウザの起動に失敗した場合はコンソールに出力する
+  unless browserLaunched $
     Text.putStr $ removeAllTrailingSpace md

@@ -12,7 +12,7 @@ import           Control.Exception
                    , throwIO
                    , throw
                    )
-import           Control.Monad (void)
+import           Control.Monad (void, unless)
 import           Control.Monad.IO.Class (liftIO)
 import qualified Control.Monad.Trans.Maybe as MaybeT
 import           Data.Bool (bool)
