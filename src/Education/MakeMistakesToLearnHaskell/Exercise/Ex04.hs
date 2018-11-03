@@ -16,10 +16,8 @@ exercise4 = Exercise "4"
           $ runHaskellExerciseWithStdin diag4 gen4
           $ (Text.pack . unlines . reverse . lines . Text.unpack)
 
-gen4 :: (Gen [String], [String] -> [String])
-gen4 = (g, id)
-  where
-    g = QuickCheck.listOf $ QuickCheck.listOf $ QuickCheck.choose ('\33', '\126')
+gen4 :: Gen String
+gen4 = unlines <$> QuickCheck.listOf (QuickCheck.listOf $ QuickCheck.choose ('\33', '\126'))
 
 diag4 :: Diagnosis
 diag4 code msg
