@@ -2,32 +2,116 @@
 
 作りながら学ぶHaskell入門
 
-## インストール方法
+## 💾インストール方法
 
-現状はHackageにまだ公開していないので👇の方法で。
+### まだ[Stack](https://haskellstack.org)や[Haskell Platform](https://www.haskell.org/platform/)をインストールしていない場合は
+
+[Stack](https://haskellstack.org)のインストールを推奨します。  
+下記のいずれかの方法でインストールしてください。
+
+#### 🍎🐧Mac OS XやLinuxなどのUnix系OSをお使いの方:
+
+「ターミナル」を起動し、下記のいずれかのコマンドを実行してください。
 
 ```
-shell> git clone https://github.com/haskell-jp/makeMistakesToLearnHaskell
+curl -sSL https://get.haskellstack.org/ | sh
+```
+
+あるいは、
+
+```
+wget -qO- https://get.haskellstack.org/ | sh
+```
+
+#### 🏁Windowsをお使いの方
+
+[64bit版のWindowsをお使いの方はこちら](https://get.haskellstack.org/stable/windows-x86_64-installer.exe)、[32bit版のWindowsをお使いの方はこちら](https://get.haskellstack.org/stable/windows-i386-installer.exe)からインストーラーをダウンロードして、インストールしてください（よくわからなければ、とりあえず64bit版を試してみてください）。  
+
+[Chocolatey](https://chocolatey.org/)をお使いの方は、
+
+```
+choco install haskell-stack
+```
+
+でもインストールできます。
+
+### 💾GHCのインストール方法
+
+ここまででstackをインストールされた方は、
+
+```
+stack setup
+```
+
+というコマンドを実行してください（どのOSでもこのコマンドです）。  
+GHCのインストールが始まります。
+
+GHCのインストールが終わったら、
+
+```
+stack exec ghc -- --version
+```
+
+と実行して、GHCが正常にインストールできたことを確認してください（`ghc`と`--version`の間に`--`を挟まないといけない点にご注意ください）。  
+`The Glorious Glasgow Haskell Compilation System`で始まる文字列が表示されたら、無事インストールができた証拠です。
+
+例:
+
+```
+The Glorious Glasgow Haskell Compilation System, version 8.4.3
+```
+
+
+#### ⚠️トラブルが発生したら:
+
+インストール中などに何か困ったことが発生した場合、下記のいずれかのウェブサービスで質問してみてください。
+
+- [teratailのHaskellタグ](https://teratail.com/tags/Haskell)
+- [スタック・オーバーフローのHaskellタグ](https://ja.stackoverflow.com/questions/tagged/haskell)
+- [日本Haskellユーザーグループ (a.k.a. Haskell-jp)の公式Slack Workspaceにおける、questionsチャンネル](https://haskell-jp.slack.com/messages/C5666B6BB/)
+    - [登録はこちらから](https://join.slack.com/t/haskell-jp/shared_invite/enQtNDY4Njc1MTA5MDQxLTAzZGNkZDlkMWYxZDRlODI3NmNlNTQ1ZDc3MjQxNzg3OTg4YzUzNmUyNmU5YWVkMjFmMjFjYzk1OTE3Yzg4ZTM)
+- [Redditのr/haskell\_jp](https://www.reddit.com/r/haskell_jp/)
+
+### 💾「Make Mistakes to Learn Haskell!」自体のインストール方法
+
+現状はHackageにまだ公開していないので👇のコマンドを実行してください。
+
+```
+git clone https://github.com/haskell-jp/makeMistakesToLearnHaskell
 # あるいは git clone git://github.com/haskell-jp/makeMistakesToLearnHaskell
 
-shell> cd makeMistakesToLearnHaskell
-shell> stack install
+cd makeMistakesToLearnHaskell
+stack install
 ```
 
-## 使い方
+インストールが完了したら、「⚙️使い方」の節に書かれたコマンドを試してみてください。
+
+### 🆙「Make Mistakes to Learn Haskell!」自体のアップデート方法
+
+現状、当入門はまだまだ完成度が低いため、今後も度々更新することとなります。  
+アップデートが必要な場合は、👆の手順で`git clone`したディレクトリーに移動した上で、
+
+```
+git pull
+stack install
+```
+
+を実行してください。
+
+## ⚙️使い方
 
 1. 課題の一覧を表示する（特に引数を与えなければ一覧が表示されます）  
    ```
-   shell> mmlh
+   mmlh
    ```
 1. 課題1の内容を表示する  
    ```
-   shell> mmlh show 1
+   mmlh show 1
    ```
 1. 課題の回答をテストする  
    （最後に`mmlh show`した課題のテストをする）  
    ```
-   shell> mmlh verify your_answer.hs
+   mmlh verify your_answer.hs
    ```
 
 ## 開発に協力していただける方へ
@@ -42,12 +126,12 @@ shell> stack install
     - 時間がなさそうなので、すべての課題を作り切ることを優先させるつもりはありません（でも課題の数を増やさないとハンズオンの当日に時間が余る恐れがあるのでそこは考慮しよう。最悪別のスライドで穴埋めする）。
 - その他[Issues](https://github.com/haskell-jp/makeMistakesToLearnHaskell/issues)をご覧ください。
 
-#### 課題のプロンプト表記について
+#### 課題におけるプロンプト表記について
 
 - GHCi に対する入力は `ghci>`
 - シェルに対する入力は `shell>`
 
-と書き、そのことを先頭に近い部分に明記する。
+と書きましょう。
 
 #### 特に私 igrepが行いたいこと
 
