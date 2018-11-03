@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-unused-imports #-}
+
 module Education.MakeMistakesToLearnHaskell.Exercise.Core
   ( runHaskellExercise
   , runHaskellExerciseWithStdin
@@ -61,23 +63,22 @@ runHaskellExercise' mParam diag right e prgFile = do
 
 -- runHaskellExercise の入力有りバージョン
 runHaskellExerciseWithStdin
-  :: Show a
-  => Diagnosis
-  -> (Gen a, a -> [String])
+  :: Diagnosis
+  -> Gen String
   -> (Text -> Text)
   -> Env
   -> FilePath
   -> IO Result
-runHaskellExerciseWithStdin diag (gen, toInputString) calcRight env prgFile = do
+runHaskellExerciseWithStdin diag gen calcRight env prgFile = do
   let qcArgs = QuickCheck.stdArgs { QuickCheck.chatty = True }
       maxSuccessSize = envQcMaxSuccessSize env
 
   resultRef <- newIORef $ error "Assertion failure: no result written after QuickCheck"
   qr <- quickCheckWithResult qcArgs $
-    QuickCheck.forAll gen $ \inputArgs ->
+    QuickCheck.forAll gen $ \inputS ->
       QuickCheck.withMaxSuccess maxSuccessSize $
         QuickCheck.ioProperty $ do
-          let input = Text.pack $ unlines $ toInputString inputArgs
+          let input = Text.pack inputS
               params = defaultRunHaskellParameters
                 { runHaskellParametersArgs = [prgFile]
                 , runHaskellParametersStdin = TextEncoding.encodeUtf8 input

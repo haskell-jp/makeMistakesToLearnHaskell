@@ -12,7 +12,7 @@ import           Control.Exception
                    , throwIO
                    , throw
                    )
-import           Control.Monad (void)
+import           Control.Monad (void, unless)
 import           Control.Monad.IO.Class (liftIO)
 import qualified Control.Monad.Trans.Maybe as MaybeT
 import           Data.Bool (bool)
@@ -50,7 +50,7 @@ import qualified System.IO as IO
 import           System.Process.Typed (readProcess)
 import qualified System.Process.Typed as Process
 import qualified Test.QuickCheck as QuickCheck
-import           Test.QuickCheck (Arbitrary, Gen, Positive, quickCheckWithResult, arbitrary)
+import           Test.QuickCheck (Arbitrary, Gen, quickCheckWithResult, arbitrary)
 import qualified Text.Regex.Applicative as Regex
 import qualified Web.Browser as Browser
 #ifdef mingw32_HOST_OS

@@ -100,16 +100,13 @@ showMarkdown env md n = do
       mkHtmlPath dir = dir <> "/" <> "mmlh-ex" <> n <> ".html"
   path <- mkHtmlPath <$> Dir.getTemporaryDirectory
 
-  TextS.writeFile path htmlContent
+  writeUtf8FileS path htmlContent
 
-  isSuccess <-
+  browserLaunched <-
     if envShowExerciseOutputLocation env == Browser then
       Browser.openBrowser path
     else
       return False
 
-  if isSuccess then
-    return ()
-  else
-    -- ブラウザの起動に失敗した場合はコンソールに出力する
+  unless browserLaunched $
     Text.putStr $ removeAllTrailingSpace md
