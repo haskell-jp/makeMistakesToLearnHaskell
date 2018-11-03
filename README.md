@@ -74,7 +74,7 @@ The Glorious Glasgow Haskell Compilation System, version 8.4.3
 
 ### 💾「Make Mistakes to Learn Haskell!」自体のインストール方法
 
-現状はHackageにまだ公開していないので👇の方法で。
+現状はHackageにまだ公開していないので👇のコマンドを実行してください。
 
 ```
 git clone https://github.com/haskell-jp/makeMistakesToLearnHaskell
@@ -83,6 +83,8 @@ git clone https://github.com/haskell-jp/makeMistakesToLearnHaskell
 cd makeMistakesToLearnHaskell
 stack install
 ```
+
+インストールが完了したら、「⚙️使い方」の節に書かれたコマンドを試してみてください。
 
 ### 🆙「Make Mistakes to Learn Haskell!」自体のアップデート方法
 
