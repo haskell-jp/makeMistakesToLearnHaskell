@@ -21,7 +21,7 @@ main = do
   cmd <- execParser (info (cmdParser <**> helper) idm)
   withMainEnv $ \e ->
     case cmd of
-      Show openBrowser n -> showExercise e openBrowser [n]
+      Show isTerminal n -> showExercise e isTerminal [n]
       Verify path -> verifySource e [path]
       -- FIXME: printExerciseList
 
@@ -43,11 +43,11 @@ data Cmd
   | Verify FilePath
   deriving (Eq, Show)
 
-optOpenBrowserP :: Parser Bool
-optOpenBrowserP = switch $ long "open" <> help "show exercise in browser"
+optTerminalP :: Parser Bool
+optTerminalP = switch $ long "terminal" <> help "display to terminal"
 
 showCmdP :: Parser Cmd
-showCmdP = Show <$> optOpenBrowserP
+showCmdP = Show <$> optTerminalP
                 <*> argument str (metavar "<number>")
 
 verifyCmdP :: Parser Cmd
@@ -107,14 +107,14 @@ verifySource e (file : _) = do
 
 showExercise :: Env -> Bool -> [String] -> IO ()
 showExercise _ _ [] = die "Specify an exercise number to show"
-showExercise env openBrowser (n : _) = do
+showExercise env isTerminal (n : _) = do
   d <- Exercise.loadDescriptionByName n
         >>= dieWhenNothing ("Exercise id " ++ n ++ " not found!")
   Exercise.saveLastShownName env n
-  showMarkdown d openBrowser n
+  showMarkdown d isTerminal n
 
 showMarkdown :: Text -> Bool -> String -> IO ()
-showMarkdown md openBrowser n = do
+showMarkdown md isTerminal n = do
   let htmlContent = CMark.commonmarkToHtml [CMark.optSafe] $ Text.toStrict md
       mkHtmlPath dir = dir <> "/" <> "mmlh-ex" <> n <> ".html"
   path <- mkHtmlPath <$> Dir.getTemporaryDirectory
@@ -122,7 +122,7 @@ showMarkdown md openBrowser n = do
   writeUtf8FileS path htmlContent
 
   browserLaunched <-
-    if openBrowser then
+    if not isTerminal then
       Browser.openBrowser path
     else
       return False
