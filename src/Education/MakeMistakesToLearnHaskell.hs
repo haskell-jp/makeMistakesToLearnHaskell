@@ -13,6 +13,7 @@ import qualified Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell as Ru
 import           Education.MakeMistakesToLearnHaskell.Error
 import           Education.MakeMistakesToLearnHaskell.Text
 
+import Options.Applicative
 
 main :: IO ()
 main = do
@@ -38,6 +39,26 @@ withMainEnv action = do
               , envShowExerciseOutputLocation = loc
               }
     action e
+
+data Cmd
+  = Show Bool Int
+  | Verify FilePath
+  deriving (Eq, Show)
+
+optOpenBrowserP :: Parser Bool
+optOpenBrowserP = switch $ long "open" <> help "show exercise in browser"
+
+showCmdP :: Parser Cmd
+showCmdP = Show <$> optOpenBrowserP
+                <*> argument auto (metavar "<number>")
+
+verifyCmdP :: Parser Cmd
+verifyCmdP = Verify <$> argument str (metavar "<filepath>")
+
+cmdParser :: Parser Cmd
+cmdParser = subparser
+  $  command "show" (info showCmdP (progDesc "Show Exercise"))
+  <> command "verify" (info verifyCmdP (progDesc "Verify Exercise"))
 
 
 printExerciseList :: IO ()

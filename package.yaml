@@ -48,6 +48,7 @@ library:
   - ghc-syntax-highlighter
   # - i18n Use in the future
   - open-browser
+  - optparse-applicative
   - QuickCheck
   - regex-applicative
   - safe
