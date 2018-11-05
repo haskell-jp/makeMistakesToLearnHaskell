@@ -21,7 +21,7 @@ main = do
   cmd <- execParser (info (cmdParser <**> helper) idm)
   withMainEnv $ \e ->
     case cmd of
-      Show openBrowser n -> showExercise e openBrowser [show n]
+      Show openBrowser n -> showExercise e openBrowser [n]
       Verify path -> verifySource e [path]
       -- FIXME: printExerciseList
 
@@ -39,7 +39,7 @@ withMainEnv action = do
     action e
 
 data Cmd
-  = Show Bool Int
+  = Show Bool String
   | Verify FilePath
   deriving (Eq, Show)
 
@@ -48,7 +48,7 @@ optOpenBrowserP = switch $ long "open" <> help "show exercise in browser"
 
 showCmdP :: Parser Cmd
 showCmdP = Show <$> optOpenBrowserP
-                <*> argument auto (metavar "<number>")
+                <*> argument str (metavar "<number>")
 
 verifyCmdP :: Parser Cmd
 verifyCmdP = Verify <$> argument str (metavar "<filepath>")
