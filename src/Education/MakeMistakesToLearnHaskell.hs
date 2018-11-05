@@ -27,7 +27,7 @@ main = do
 
 
 withMainEnv :: (Env -> IO r) -> IO r
-withMainEnv action = do
+withMainEnv doAction = do
   d <- Env.getEnv homePathEnvVarName <|> Dir.getXdgDirectory Dir.XdgData appName
   Dir.createDirectoryIfMissing True d
   IO.withFile (d </> "debug.log") IO.WriteMode $ \h -> do
@@ -36,7 +36,7 @@ withMainEnv action = do
               , appHomePath = d
               , runHaskell = RunHaskell.runFile e
               }
-    action e
+    doAction e
 
 data Cmd
   = Show Bool String
@@ -59,16 +59,16 @@ cmdParser = subparser
   <> command "verify" (info verifyCmdP (progDesc "Verify Exercise"))
 
 
-printExerciseList :: IO ()
-printExerciseList = do
-  Text.putStrLn "# Make Mistakes to Learn Haskell!"
-  Text.putStrLn ""
-  Text.putStrLn "## Contents"
+-- printExerciseList :: IO ()
+-- printExerciseList = do
+--   Text.putStrLn "# Make Mistakes to Learn Haskell!"
+--   Text.putStrLn ""
+--   Text.putStrLn "## Contents"
 
-  let printHeader h = Text.putStrLn $ "- " <> h
-  mapM_ printHeader =<< Exercise.loadHeaders
+--   let printHeader h = Text.putStrLn $ "- " <> h
+--   mapM_ printHeader =<< Exercise.loadHeaders
 
-  Text.putStrLn $ "\nRun `" <> Text.pack appName <> " show <the exercise number>` to try the exercise."
+--   Text.putStrLn $ "\nRun `" <> Text.pack appName <> " show <the exercise number>` to try the exercise."
 
 
 verifySource :: Env -> [FilePath] -> IO ()
@@ -111,10 +111,10 @@ showExercise env openBrowser (n : _) = do
   d <- Exercise.loadDescriptionByName n
         >>= dieWhenNothing ("Exercise id " ++ n ++ " not found!")
   Exercise.saveLastShownName env n
-  showMarkdown env d openBrowser n
+  showMarkdown d openBrowser n
 
-showMarkdown :: Env -> Text -> Bool -> String -> IO ()
-showMarkdown env md openBrowser n = do
+showMarkdown :: Text -> Bool -> String -> IO ()
+showMarkdown md openBrowser n = do
   let htmlContent = CMark.commonmarkToHtml [CMark.optSafe] $ Text.toStrict md
       mkHtmlPath dir = dir <> "/" <> "mmlh-ex" <> n <> ".html"
   path <- mkHtmlPath <$> Dir.getTemporaryDirectory
