@@ -18,12 +18,15 @@ import Options.Applicative
 main :: IO ()
 main = do
   avoidCodingError
-  cmd <- execParser (info (cmdParser <**> helper) idm)
-  withMainEnv $ \e ->
-    case cmd of
-      Show isTerminal n -> showExercise e isTerminal [n]
-      Verify path -> verifySource e [path]
-      -- FIXME: printExerciseList
+  args <- Env.getArgs
+  if null args then
+    printExerciseList
+  else do
+    cmd <- execParser (info (cmdParser <**> helper) idm)
+    withMainEnv $ \e ->
+      case cmd of
+        Show isTerminal n -> showExercise e isTerminal [n]
+        Verify path -> verifySource e [path]
 
 
 withMainEnv :: (Env -> IO r) -> IO r
@@ -59,16 +62,16 @@ cmdParser = subparser
   <> command "verify" (info verifyCmdP (progDesc "Verify Exercise"))
 
 
--- printExerciseList :: IO ()
--- printExerciseList = do
---   Text.putStrLn "# Make Mistakes to Learn Haskell!"
---   Text.putStrLn ""
---   Text.putStrLn "## Contents"
+printExerciseList :: IO ()
+printExerciseList = do
+  Text.putStrLn "# Make Mistakes to Learn Haskell!"
+  Text.putStrLn ""
+  Text.putStrLn "## Contents"
 
---   let printHeader h = Text.putStrLn $ "- " <> h
---   mapM_ printHeader =<< Exercise.loadHeaders
+  let printHeader h = Text.putStrLn $ "- " <> h
+  mapM_ printHeader =<< Exercise.loadHeaders
 
---   Text.putStrLn $ "\nRun `" <> Text.pack appName <> " show <the exercise number>` to try the exercise."
+  Text.putStrLn $ "\nRun `" <> Text.pack appName <> " show <the exercise number>` to try the exercise."
 
 
 verifySource :: Env -> [FilePath] -> IO ()
