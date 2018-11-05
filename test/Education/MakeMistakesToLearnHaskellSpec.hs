@@ -53,9 +53,7 @@ spec =
 runMmlh :: [String] -> IO ProcessResult
 runMmlh args = do
   Dir.createDirectoryIfMissing False "./tmp/"
-  let env = [ (homePathEnvVarName, Just "./tmp/")
-            , (showExerciseOutputEnvVarName, Just (show Terminal))
-            ]
+  let env = [ (homePathEnvVarName, Just "./tmp/")]
   withArgs args
     $ withEnv env
     $ captureProcessResult Education.MakeMistakesToLearnHaskell.main

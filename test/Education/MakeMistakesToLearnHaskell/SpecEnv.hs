@@ -16,7 +16,6 @@ mkDefaultSpecEnv = runIO $ do
             { logDebug = const $ return ()
             -- { logDebug = ByteString.putStrLn
             , appHomePath = tmpDir
-            , envShowExerciseOutputLocation = Terminal
             }
 
 
