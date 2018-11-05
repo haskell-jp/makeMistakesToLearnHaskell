@@ -18,12 +18,12 @@ import Options.Applicative
 main :: IO ()
 main = do
   avoidCodingError
-  args <- Env.getArgs
+  cmd <- execParser (info (cmdParser <**> helper) idm)
   withMainEnv $ \e ->
-    case args of
-        ("verify" : left) -> verifySource e left
-        ("show" : left) -> showExercise e left
-        _ -> printExerciseList
+    case cmd of
+      Show openBrowser n -> showExercise e openBrowser [show n]
+      Verify path -> verifySource e [path]
+      -- FIXME: printExerciseList
 
 
 withMainEnv :: (Env -> IO r) -> IO r
@@ -107,16 +107,16 @@ verifySource e (file : _) = do
         Exit.exitSuccess
 
 
-showExercise :: Env -> [String] -> IO ()
-showExercise _ [] = die "Specify an exercise number to show"
-showExercise env (n : _) = do
+showExercise :: Env -> Bool -> [String] -> IO ()
+showExercise _ _ [] = die "Specify an exercise number to show"
+showExercise env openBrowser (n : _) = do
   d <- Exercise.loadDescriptionByName n
         >>= dieWhenNothing ("Exercise id " ++ n ++ " not found!")
   Exercise.saveLastShownName env n
-  showMarkdown env d n
+  showMarkdown env d openBrowser n
 
-showMarkdown :: Env -> Text -> String -> IO ()
-showMarkdown env md n = do
+showMarkdown :: Env -> Text -> Bool -> String -> IO ()
+showMarkdown env md openBrowser n = do
   let htmlContent = CMark.commonmarkToHtml [CMark.optSafe] $ Text.toStrict md
       mkHtmlPath dir = dir <> "/" <> "mmlh-ex" <> n <> ".html"
   path <- mkHtmlPath <$> Dir.getTemporaryDirectory
@@ -124,7 +124,7 @@ showMarkdown env md n = do
   writeUtf8FileS path htmlContent
 
   browserLaunched <-
-    if envShowExerciseOutputLocation env == Browser then
+    if openBrowser then
       Browser.openBrowser path
     else
       return False
