@@ -3,12 +3,10 @@
 module Education.MakeMistakesToLearnHaskell.Env
   ( Env (..)
   , defaultEnv
-  , ShowExerciseOutputLocation (..)
   , RunHaskellParameters(runHaskellParametersArgs, runHaskellParametersStdin)
   , defaultRunHaskellParameters
   , appName
   , homePathEnvVarName
-  , showExerciseOutputEnvVarName
   , avoidCodingError
   )
 where
@@ -30,13 +28,7 @@ data Env = Env
   , appHomePath :: FilePath
   , runHaskell :: RunHaskellParameters -> IO (Either RunHaskellError (ByteString, ByteString))
   , envQcMaxSuccessSize :: Int
-  , envShowExerciseOutputLocation :: ShowExerciseOutputLocation -- ^ mmlh show コマンドの出力先
   }
-
-data ShowExerciseOutputLocation
-  = Browser
-  | Terminal
-  deriving (Eq, Show, Read)
 
 defaultEnv :: Env
 defaultEnv = Env
@@ -44,7 +36,6 @@ defaultEnv = Env
   , appHomePath = error "Set appHomePath to defaultEnv"
   , runHaskell = error "Set runHaskell to defaultEnv"
   , envQcMaxSuccessSize = 20
-  , envShowExerciseOutputLocation = Browser
   }
 
 appName :: String
@@ -53,10 +44,6 @@ appName = "mmlh"
 
 homePathEnvVarName :: String
 homePathEnvVarName = "MAKE_MISTAKES_TO_LEARN_HASKELL_HOME"
-
-showExerciseOutputEnvVarName :: String
-showExerciseOutputEnvVarName = "MAKE_MISTAKES_TO_LEARN_HASKELL_SHOW_EXERCISE_OUTPUT_LOCATION"
-
 
 avoidCodingError :: IO ()
 #ifdef mingw32_HOST_OS

@@ -13,31 +13,53 @@ import qualified Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell as Ru
 import           Education.MakeMistakesToLearnHaskell.Error
 import           Education.MakeMistakesToLearnHaskell.Text
 
+import Options.Applicative
 
 main :: IO ()
 main = do
   avoidCodingError
   args <- Env.getArgs
-  withMainEnv $ \e ->
-    case args of
-        ("verify" : left) -> verifySource e left
-        ("show" : left) -> showExercise e left
-        _ -> printExerciseList
+  if null args then
+    printExerciseList
+  else do
+    cmd <- execParser (info (cmdParser <**> helper) idm)
+    withMainEnv $ \e ->
+      case cmd of
+        Show isTerminal n -> showExercise e isTerminal [n]
+        Verify path -> verifySource e [path]
 
 
 withMainEnv :: (Env -> IO r) -> IO r
-withMainEnv action = do
+withMainEnv doAction = do
   d <- Env.getEnv homePathEnvVarName <|> Dir.getXdgDirectory Dir.XdgData appName
   Dir.createDirectoryIfMissing True d
-  loc <- maybe Browser read <$> Env.lookupEnv showExerciseOutputEnvVarName
   IO.withFile (d </> "debug.log") IO.WriteMode $ \h -> do
     let e = defaultEnv
               { logDebug = ByteString.hPutStr h . (<> "\n")
               , appHomePath = d
               , runHaskell = RunHaskell.runFile e
-              , envShowExerciseOutputLocation = loc
               }
-    action e
+    doAction e
+
+data Cmd
+  = Show Bool String
+  | Verify FilePath
+  deriving (Eq, Show)
+
+optTerminalP :: Parser Bool
+optTerminalP = switch $ long "terminal" <> help "display to terminal"
+
+showCmdP :: Parser Cmd
+showCmdP = Show <$> optTerminalP
+                <*> argument str (metavar "<number>")
+
+verifyCmdP :: Parser Cmd
+verifyCmdP = Verify <$> argument str (metavar "<filepath>")
+
+cmdParser :: Parser Cmd
+cmdParser = subparser
+  $  command "show" (info showCmdP (progDesc "Show Exercise"))
+  <> command "verify" (info verifyCmdP (progDesc "Verify Exercise"))
 
 
 printExerciseList :: IO ()
@@ -86,16 +108,16 @@ verifySource e (file : _) = do
         Exit.exitSuccess
 
 
-showExercise :: Env -> [String] -> IO ()
-showExercise _ [] = die "Specify an exercise number to show"
-showExercise env (n : _) = do
+showExercise :: Env -> Bool -> [String] -> IO ()
+showExercise _ _ [] = die "Specify an exercise number to show"
+showExercise env isTerminal (n : _) = do
   d <- Exercise.loadDescriptionByName n
         >>= dieWhenNothing ("Exercise id " ++ n ++ " not found!")
   Exercise.saveLastShownName env n
-  showMarkdown env d n
+  showMarkdown d isTerminal n
 
-showMarkdown :: Env -> Text -> String -> IO ()
-showMarkdown env md n = do
+showMarkdown :: Text -> Bool -> String -> IO ()
+showMarkdown md isTerminal n = do
   let htmlContent = CMark.commonmarkToHtml [CMark.optSafe] $ Text.toStrict md
       mkHtmlPath dir = dir <> "/" <> "mmlh-ex" <> n <> ".html"
   path <- mkHtmlPath <$> Dir.getTemporaryDirectory
@@ -103,7 +125,7 @@ showMarkdown env md n = do
   writeUtf8FileS path htmlContent
 
   browserLaunched <-
-    if envShowExerciseOutputLocation env == Browser then
+    if not isTerminal then
       Browser.openBrowser path
     else
       return False
