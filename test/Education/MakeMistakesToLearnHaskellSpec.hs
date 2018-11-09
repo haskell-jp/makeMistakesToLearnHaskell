@@ -18,34 +18,34 @@ spec :: Spec
 spec =
   describe "mmlh verify" $ do
     it "given the correct answer of exercise 1, show SUCCESS" $ do
-      void $ runMmlh ["show", "1"]
+      void $ runMmlh ["show", "--terminal", "1"]
       answerFile <- Paths.getDataFileName ("assets" </> "1.hs")
       runMmlh ["verify", answerFile] >>= shouldVerifySuccess
 
     it "given an empty answer, show FAIL" $ do
-      void $ runMmlh ["show", "1"]
+      void $ runMmlh ["show", "--terminal", "1"]
       runMmlh ["verify", "test/assets/common/empty.hs"]
         >>= shouldExitWithHints ["HINT: This error indicates you haven't defined main function."]
 
     it "given non-existing answer of exercise 2.5, show NOT VERIFIED" $ do
-      void $ runMmlh ["show", "2.5"]
+      void $ runMmlh ["show", "--terminal", "2.5"]
       runMmlh ["verify", "non-existing"] >>= shouldPrintNotVerified
 
     it "given the correct answer of exercise 4, show SUCCESS" $ do
       answerFile <- Paths.getDataFileName ("assets" </> "4.hs")
-      void $ runMmlh ["show", "4"]
+      void $ runMmlh ["show", "--terminal", "4"]
       runMmlh ["verify", answerFile] >>= shouldVerifySuccess
 
     it "given a wrong answer of exercise 4, show FAIL" $ do
       let msgs = ["Your program's output:", "Expected output:"]
-      void $ runMmlh ["show", "4"]
+      void $ runMmlh ["show", "--terminal", "4"]
       runMmlh ["verify", "test/assets/4/wrong-output.hs"]
         >>= shouldExitWithHints msgs
 
     it "given a not-compilable answer of exercise 4, show FAIL" $ do
       let msgs =
             ["HINT: You seem to forget to write `do`. `do` must be put before listing `putStr`s and `getContents`."]
-      void $ runMmlh ["show", "4"]
+      void $ runMmlh ["show", "--terminal", "4"]
       runMmlh ["verify", "test/assets/4/no-do.hs"]
         >>= shouldExitWithHints msgs
 
