@@ -19,7 +19,7 @@ spec =
   describe "mmlh verify" $ do
     it "given the correct answer of exercise 1, show SUCCESS" $ do
       void $ runMmlh ["show", "1"]
-      answerFile <- Paths_makeMistakesToLearnHaskell.getDataFileName ("assets" </> "1.hs")
+      answerFile <- Paths.getDataFileName ("assets" </> "1.hs")
       runMmlh ["verify", answerFile] >>= shouldVerifySuccess
 
     it "given an empty answer, show FAIL" $ do
@@ -32,7 +32,7 @@ spec =
       runMmlh ["verify", "non-existing"] >>= shouldPrintNotVerified
 
     it "given the correct answer of exercise 4, show SUCCESS" $ do
-      answerFile <- Paths_makeMistakesToLearnHaskell.getDataFileName ("assets" </> "4.hs")
+      answerFile <- Paths.getDataFileName ("assets" </> "4.hs")
       void $ runMmlh ["show", "4"]
       runMmlh ["verify", answerFile] >>= shouldVerifySuccess
 

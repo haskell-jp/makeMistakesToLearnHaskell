@@ -11,6 +11,7 @@ git: https://github.com/haskell-jp/makeMistakesToLearnHaskell.git
 data-files:
 - assets/*.md
 - assets/*.hs
+- assets/exercise.css
 extra-source-files:
 - README.md
 - src/imports/*.hs

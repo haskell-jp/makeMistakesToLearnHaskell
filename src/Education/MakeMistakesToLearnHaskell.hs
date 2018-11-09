@@ -118,11 +118,28 @@ showExercise env isTerminal (n : _) = do
 
 showMarkdown :: Text -> Bool -> String -> IO ()
 showMarkdown md isTerminal n = do
-  let htmlContent = CMark.commonmarkToHtml [CMark.optSafe] $ Text.toStrict md
+  cssPath <- ("file://" <>) . TextS.pack <$> Paths.getDataFileName "assets/exercise.css"
+  let htmlBody = CMark.commonmarkToHtml [CMark.optSafe] $ Text.toStrict md
+      htmlHead = TextS.unlines
+        [ "<!DOCTYPE html>"
+        , "<html>"
+        , "<head>"
+        , "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />"
+        , "<link rel=\"stylesheet\" type=\"text/css\" href=\"" <> cssPath <> "\" />"
+        , "</head>"
+        , "<body>"
+        , "<div id=\"container\">"
+        ]
+      htmlFoot = TextS.unlines
+        [ "</div>"
+        , "</body>"
+        , "</html>"
+        ]
+
       mkHtmlPath dir = dir <> "/" <> "mmlh-ex" <> n <> ".html"
   path <- mkHtmlPath <$> Dir.getTemporaryDirectory
 
-  writeUtf8FileS path htmlContent
+  writeUtf8FileS path (htmlHead <> htmlBody <> htmlFoot)
 
   browserLaunched <-
     if not isTerminal then

@@ -16,8 +16,6 @@ module Education.MakeMistakesToLearnHaskell.Exercise
 
 #include <imports/external.hs>
 
-import qualified Paths_makeMistakesToLearnHaskell
-
 import           Education.MakeMistakesToLearnHaskell.Exercise.Core
 import           Education.MakeMistakesToLearnHaskell.Diagnosis
 import           Education.MakeMistakesToLearnHaskell.Env
@@ -74,7 +72,7 @@ loadExampleSolution = loadWithExtension ".hs"
 
 loadWithExtension :: String -> Exercise -> IO Text
 loadWithExtension ext ex =
-  Paths_makeMistakesToLearnHaskell.getDataFileName ("assets/" ++ exerciseName ex ++ ext)
+  Paths.getDataFileName ("assets/" ++ exerciseName ex ++ ext)
     >>= readUtf8File
 
 
