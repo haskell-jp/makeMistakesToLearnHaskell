@@ -2,7 +2,7 @@
 -- Intended to include by CPP.
 
 import qualified CMark
-import           Control.Applicative ((<|>), optional)
+import           Control.Applicative ((<|>), optional, (<**>))
 import qualified Control.Error as Error
 import           Control.Exception
                    ( Exception

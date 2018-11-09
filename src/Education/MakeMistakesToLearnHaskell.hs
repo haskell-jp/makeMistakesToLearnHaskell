@@ -13,7 +13,7 @@ import qualified Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell as Ru
 import           Education.MakeMistakesToLearnHaskell.Error
 import           Education.MakeMistakesToLearnHaskell.Text
 
-import Options.Applicative
+import qualified Options.Applicative as Opt
 
 main :: IO ()
 main = do
@@ -22,7 +22,7 @@ main = do
   if null args then
     printExerciseList
   else do
-    cmd <- execParser (info (cmdParser <**> helper) idm)
+    cmd <- Opt.execParser (Opt.info (cmdParser <**> Opt.helper) Opt.idm)
     withMainEnv $ \e ->
       case cmd of
         Show isTerminal n -> showExercise e isTerminal [n]
@@ -46,20 +46,20 @@ data Cmd
   | Verify FilePath
   deriving (Eq, Show)
 
-optTerminalP :: Parser Bool
-optTerminalP = switch $ long "terminal" <> help "display to terminal"
+optTerminalP :: Opt.Parser Bool
+optTerminalP = Opt.switch $ Opt.long "terminal" <> Opt.help "display to terminal"
 
-showCmdP :: Parser Cmd
+showCmdP :: Opt.Parser Cmd
 showCmdP = Show <$> optTerminalP
-                <*> argument str (metavar "<number>")
+                <*> Opt.argument Opt.str (Opt.metavar "<number>")
 
-verifyCmdP :: Parser Cmd
-verifyCmdP = Verify <$> argument str (metavar "<filepath>")
+verifyCmdP :: Opt.Parser Cmd
+verifyCmdP = Verify <$> Opt.argument Opt.str (Opt.metavar "<filepath>")
 
-cmdParser :: Parser Cmd
-cmdParser = subparser
-  $  command "show" (info showCmdP (progDesc "Show Exercise"))
-  <> command "verify" (info verifyCmdP (progDesc "Verify Exercise"))
+cmdParser :: Opt.Parser Cmd
+cmdParser = Opt.hsubparser
+  $  Opt.command "show" (Opt.info showCmdP (Opt.progDesc "Show Exercise"))
+  <> Opt.command "verify" (Opt.info verifyCmdP (Opt.progDesc "Verify Exercise"))
 
 
 printExerciseList :: IO ()
