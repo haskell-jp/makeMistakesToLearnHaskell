@@ -7,7 +7,7 @@ import           Test.Main
                    , ProcessResult(ProcessResult, prStdout, prStderr, prExitCode, prException)
                    )
 
-import qualified Paths_makeMistakesToLearnHaskell
+import qualified Paths_makeMistakesToLearnHaskell as Paths
 
 import           Control.Monad (void)
 import           Control.Exception (try)

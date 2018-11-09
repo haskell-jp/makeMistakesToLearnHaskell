@@ -118,7 +118,7 @@ showExercise env isTerminal (n : _) = do
 
 showMarkdown :: Text -> Bool -> String -> IO ()
 showMarkdown md isTerminal n = do
-  cssPath <- ("file://" <>) . TextS.pack <$> Paths_makeMistakesToLearnHaskell.getDataFileName "assets/exercise.css"
+  cssPath <- ("file://" <>) . TextS.pack <$> Paths.getDataFileName "assets/exercise.css"
   let htmlBody = CMark.commonmarkToHtml [CMark.optSafe] $ Text.toStrict md
       htmlHead = TextS.unlines
         [ "<!DOCTYPE html>"

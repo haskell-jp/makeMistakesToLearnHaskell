@@ -72,7 +72,7 @@ loadExampleSolution = loadWithExtension ".hs"
 
 loadWithExtension :: String -> Exercise -> IO Text
 loadWithExtension ext ex =
-  Paths_makeMistakesToLearnHaskell.getDataFileName ("assets/" ++ exerciseName ex ++ ext)
+  Paths.getDataFileName ("assets/" ++ exerciseName ex ++ ext)
     >>= readUtf8File
 
 
