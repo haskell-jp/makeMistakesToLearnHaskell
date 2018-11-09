@@ -1,0 +1,77 @@
+body {
+  margin: 0px auto 0px auto;
+  background-color: #f8f8f8;
+  width: 700px;
+}
+
+p,ol,ul,footer {
+  line-height: 1.5em;
+}
+
+a:link {
+  color: #c11;
+  text-decoration: none;
+}
+
+a:visited {
+  color: #a11;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+#container {
+  border-radius: 8px;
+  background-color: #fff;
+  padding: 0 5px 5px;
+}
+
+h1 {
+  font-size: 150%;
+  border-left: solid 5px #c11;
+  padding-left: 3px;
+}
+
+h2 {
+  margin-top: 1.5em;
+  font-size: 130%;
+  border-left: solid 3px #c11;
+  padding-left: 3px;
+}
+
+h3 {
+  font-size: 115%;
+  border-left: solid 2px #c11;
+  padding-left: 3px;
+}
+
+ol,ul {
+  padding-left: 1em;
+  padding-bottom: 0.5em;
+}
+
+li {
+  margin-top: 0.2em;
+}
+
+pre, code {
+  font-family: monospace;
+}
+
+pre {
+  margin: 1em;
+  white-space: pre-wrap;
+  color: #000000;
+  overflow: auto;
+  border: ridge;
+  border-top-left-radius            : 5px;
+  border-top-right-radius           : 5px;
+  -webkit-border-top-left-radius    : 5px;
+  -webkit-border-top-right-radius   : 5px;
+  border-bottom-left-radius         : 5px;
+  border-bottom-right-radius        : 5px;
+  -webkit-border-bottom-left-radius : 5px;
+  -webkit-border-bottom-right-radius: 5px;
+  padding                           : 8px;
+}

@@ -40,6 +40,7 @@ import qualified Debug.Trace as Debug
 import           GHC.Generics (Generic)
 import qualified GHC.SyntaxHighlighter as GHC
 import           Numeric.Natural (Natural)
+import qualified Paths_makeMistakesToLearnHaskell
 import           Safe (headMay)
 import qualified System.Directory as Dir
 import qualified System.Environment as Env
