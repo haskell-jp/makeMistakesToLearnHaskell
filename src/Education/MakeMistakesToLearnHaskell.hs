@@ -106,7 +106,7 @@ verifySource e (file : _) = do
         Text.putStr =<< Exercise.loadExampleSolution currentExercise
         Exit.exitSuccess
   where
-    withSGR sgrs action = setSGR sgrs >> action >> setSGR [Reset]
+    withSGR sgrs act = setSGR sgrs >> act >> setSGR [Reset]
 
 
 showExercise :: Env -> Bool -> [String] -> IO ()
