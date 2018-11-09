@@ -40,6 +40,7 @@ library:
   dependencies:
   - base >=4.7 && <5
   # TODO: Decide version
+  - ansi-terminal
   - QuickCheck
   - bytestring
   - cmark

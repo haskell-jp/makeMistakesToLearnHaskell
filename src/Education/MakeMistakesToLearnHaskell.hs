@@ -14,6 +14,7 @@ import           Education.MakeMistakesToLearnHaskell.Error
 import           Education.MakeMistakesToLearnHaskell.Text
 
 import qualified Options.Applicative as Opt
+import           System.Console.ANSI
 
 main :: IO ()
 main = do
@@ -83,17 +84,15 @@ verifySource e (file : _) = do
   case result of
       Exercise.Success details -> do
         Text.putStrLn details
-        putStrLn "\n\nSUCCESS: Congratulations! Your solution got compiled and ran correctly!"
+        withSGR [SetColor Foreground Vivid Green] $
+          putStrLn "\n\nSUCCESS: Congratulations! Your solution got compiled and ran correctly!"
         putStrLn "Here's an example solution of this exercise:\n"
         Text.putStr =<< Exercise.loadExampleSolution currentExercise
         Exit.exitSuccess
       Exercise.Fail details -> do
-        mapM_ Text.putStrLn
-          [ details
-          , ""
-          , "FAIL: Your solution didn't pass. Try again!"
-          , ""
-          ]
+        Text.putStrLn details
+        withSGR [SetColor Foreground Vivid Red] $
+          putStrLn "\nFAIL: Your solution didn't pass. Try again!\n"
         Exit.exitFailure
       Exercise.Error details -> do
         Error.errLn $ Text.toStrict $ details <> "\n\n"
@@ -106,6 +105,8 @@ verifySource e (file : _) = do
         putStrLn "Here's an example solution of this exercise:\n"
         Text.putStr =<< Exercise.loadExampleSolution currentExercise
         Exit.exitSuccess
+  where
+    withSGR sgrs action = setSGR sgrs >> action >> setSGR [Reset]
 
 
 showExercise :: Env -> Bool -> [String] -> IO ()
