@@ -79,7 +79,6 @@ verifySource _ [] = die "Specify the Haskell source file to veirfy!"
 verifySource e (file : _) = do
   currentExercise <- Exercise.loadLastShown e
   result <- Exercise.verify currentExercise e file
-  putStrLn "==================== GHC output ===================="
   case result of
       Exercise.Success details -> do
         Text.putStrLn details
