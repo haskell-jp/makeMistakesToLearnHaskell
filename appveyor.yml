@@ -22,6 +22,9 @@ environment:
     STACK_ROOT: "c:\\sr"
     TMP: "c:\\tmp"
 
+cache:
+- "c:\\sr"
+
 test_script:
 - chcp 932
 - stack setup > nul
