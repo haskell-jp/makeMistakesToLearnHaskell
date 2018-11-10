@@ -12,6 +12,7 @@ import qualified Education.MakeMistakesToLearnHaskell.Exercise as Exercise
 import qualified Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell as RunHaskell
 import           Education.MakeMistakesToLearnHaskell.Error
 import           Education.MakeMistakesToLearnHaskell.Text
+import           Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 import qualified Options.Applicative as Opt
 import           System.Console.ANSI
@@ -79,6 +80,7 @@ verifySource :: Env -> [FilePath] -> IO ()
 verifySource _ [] = die "Specify the Haskell source file to veirfy!"
 verifySource e (file : _) = do
   currentExercise <- Exercise.loadLastShown e
+  putStrLn $ "Verify Exercise: " <> exerciseName currentExercise
   result <- Exercise.verify currentExercise e file
   case result of
       Exercise.Success details -> do
