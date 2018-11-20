@@ -52,14 +52,14 @@ runHaskellExercise' mParam diag right e prgFile = do
           if out == right
             then Success $ "Nice output!\n\n" <> msg
             else Fail $ "Wrong output!\n\n" <> msg
-      Left err -> do
-        putStrLn "==================== GHC output ===================="
+      Left err ->
         case err of
             RunHaskell.RunHaskellNotFound ->
               return $ Error "runhaskell command is not available.\nInstall stack or Haskell Platform."
             RunHaskell.RunHaskellFailure _ msg -> do
               logDebug e $ "RunHaskellFailure: " <> msg
               code <- readUtf8File prgFile
+              putStrLn "==================== GHC output ===================="
               return $ Fail $ appendDiagnosis diag code msg
 
 -- runHaskellExercise の入力有りバージョン
