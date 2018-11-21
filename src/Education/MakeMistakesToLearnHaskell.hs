@@ -28,8 +28,12 @@ main = do
     withMainEnv $ \e ->
       case cmd of
         Show isTerminal n -> showExercise e isTerminal [n]
-        Verify path -> verifySource e [path]
+        Verify path -> do
+          exitCode <- verifySource e [path]
 
+          currentExercise <- Exercise.loadLastShown e
+          putStrLn $ "Verified exercise: " <> exerciseName currentExercise
+          Exit.exitWith exitCode
 
 withMainEnv :: (Env -> IO r) -> IO r
 withMainEnv doAction = do
@@ -76,36 +80,35 @@ printExerciseList = do
   Text.putStrLn $ "\nRun `" <> Text.pack appName <> " show <the exercise number>` to try the exercise."
 
 
-verifySource :: Env -> [FilePath] -> IO ()
+verifySource :: Env -> [FilePath] -> IO ExitCode
 verifySource _ [] = die "Specify the Haskell source file to veirfy!"
 verifySource e (file : _) = do
   currentExercise <- Exercise.loadLastShown e
-  putStrLn $ "Verify Exercise: " <> exerciseName currentExercise
   result <- Exercise.verify currentExercise e file
   case result of
-      Exercise.Success details -> do
-        Text.putStrLn details
-        withSGR [SetColor Foreground Vivid Green] $
-          putStrLn "\n\nSUCCESS: Congratulations! Your solution got compiled and ran correctly!"
-        putStrLn "Here's an example solution of this exercise:\n"
-        Text.putStr =<< Exercise.loadExampleSolution currentExercise
-        Exit.exitSuccess
-      Exercise.Fail details -> do
-        Text.putStrLn details
-        withSGR [SetColor Foreground Vivid Red] $
-          putStrLn "\nFAIL: Your solution didn't pass. Try again!\n"
-        Exit.exitFailure
-      Exercise.Error details -> do
-        Error.errLn $ Text.toStrict $ details <> "\n\n"
-        die "An unexpected error occurred when evaluating your solution."
-      Exercise.NotVerified -> do
-        Text.putStrLn "[NOT VERIFIED] This exercise has no test. Go ahead!"
-        Exit.exitSuccess
-      Exercise.NotYetImplemented -> do
-        Text.putStrLn "[NOT YET IMPLEMENTED] Sorry, this exercise's test is not yet implemented. Check by yourself!"
-        putStrLn "Here's an example solution of this exercise:\n"
-        Text.putStr =<< Exercise.loadExampleSolution currentExercise
-        Exit.exitSuccess
+    Exercise.Success details -> do
+      Text.putStrLn details
+      withSGR [SetColor Foreground Vivid Green] $
+        putStrLn "\n\nSUCCESS: Congratulations! Your solution got compiled and ran correctly!"
+      putStrLn "Here's an example solution of this exercise:\n"
+      Text.putStr =<< Exercise.loadExampleSolution currentExercise
+      return ExitSuccess
+    Exercise.Fail details -> do
+      Text.putStrLn details
+      withSGR [SetColor Foreground Vivid Red] $
+        putStrLn "\nFAIL: Your solution didn't pass. Try again!\n"
+      return (ExitFailure 1)
+    Exercise.Error details -> do
+      Error.errLn $ Text.toStrict $ details <> "\n\n"
+      die "An unexpected error occurred when evaluating your solution."
+    Exercise.NotVerified -> do
+      Text.putStrLn "[NOT VERIFIED] This exercise has no test. Go ahead!"
+      return ExitSuccess
+    Exercise.NotYetImplemented -> do
+      Text.putStrLn "[NOT YET IMPLEMENTED] Sorry, this exercise's test is not yet implemented. Check by yourself!"
+      putStrLn "Here's an example solution of this exercise:\n"
+      Text.putStr =<< Exercise.loadExampleSolution currentExercise
+      return ExitSuccess
   where
     withSGR sgrs act = setSGR sgrs >> act >> setSGR [Reset]
 
