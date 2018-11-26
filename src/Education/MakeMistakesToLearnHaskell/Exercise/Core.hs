@@ -148,8 +148,7 @@ isInconsistentlyIndentedAfter code wd =
       in
         if null containing
           then []
-          else drop 1 containing
-          -- ^ except the first line, which contains 'w'
+          else drop 1 containing -- except the first line, which contains 'w'
 
 allSame :: Eq a => [a] -> Bool
 allSame [] = True

@@ -25,8 +25,7 @@ diag4 code msg
     detailsDoConsistentWidth
   | "Perhaps this statement should be within a 'do' block?" `Text.isInfixOf` msg =
     if hasNoMainFirst code then
-      "HINT: Your source code dosn't have `main` function!"
-      -- ^ TODO: Rewrite other no-main cases with this.
+      "HINT: Your source code dosn't have `main` function!" -- TODO: Rewrite other no-main cases with this.
     else if code `containsSequence` ["main", "<-"] then
       "HINT: Don't use `<-` to define the `main` function. Use `=` instead."
     else
