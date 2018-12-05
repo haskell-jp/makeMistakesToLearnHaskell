@@ -85,27 +85,39 @@ verifySource e (file : _) = do
         Text.putStrLn details
         withSGR [SetColor Foreground Vivid Green] $
           putStrLn "\n\nSUCCESS: Congratulations! Your solution got compiled and ran correctly!"
-        putStrLn "Here's an example solution of this exercise:\n"
-        Text.putStr =<< Exercise.loadExampleSolution currentExercise
+
+        showExampleSolution currentExercise
         Exit.exitSuccess
+
       Exercise.Fail details -> do
         Text.putStrLn details
         withSGR [SetColor Foreground Vivid Red] $
-          putStrLn "\nFAIL: Your solution didn't pass. Try again!\n"
+          putStrLn "\nFAIL: Your solution didn't pass. Try again!"
+        putStrLn $ "HINT: Verified the exercise " ++ Exercise.name currentExercise ++ ". Note I verify the last `mmlh show`-ed exercise.\n"
         Exit.exitFailure
+
       Exercise.Error details -> do
         Error.errLn $ Text.toStrict $ details <> "\n\n"
         die "An unexpected error occurred when evaluating your solution."
+
       Exercise.NotVerified -> do
-        Text.putStrLn "[NOT VERIFIED] This exercise has no test. Go ahead!"
+        putStrLn $ "[NOT VERIFIED] the exercise " ++ Exercise.name currentExercise ++ " has no test. Go ahead!"
         Exit.exitSuccess
+
       Exercise.NotYetImplemented -> do
-        Text.putStrLn "[NOT YET IMPLEMENTED] Sorry, this exercise's test is not yet implemented. Check by yourself!"
-        putStrLn "Here's an example solution of this exercise:\n"
-        Text.putStr =<< Exercise.loadExampleSolution currentExercise
+        putStrLn
+          $ "[NOT YET IMPLEMENTED] Sorry, the test of exercise "
+          ++ Exercise.name currentExercise
+          ++ " is not yet implemented. Check by yourself!"
+
+        showExampleSolution currentExercise
         Exit.exitSuccess
   where
     withSGR sgrs act = setSGR sgrs >> act >> setSGR [Reset]
+
+    showExampleSolution ex = do
+        putStrLn $ "Here's an example solution of the exercise " ++ Exercise.name ex ++ ":\n"
+        Text.putStr =<< Exercise.loadExampleSolution ex
 
 
 showExercise :: Env -> Bool -> [String] -> IO ()
