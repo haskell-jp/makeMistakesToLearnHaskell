@@ -9,7 +9,7 @@ import           Education.MakeMistakesToLearnHaskell.Env
 
 data Exercise =
   Exercise
-    { exerciseName :: !Name
+    { name :: !Name
     -- ^ The name of the exercise.
     , verify :: Env -> String -> IO Result
     -- ^ The function to verify the source file, project directory,

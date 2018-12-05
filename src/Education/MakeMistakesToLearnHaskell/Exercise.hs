@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
 module Education.MakeMistakesToLearnHaskell.Exercise
-  ( Exercise(verify)
+  ( Exercise(verify, name)
   , Name
   , Result(..)
   , Details
@@ -37,7 +37,7 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Ex04
 import Education.MakeMistakesToLearnHaskell.Exercise.Ex05
 
 exercises :: [(Name, Exercise)]
-exercises = map (\e -> (exerciseName e, e))
+exercises = map (\e -> (name e, e))
   [ exercise1
   , exercise2
   , exercise2_5
@@ -52,14 +52,14 @@ loadHeaders = mapM (loadHeader . snd) exercises
     loadHeader ex = extractHeader ex =<< loadDescription ex
 
     extractHeader ex desc =
-      dieWhenNothing ("The description of exercise '" ++ exerciseName ex ++ "' is empty!")
+      dieWhenNothing ("The description of exercise '" ++ name ex ++ "' is empty!")
         $ appendName ex . cutHash <$> headMay (Text.lines desc)
 
     cutHash h =
       Text.strip $ fromMaybe h $ Text.stripPrefix "# " h
 
     appendName ex h =
-      Text.pack (exerciseName ex) <> ": " <> h
+      Text.pack (name ex) <> ": " <> h
 
 
 loadDescription :: Exercise -> IO Text
@@ -72,7 +72,7 @@ loadExampleSolution = loadWithExtension ".hs"
 
 loadWithExtension :: String -> Exercise -> IO Text
 loadWithExtension ext ex =
-  Paths.getDataFileName ("assets/" ++ exerciseName ex ++ ext)
+  Paths.getDataFileName ("assets/" ++ name ex ++ ext)
     >>= readUtf8File
 
 
