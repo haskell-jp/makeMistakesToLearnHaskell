@@ -113,7 +113,7 @@ verifySource e (file : _) = do
         showExampleSolution currentExercise
         Exit.exitSuccess
   where
-    withSGR sgrs act = setSGR sgrs >> act >> setSGR [Reset]
+    withSGR sgrs act = bracket_ (setSGR sgrs) (setSGR [Reset]) act
 
     showExampleSolution ex = do
         putStrLn $ "Here's an example solution of the exercise " ++ Exercise.name ex ++ ":\n"
