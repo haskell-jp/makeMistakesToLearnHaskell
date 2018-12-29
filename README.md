@@ -72,14 +72,6 @@ The Glorious Glasgow Haskell Compilation System, version 8.4.3
     - [登録はこちらから](https://join.slack.com/t/haskell-jp/shared_invite/enQtNDY4Njc1MTA5MDQxLTAzZGNkZDlkMWYxZDRlODI3NmNlNTQ1ZDc3MjQxNzg3OTg4YzUzNmUyNmU5YWVkMjFmMjFjYzk1OTE3Yzg4ZTM)
 - [Redditのr/haskell\_jp](https://www.reddit.com/r/haskell_jp/)
 
-#### Windowsユーザー向けTips
-
-MSYS2を利用している場合、stackがインストールするMSYS2と衝突して問題が起こることがあります。その場合、`%APPDATA%\stack\config.yaml`に以下の行を追加し、インストール済みのMSYSを使うように設定しましょう。
-
-```
-skip-msys: true
-```
-
 ### 💾「Make Mistakes to Learn Haskell!」自体のインストール方法
 
 現状はHackageにまだ公開していないので👇のコマンドを実行してください。
@@ -121,6 +113,14 @@ stack install
    ```
    mmlh verify your_answer.hs
    ```
+
+### 🏁Windowsユーザー向けTips
+
+MSYS2を利用している場合、stackがインストールするMSYS2と衝突して問題が起こることがあります。その場合、`%APPDATA%\stack\config.yaml`に以下の行を追加し、インストール済みのMSYSを使うように設定しましょう。
+
+```
+skip-msys: true
+```
 
 ## 開発に協力していただける方へ
 
