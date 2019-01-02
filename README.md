@@ -72,14 +72,6 @@ The Glorious Glasgow Haskell Compilation System, version 8.4.3
     - [登録はこちらから](https://join.slack.com/t/haskell-jp/shared_invite/enQtNDY4Njc1MTA5MDQxLTAzZGNkZDlkMWYxZDRlODI3NmNlNTQ1ZDc3MjQxNzg3OTg4YzUzNmUyNmU5YWVkMjFmMjFjYzk1OTE3Yzg4ZTM)
 - [Redditのr/haskell\_jp](https://www.reddit.com/r/haskell_jp/)
 
-#### Windowsユーザー向けTips
-
-MSYS2を利用している場合、stackがインストールするMSYS2と衝突して問題が起こることがあります。その場合、`%APPDATA%\stack\config.yaml`に以下の行を追加し、インストール済みのMSYSを使うように設定しましょう。
-
-```
-skip-msys: true
-```
-
 ### 💾「Make Mistakes to Learn Haskell!」自体のインストール方法
 
 現状はHackageにまだ公開していないので👇のコマンドを実行してください。
@@ -93,6 +85,13 @@ stack install
 ```
 
 インストールが完了したら、「⚙️使い方」の節に書かれたコマンドを試してみてください。
+
+なお、Linuxにおいて、libtinfoパッケージがないとインストールできない」というトラブルが報告されています。  
+例えばUbuntuの場合、下記のコマンドを実行してインストールしておく必要があるかも知れません。
+
+```
+sudo apt-get install libtinfo-dev
+```
 
 ### 🆙「Make Mistakes to Learn Haskell!」自体のアップデート方法
 
@@ -122,16 +121,23 @@ stack install
    mmlh verify your_answer.hs
    ```
 
+### 🏁Windowsユーザー向けTips
+
+MSYS2を利用している場合、stackがインストールするMSYS2と衝突して問題が起こることがあります。その場合、`%APPDATA%\stack\config.yaml`に以下の行を追加し、インストール済みのMSYSを使うように設定しましょう。
+
+```
+skip-msys: true
+```
+
 ## 開発に協力していただける方へ
 
 ### 現状
 
 問題を表示したり、ユーザーが与えた回答を判定するための基本的なフレームワークはできています。  
-現在はひとまず[Haskell Day 2018](https://haskell-jp.connpass.com/event/92617/)のハンズオンのセッションを少しでも充実させるために、下記のことに取り組んでします。
+私 igrepが社内の勉強会で使用するため、下記のことに取り組んでいます。
 
 - [計算アプリケーションを作る（概要）](https://github.com/haskell-jp/makeMistakesToLearnHaskell/blob/master/assets/2.5.md)に書いた目標に従い、課題とその判定処理の実装。
-    - 「そのために以下の課題を解いて、Haskellの初歩を身につけましょう」以降に書いた各課題とその判定処理を実装します。
-    - 時間がなさそうなので、すべての課題を作り切ることを優先させるつもりはありません（でも課題の数を増やさないとハンズオンの当日に時間が余る恐れがあるのでそこは考慮しよう。最悪別のスライドで穴埋めする）。
+    - 「そのために以下の課題を解いて、Haskellの初歩を身につけましょう」以降に書いた各課題とその判定処理を実装します（実際には課題の中身を優先して作っています）。
 - その他[Issues](https://github.com/haskell-jp/makeMistakesToLearnHaskell/issues)をご覧ください。
 
 #### 課題におけるプロンプト表記について
