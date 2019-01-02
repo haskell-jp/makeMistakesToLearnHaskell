@@ -35,32 +35,28 @@ choco install haskell-stack
 
 でもインストールできます。
 
-### 💾GHCのインストール方法
+### 💾GHCと「Make Mistakes to Learn Haskell!」のインストール方法
 
-ここまででstackをインストールされた方は、
-
-```
-stack setup
-```
-
-というコマンドを実行してください（どのOSでもこのコマンドです）。  
-GHCのインストールが始まります。
-
-GHCのインストールが終わったら、
+現状はHackageにまだ公開していないので👇のコマンドを実行してください（どのOSでもこのコマンドです）。
 
 ```
-stack exec ghc -- --version
+git clone https://github.com/haskell-jp/makeMistakesToLearnHaskell
+# あるいは git clone git://github.com/haskell-jp/makeMistakesToLearnHaskell
+
+cd makeMistakesToLearnHaskell
+stack install
 ```
 
-と実行して、GHCが正常にインストールできたことを確認してください（`ghc`と`--version`の間に`--`を挟まないといけない点にご注意ください）。  
-`The Glorious Glasgow Haskell Compilation System`で始まる文字列が表示されたら、無事インストールができた証拠です。
+GHCのインストールと、「Make Mistakes to Learn Haskell!」のビルドが始まります。
 
-例:
+インストールが完了したら、「⚙️使い方」の節に書かれたコマンドを試してみてください。
+
+なお、Linuxにおいて、libtinfoパッケージがないとインストールできない」というトラブルが報告されています。  
+例えばUbuntuの場合、下記のコマンドを実行してインストールしておく必要があるかも知れません。
 
 ```
-The Glorious Glasgow Haskell Compilation System, version 8.4.3
+sudo apt-get install libtinfo-dev
 ```
-
 
 #### ⚠️トラブルが発生したら:
 
@@ -71,27 +67,6 @@ The Glorious Glasgow Haskell Compilation System, version 8.4.3
 - [日本Haskellユーザーグループ (a.k.a. Haskell-jp)の公式Slack Workspaceにおける、questionsチャンネル](https://haskell-jp.slack.com/messages/C5666B6BB/)
     - [登録はこちらから](https://join.slack.com/t/haskell-jp/shared_invite/enQtNDY4Njc1MTA5MDQxLTAzZGNkZDlkMWYxZDRlODI3NmNlNTQ1ZDc3MjQxNzg3OTg4YzUzNmUyNmU5YWVkMjFmMjFjYzk1OTE3Yzg4ZTM)
 - [Redditのr/haskell\_jp](https://www.reddit.com/r/haskell_jp/)
-
-### 💾「Make Mistakes to Learn Haskell!」自体のインストール方法
-
-現状はHackageにまだ公開していないので👇のコマンドを実行してください。
-
-```
-git clone https://github.com/haskell-jp/makeMistakesToLearnHaskell
-# あるいは git clone git://github.com/haskell-jp/makeMistakesToLearnHaskell
-
-cd makeMistakesToLearnHaskell
-stack install
-```
-
-インストールが完了したら、「⚙️使い方」の節に書かれたコマンドを試してみてください。
-
-なお、Linuxにおいて、libtinfoパッケージがないとインストールできない」というトラブルが報告されています。  
-例えばUbuntuの場合、下記のコマンドを実行してインストールしておく必要があるかも知れません。
-
-```
-sudo apt-get install libtinfo-dev
-```
 
 ### 🆙「Make Mistakes to Learn Haskell!」自体のアップデート方法
 
