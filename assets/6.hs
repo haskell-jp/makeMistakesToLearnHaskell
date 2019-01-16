@@ -6,6 +6,6 @@ data Entry = Entry
 main = do
   cat <- getLine
   priceStr <- getLine
-  let entry = Entry { category = cat, price = read priceStr }
+  let entry = Entry cat (read priceStr)
   putStrLn ("Category: " ++ category entry)
   putStrLn ("Price: " ++ show (price entry))
