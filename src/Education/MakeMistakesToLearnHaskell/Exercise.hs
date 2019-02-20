@@ -28,7 +28,6 @@ import           Education.MakeMistakesToLearnHaskell.Exercise.Types
 import           Education.MakeMistakesToLearnHaskell.Error
 import           Education.MakeMistakesToLearnHaskell.Text
 
--- 課題
 import Education.MakeMistakesToLearnHaskell.Exercise.Ex01
 import Education.MakeMistakesToLearnHaskell.Exercise.Ex02
 import Education.MakeMistakesToLearnHaskell.Exercise.Ex02_5
@@ -37,6 +36,7 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Ex04
 import Education.MakeMistakesToLearnHaskell.Exercise.Ex05
 import Education.MakeMistakesToLearnHaskell.Exercise.Ex06
 import Education.MakeMistakesToLearnHaskell.Exercise.Ex07
+import Education.MakeMistakesToLearnHaskell.Exercise.Ex08
 
 exercises :: [(Name, Exercise)]
 exercises = map (\e -> (name e, e))
@@ -48,6 +48,7 @@ exercises = map (\e -> (name e, e))
   , exercise5
   , exercise6
   , exercise7
+  , exercise8
   ]
 
 loadHeaders :: IO [Text]
