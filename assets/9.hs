@@ -2,7 +2,7 @@ main = do
   putStrLn "Height Weight: "
   hwStr <- getLine
   case words hwStr of
-    [heightStr, weightStr] -> do
+    heightStr : weightStr : _ -> do
       let height = read heightStr
           weight = read weightStr
       print (weight / (height * height))

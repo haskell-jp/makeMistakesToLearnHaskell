@@ -2,7 +2,7 @@ main = do
   putStrLn "Height Weight: "
   hwStr <- getLine
   case words hwStr of
-    [heightStr, weightStr] ->
+    heightStr : weightStr : _ ->
       print (bmiFromStrings heightStr weightStr)
     [heightStr] -> do
       putStrLn "Weight: "
