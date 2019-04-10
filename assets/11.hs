@@ -7,7 +7,7 @@ main = do
     [heightStr] -> do
       weightStr <- askWeight
       print (bmiFromStrings heightStr weightStr)
-    other -> do
+    _ -> do
       putStrLn ("Invalid input: " ++ hwStr)
       main
 
