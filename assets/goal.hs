@@ -15,7 +15,6 @@ import System.IO (BufferMode(..), hSetBuffering, stdout)
 data Entry =
   Entry { category :: String, price :: Integer } deriving (Eq, Show)
 
-main :: IO ()
 main = do
   files <- getArgs
   entries <-
