@@ -1,8 +1,6 @@
 import System.Environment (getArgs)
-import System.IO (BufferMode(..), hSetBuffering, stdout)
 
 
-main :: IO ()
 main = do
   args <- getArgs
   case args of
