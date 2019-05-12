@@ -11,8 +11,7 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 
 exercise11 :: Exercise
-exercise11 = Exercise "11"
-          $ notYetImplementedVeirificationExercise
+exercise11 = Exercise "11" notYetImplementedVeirificationExercise
 
 
 {-

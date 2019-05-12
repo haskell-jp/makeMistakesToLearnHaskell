@@ -15,9 +15,9 @@ import           Education.MakeMistakesToLearnHaskell.Evaluator.Command
 
 runFile :: Env -> CommandParameters -> IO (Either CommandError (ByteString, ByteString))
 runFile env params = do
-  let ename = "runhaskell"
-  commandAndArgs <- resolveHaskellProcessor ename optionsAlwaysColor
-  runFileWith ename commandAndArgs env params
+  let cname = "runhaskell"
+  commandAndArgs <- resolveHaskellProcessor cname optionsAlwaysColor
+  runFileWith cname commandAndArgs env params
 
 
 optionsAlwaysColor :: [String]

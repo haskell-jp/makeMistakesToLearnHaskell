@@ -2,6 +2,7 @@
 
 module Education.MakeMistakesToLearnHaskell.Exercise.FormatMessage
   ( formatSingleArgFunApp
+  , formatFailure
   ) where
 
 
@@ -38,3 +39,16 @@ formatSingleArgFunApp = List.unfoldr uf
                 then Just (Text.fromStrict hint, safa2)
                 else Nothing
       in f =<< singleArgFunAppArg safa1
+
+
+formatFailure :: FailBy -> Details
+formatFailure (WrongOutput details) = details
+formatFailure (CommandFailed cname cout diag) =
+  Text.intercalate "\n"
+    [ "==================== " <> Text.pack cname <> " output ===================="
+    , ""
+    , cout
+    , ""
+    , "==================== mmlh HINT output ===================="
+    , diag
+    ]

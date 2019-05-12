@@ -9,7 +9,9 @@ module Education.MakeMistakesToLearnHaskell
 
 import           Education.MakeMistakesToLearnHaskell.Env
 import qualified Education.MakeMistakesToLearnHaskell.Exercise as Exercise
+import qualified Education.MakeMistakesToLearnHaskell.Exercise.FormatMessage as Exercise
 import qualified Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell as RunHaskell
+import qualified Education.MakeMistakesToLearnHaskell.Evaluator.Ghc as Ghc
 import           Education.MakeMistakesToLearnHaskell.Error
 import           Education.MakeMistakesToLearnHaskell.Text
 
@@ -39,6 +41,7 @@ withMainEnv doAction = do
               { logDebug = ByteString.hPutStr h . (<> "\n")
               , appHomePath = d
               , runHaskell = RunHaskell.runFile e
+              , runGhc = Ghc.runFile e
               }
     doAction e
 
@@ -90,7 +93,7 @@ verifySource e (file : _) = do
         Exit.exitSuccess
 
       Exercise.Fail details -> do
-        Text.putStrLn details
+        Text.putStrLn $ Exercise.formatFailure details
         withSGR [SetColor Foreground Vivid Red] $
           putStrLn "\nFAIL: Your solution didn't pass. Try again!"
         putStrLn $ "HINT: Verified the exercise " ++ Exercise.name currentExercise ++ ". Note I verify the last `mmlh show`-ed exercise.\n"

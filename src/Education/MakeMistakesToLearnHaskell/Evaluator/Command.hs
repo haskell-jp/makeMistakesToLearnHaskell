@@ -14,8 +14,8 @@ import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 
 
 runFileWith :: String -> [String] -> Env -> CommandParameters -> IO (Either CommandError (ByteString, ByteString))
-runFileWith ename [] _e _rhp = return . Left $ CommandNotFound ename
-runFileWith ename (actualCommand : initialArgs) e rhp = do
+runFileWith cname [] _e _rhp = return . Left $ CommandNotFound cname
+runFileWith cname (actualCommand : initialArgs) e rhp = do
   let prc =
         Process.setStdin (Process.byteStringInput $ commandParametersStdin rhp)
           $ Process.proc actualCommand
@@ -23,15 +23,15 @@ runFileWith ename (actualCommand : initialArgs) e rhp = do
   (ecode, out, err) <- fixingCodePage e $ readProcess prc
   return $ case ecode of
       ExitSuccess -> Right (out, err)
-      ExitFailure i -> Left $ CommandFailure ename i err
+      ExitFailure i -> Left $ CommandFailure cname i err
 
 
 resolveHaskellProcessor :: String -> [String] -> IO [String]
-resolveHaskellProcessor ename options = do
+resolveHaskellProcessor cname options = do
   stack <- Dir.findExecutable "stack"
   case stack of
-      Just p -> return $ [p, "exec", ename, "--"] ++ options
-      _ -> maybe [] (: options) <$> Dir.findExecutable ename
+      Just p -> return $ [p, "exec", cname, "--"] ++ options
+      _ -> maybe [] (: options) <$> Dir.findExecutable cname
 
 
 -- | Ref: https://github.com/commercialhaskell/stack/blob/a9042ad6fa1d7c813a1c79713a518ee521da9add/src/Stack/Build.hs#L306-L332

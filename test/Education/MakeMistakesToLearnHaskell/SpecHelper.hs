@@ -5,11 +5,12 @@ module Education.MakeMistakesToLearnHaskell.SpecHelper where
 #include <test/imports/external.hs>
 
 import qualified Education.MakeMistakesToLearnHaskell.Exercise as Exercise
+import qualified Education.MakeMistakesToLearnHaskell.Exercise.FormatMessage as Exercise
 import           Education.MakeMistakesToLearnHaskell.SpecEnv (setRunHaskellFailureWithOutput, mkDefaultSpecEnv)
 
 
 shouldFail :: Exercise.Result -> IO Exercise.Details
-shouldFail (Exercise.Fail d) = return d
+shouldFail (Exercise.Fail d) = return $ Exercise.formatFailure d
 shouldFail other = fail $ "Unexpected exercise result: " ++ show other
 
 
@@ -21,12 +22,12 @@ shouldSuccess other = fail $ "Unexpected exercise result: " ++ show other
 type TestCaseId = String
 
 itShouldFailForCaseWithMessage :: Exercise.Name -> TestCaseId -> [Exercise.Details] -> SpecM () ()
-itShouldFailForCaseWithMessage ename tcid messages = do
+itShouldFailForCaseWithMessage cname tcid messages = do
   baseEnv <- mkDefaultSpecEnv
-  it (ename ++ "::" ++ tcid) $ do
-    let subject = Exercise.unsafeGetByName ename
-    err <- ByteString.readFile $ "test/assets/" ++ ename ++ "/error-messages/" ++ tcid ++ ".txt"
+  it (cname ++ "::" ++ tcid) $ do
+    let subject = Exercise.unsafeGetByName cname
+    err <- ByteString.readFile $ "test/assets/" ++ cname ++ "/error-messages/" ++ tcid ++ ".txt"
     let e = setRunHaskellFailureWithOutput baseEnv err
-    d <- shouldFail =<< Exercise.verify subject e ("test/assets/" ++ ename ++ "/" ++ tcid ++ ".hs")
+    d <- shouldFail =<< Exercise.verify subject e ("test/assets/" ++ cname ++ "/" ++ tcid ++ ".hs")
 
     for_ messages $ \message -> d `shouldSatisfy` Text.isInfixOf message

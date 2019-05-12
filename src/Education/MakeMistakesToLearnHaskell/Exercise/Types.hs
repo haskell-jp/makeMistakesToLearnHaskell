@@ -21,10 +21,18 @@ data Exercise =
 
 data Result =
     Error !Details
-  | Fail !Details
+  | Fail !FailBy
   | Success !Details
   | NotVerified
   | NotYetImplemented
+  deriving (Eq, Show)
+
+data FailBy =
+    WrongOutput !Details
+  | CommandFailed
+      String   -- ^ Command name
+      !Details -- ^ Output by command
+      !Details -- ^ Diagnosis message
   deriving (Eq, Show)
 
 newtype Record = Record

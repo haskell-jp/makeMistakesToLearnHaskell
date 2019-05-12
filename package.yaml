@@ -34,6 +34,7 @@ library:
   - Education.MakeMistakesToLearnHaskell.Env
   - Education.MakeMistakesToLearnHaskell.Evaluator.Types
   - Education.MakeMistakesToLearnHaskell.Exercise
+  - Education.MakeMistakesToLearnHaskell.Exercise.FormatMessage
   - Education.MakeMistakesToLearnHaskell.Exercise.Types
   # ghc-options:          -Wno-unused-imports
   # Why doesn't -Wno-unused-imports work?

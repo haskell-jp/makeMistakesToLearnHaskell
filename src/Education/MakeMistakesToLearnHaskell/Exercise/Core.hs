@@ -18,7 +18,6 @@ import qualified Education.MakeMistakesToLearnHaskell.Evaluator.Command as Comma
 import           Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 import           Education.MakeMistakesToLearnHaskell.Exercise.Types
-import           Education.MakeMistakesToLearnHaskell.Diagnosis
 import           Education.MakeMistakesToLearnHaskell.Text
 
 runHaskellExercise
@@ -95,12 +94,12 @@ resultForUser _diag _code messageFooter calcRight input (Right (outB, _errB {- T
   in
     if right == out
       then Success $ "Nice output!\n\n" <> msg
-      else Fail $ "Wrong output!\n\n" <> msg
-resultForUser _diag _code _messageFooter _calcRight _minput (Left (Command.CommandNotFound ename)) =
-  Error $ Text.pack ename <> " command is not available.\nInstall stack or Haskell Platform."
-resultForUser diag code _messageFooter _calcRight _minput (Left (Command.CommandFailure ename _ msg)) = do
-  let msg' = "==================== " <> ByteString.pack ename <> " output ====================\n" <> msg
-  Fail $ appendDiagnosis diag code msg'
+      else Fail . WrongOutput $ "Wrong output!\n\n" <> msg
+resultForUser _diag _code _messageFooter _calcRight _minput (Left (Command.CommandNotFound cname)) =
+  Error $ Text.pack cname <> " command is not available.\nInstall stack or Haskell Platform."
+resultForUser diag code _messageFooter _calcRight _minput (Left (Command.CommandFailure cname _ msg)) =
+  let textMsg = decodeUtf8 msg
+   in Fail . CommandFailed cname textMsg $ diag code textMsg
 
 isInWords :: Text -> [Text] -> Bool
 isInWords wd = any (Text.isInfixOf wd)
