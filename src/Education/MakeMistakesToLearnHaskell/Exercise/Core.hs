@@ -28,7 +28,6 @@ runHaskellExercise
   -> IO Result
 runHaskellExercise = runHaskellExercise' Nothing
 
--- TODO: refactor with resultForUser
 runHaskellExercise'
   :: Maybe CommandParameters
   -> Diagnosis
