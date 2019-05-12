@@ -3,7 +3,7 @@
 module Education.MakeMistakesToLearnHaskell.Evaluator.Types
   ( ErrorCode
   , ErrorMessage
-  , RunHaskellError(..)
+  , CommandError(..)
   , SingleArgFunApp(..)
   , HasParens(..)
   ) where
@@ -16,10 +16,10 @@ type ErrorCode = Int
 type ErrorMessage = ByteString
 
 
-data RunHaskellError =
-  RunHaskellNotFound | RunHaskellFailure ErrorCode ErrorMessage deriving (Show, Typeable)
+data CommandError =
+  CommandNotFound String | CommandFailure String ErrorCode ErrorMessage deriving (Show, Typeable)
 
-instance Exception RunHaskellError
+instance Exception CommandError
 
 data HasParens =
   NoParens | OnlyOpenParen | BothParens

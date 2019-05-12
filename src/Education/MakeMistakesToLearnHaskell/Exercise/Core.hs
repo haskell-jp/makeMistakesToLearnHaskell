@@ -14,7 +14,8 @@ module Education.MakeMistakesToLearnHaskell.Exercise.Core
 #include <imports/external.hs>
 
 import           Education.MakeMistakesToLearnHaskell.Env
-import qualified Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell as RunHaskell
+import qualified Education.MakeMistakesToLearnHaskell.Evaluator.Command as Command
+import           Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 import           Education.MakeMistakesToLearnHaskell.Exercise.Types
 import           Education.MakeMistakesToLearnHaskell.Diagnosis
@@ -30,7 +31,7 @@ runHaskellExercise = runHaskellExercise' Nothing
 
 -- TODO: refactor with resultForUser
 runHaskellExercise'
-  :: Maybe RunHaskellParameters
+  :: Maybe CommandParameters
   -> Diagnosis
   -> Text
   -> Env
@@ -38,29 +39,9 @@ runHaskellExercise'
   -> IO Result
 runHaskellExercise' mParam diag right e prgFile = do
   let rhp = fromMaybe defaultRunHaskellParameters mParam
-  result <- runHaskell e $ rhp { runHaskellParametersArgs = [prgFile] }
-  case result of
-      Right (outB, _errB {- TODO: print stderr -}) -> do
-        let out = canonicalizeNewlines outB
-            msg =
-              Text.unlines
-                [ Text.replicate 80 "="
-                , "Your program's output: " <> Text.pack (show out) -- TODO: pretty print
-                , "      Expected output: " <> Text.pack (show right)
-                ]
-        return $
-          if out == right
-            then Success $ "Nice output!\n\n" <> msg
-            else Fail $ "Wrong output!\n\n" <> msg
-      Left err ->
-        case err of
-            RunHaskell.RunHaskellNotFound ->
-              return $ Error "runhaskell command is not available.\nInstall stack or Haskell Platform."
-            RunHaskell.RunHaskellFailure _ msg -> do
-              logDebug e $ "RunHaskellFailure: " <> msg
-              code <- readUtf8File prgFile
-              putStrLn "==================== GHC output ===================="
-              return $ Fail $ appendDiagnosis diag code msg
+  code <- readUtf8File prgFile
+  result <- runHaskell e rhp { commandParametersArgs = [prgFile] }
+  return $ resultForUser diag code [] (const right) "" result
 
 -- runHaskellExercise の入力有りバージョン
 runHaskellExerciseWithStdin
@@ -81,8 +62,8 @@ runHaskellExerciseWithStdin diag gen calcRight env prgFile = do
         QuickCheck.ioProperty $ do
           let input = Text.pack inputS
               params = defaultRunHaskellParameters
-                { runHaskellParametersArgs = [prgFile]
-                , runHaskellParametersStdin = TextEncoding.encodeUtf8 input
+                { commandParametersArgs = [prgFile]
+                , commandParametersStdin = TextEncoding.encodeUtf8 input
                 }
           code <- readUtf8File prgFile
           result <- resultForUser diag code ["            For input: " <> Text.pack (show input)] calcRight input <$> runHaskell env params
@@ -100,7 +81,7 @@ resultForUser
   -> [Text]
   -> (Text -> Text)
   -> Text
-  -> Either RunHaskellError (ByteString, ByteString)
+  -> Either CommandError (ByteString, ByteString)
   -> Result
 resultForUser _diag _code messageFooter calcRight input (Right (outB, _errB {- TODO: print stderr -})) =
   let out = canonicalizeNewlines outB
@@ -115,10 +96,11 @@ resultForUser _diag _code messageFooter calcRight input (Right (outB, _errB {- T
     if right == out
       then Success $ "Nice output!\n\n" <> msg
       else Fail $ "Wrong output!\n\n" <> msg
-resultForUser _diag _code _messageFooter _calcRight _minput (Left RunHaskell.RunHaskellNotFound) =
-  Error "runhaskell command is not available.\nInstall stack or Haskell Platform."
-resultForUser diag code _messageFooter _calcRight _minput (Left (RunHaskell.RunHaskellFailure _ msg)) =
-  Fail $ appendDiagnosis diag code msg
+resultForUser _diag _code _messageFooter _calcRight _minput (Left (Command.CommandNotFound ename)) =
+  Error $ Text.pack ename <> " command is not available.\nInstall stack or Haskell Platform."
+resultForUser diag code _messageFooter _calcRight _minput (Left (Command.CommandFailure ename _ msg)) = do
+  let msg' = "==================== " <> ByteString.pack ename <> " output ====================\n" <> msg
+  Fail $ appendDiagnosis diag code msg'
 
 isInWords :: Text -> [Text] -> Bool
 isInWords wd = any (Text.isInfixOf wd)
@@ -159,4 +141,4 @@ noVeirificationExercise :: Env -> String -> IO Result
 noVeirificationExercise _ _ = return NotVerified
 
 notYetImplementedVeirificationExercise :: Env -> String -> IO Result
-notYetImplementedVeirificationExercise _ _ = return NotYetImplemented
+notYetImplementedVeirificationExercise _ _ = return NotYetImplemented -- TODO: Run GHC Evaluator

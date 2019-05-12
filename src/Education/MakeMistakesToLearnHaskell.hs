@@ -108,12 +108,14 @@ verifySource e (file : _) = do
         putStrLn
           $ "[NOT YET IMPLEMENTED] Sorry, the test of exercise "
           ++ Exercise.name currentExercise
-          ++ " is not yet implemented. Check by yourself!"
+          ++ " is not yet implemented.\n"
+          ++ "So I confirmed only that the your answer is compilable.\n"
+          ++ "Test by yourself!"
 
         showExampleSolution currentExercise
         Exit.exitSuccess
   where
-    withSGR sgrs act = bracket_ (setSGR sgrs) (setSGR [Reset]) act
+    withSGR sgrs = bracket_ (setSGR sgrs) (setSGR [Reset])
 
     showExampleSolution ex = do
         putStrLn $ "Here's an example solution of the exercise " ++ Exercise.name ex ++ ":\n"

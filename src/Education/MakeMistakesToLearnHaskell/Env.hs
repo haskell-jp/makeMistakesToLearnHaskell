@@ -3,7 +3,7 @@
 module Education.MakeMistakesToLearnHaskell.Env
   ( Env (..)
   , defaultEnv
-  , RunHaskellParameters(runHaskellParametersArgs, runHaskellParametersStdin)
+  , CommandParameters(commandParametersArgs, commandParametersStdin)
   , defaultRunHaskellParameters
   , appName
   , homePathEnvVarName
@@ -15,18 +15,19 @@ where
 
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 
-data RunHaskellParameters = RunHaskellParameters
-  { runHaskellParametersArgs :: ![String]
-  , runHaskellParametersStdin :: !ByteString
+data CommandParameters = CommandParameters
+  { commandParametersArgs :: ![String]
+  , commandParametersStdin :: !ByteString
   }
 
-defaultRunHaskellParameters :: RunHaskellParameters
-defaultRunHaskellParameters = RunHaskellParameters [] ""
+defaultRunHaskellParameters :: CommandParameters
+defaultRunHaskellParameters = CommandParameters [] ""
 
 data Env = Env
   { logDebug :: ByteString -> IO ()
   , appHomePath :: FilePath
-  , runHaskell :: RunHaskellParameters -> IO (Either RunHaskellError (ByteString, ByteString))
+  , runHaskell :: CommandParameters -> IO (Either CommandError (ByteString, ByteString))
+  , runGhc :: CommandParameters -> IO (Either CommandError (ByteString, ByteString))
   , envQcMaxSuccessSize :: Int
   }
 
@@ -35,6 +36,7 @@ defaultEnv = Env
   { logDebug = error "Set logDebug to defaultEnv"
   , appHomePath = error "Set appHomePath to defaultEnv"
   , runHaskell = error "Set runHaskell to defaultEnv"
+  , runGhc = error "Set runGhc to defaultEnv"
   , envQcMaxSuccessSize = 20
   }
 
