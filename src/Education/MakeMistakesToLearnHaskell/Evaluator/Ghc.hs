@@ -15,7 +15,7 @@ import           Education.MakeMistakesToLearnHaskell.Evaluator.Command
 runFile :: Env -> CommandParameters -> IO (Either CommandError (ByteString, ByteString))
 runFile env params = do
   let cname = "ghc"
-  commandAndArgs <- resolveHaskellProcessor cname optionsAlwaysColor
+  commandAndArgs <- resolveHaskellProcessor cname ("-fno-code" : optionsAlwaysColor)
   runFileWith cname commandAndArgs env params
 
 
