@@ -26,19 +26,18 @@ runHaskellExercise
   -> Env
   -> FilePath
   -> IO Result
-runHaskellExercise = runHaskellExercise' Nothing
+runHaskellExercise = runHaskellExercise' defaultRunHaskellParameters
 
 runHaskellExercise'
-  :: Maybe CommandParameters
+  :: CommandParameters
   -> Diagnosis
   -> Text
   -> Env
   -> FilePath
   -> IO Result
-runHaskellExercise' mParam diag right e prgFile = do
-  let rhp = fromMaybe defaultRunHaskellParameters mParam
+runHaskellExercise' params diag right e prgFile = do
   code <- readUtf8File prgFile
-  result <- runHaskell e rhp { commandParametersArgs = [prgFile] }
+  result <- runHaskell e params { commandParametersArgs = [prgFile] }
   return $ resultForUser diag code [] (const right) "" result
 
 -- runHaskellExercise の入力有りバージョン
