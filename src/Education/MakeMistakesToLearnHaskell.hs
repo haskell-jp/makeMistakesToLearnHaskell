@@ -97,6 +97,8 @@ verifySource e (file : _) = do
         withSGR [SetColor Foreground Vivid Red] $
           putStrLn "\nFAIL: Your solution didn't pass. Try again!"
         putStrLn $ "HINT: Verified the exercise " ++ Exercise.name currentExercise ++ ". Note I verify the last `mmlh show`-ed exercise.\n"
+
+        -- TODO: ask if ask for a help
         Exit.exitFailure
 
       Exercise.Error details -> do
