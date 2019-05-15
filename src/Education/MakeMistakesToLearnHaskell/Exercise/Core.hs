@@ -137,5 +137,14 @@ allSame (x1 : x2 : xs) = x1 == x2 && allSame xs
 noVeirificationExercise :: Env -> String -> IO Result
 noVeirificationExercise _ _ = return NotVerified
 
-notYetImplementedVeirificationExercise :: Env -> String -> IO Result
-notYetImplementedVeirificationExercise _ _ = return NotYetImplemented -- TODO: Run GHC Evaluator
+notYetImplementedVeirificationExercise :: Env -> FilePath -> IO Result
+notYetImplementedVeirificationExercise e prgFile = do
+  code <- readUtf8File prgFile
+  result <- runGhc e defaultRunHaskellParameters { commandParametersArgs = [prgFile] }
+  case result of
+      Right _ ->
+        return NotYetImplemented
+      Left (CommandFailure cname _ecode msg) ->
+        return . Fail $ CommandFailed cname (decodeUtf8 msg) ""
+      Left (CommandNotFound cname) ->
+        return . Error $ Text.pack cname <> " command is not available.\nInstall stack or Haskell Platform."
