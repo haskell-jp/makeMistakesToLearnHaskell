@@ -12,6 +12,7 @@ module Education.MakeMistakesToLearnHaskell.Exercise.Core
   ) where
 
 #include <imports/external.hs>
+#include <imports/io.hs>
 
 import           Education.MakeMistakesToLearnHaskell.Env
 import qualified Education.MakeMistakesToLearnHaskell.Evaluator.Command as Command
@@ -80,7 +81,7 @@ resultForUser
   -> Text
   -> Either CommandError (ByteString, ByteString)
   -> Result
-resultForUser _diag _code messageFooter calcRight input (Right (outB, _errB {- TODO: print stderr -})) =
+resultForUser _diag code messageFooter calcRight input (Right (outB, _errB {- TODO: print stderr -})) =
   let out = canonicalizeNewlines outB
       right = calcRight input
       msg =
@@ -92,12 +93,12 @@ resultForUser _diag _code messageFooter calcRight input (Right (outB, _errB {- T
   in
     if right == out
       then Success $ "Nice output!\n\n" <> msg
-      else Fail . WrongOutput $ "Wrong output!\n\n" <> msg
+      else Fail code . WrongOutput $ "Wrong output!\n\n" <> msg
 resultForUser _diag _code _messageFooter _calcRight _minput (Left (Command.CommandNotFound cname)) =
   Error $ Text.pack cname <> " command is not available.\nInstall stack or Haskell Platform."
 resultForUser diag code _messageFooter _calcRight _minput (Left (Command.CommandFailure cname _ msg)) =
   let textMsg = decodeUtf8 msg
-   in Fail . CommandFailed cname textMsg $ diag code textMsg
+   in Fail code . CommandFailed cname textMsg $ diag code textMsg
 
 isInWords :: Text -> [Text] -> Bool
 isInWords wd = any (Text.isInfixOf wd)
@@ -145,6 +146,6 @@ notYetImplementedVeirificationExercise e prgFile = do
       Right _ ->
         return NotYetImplemented
       Left (CommandFailure cname _ecode msg) ->
-        return . Fail $ CommandFailed cname (decodeUtf8 msg) ""
+        return . Fail code $ CommandFailed cname (decodeUtf8 msg) ""
       Left (CommandNotFound cname) ->
         return . Error $ Text.pack cname <> " command is not available.\nInstall stack or Haskell Platform."

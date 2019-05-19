@@ -6,6 +6,7 @@ module Education.MakeMistakesToLearnHaskell
 
 
 #include <imports/external.hs>
+#include <imports/io.hs>
 
 import           Education.MakeMistakesToLearnHaskell.Env
 import qualified Education.MakeMistakesToLearnHaskell.Exercise as Exercise
@@ -13,6 +14,7 @@ import qualified Education.MakeMistakesToLearnHaskell.Exercise.FormatMessage as 
 import qualified Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell as RunHaskell
 import qualified Education.MakeMistakesToLearnHaskell.Evaluator.Ghc as Ghc
 import           Education.MakeMistakesToLearnHaskell.Error
+import qualified Education.MakeMistakesToLearnHaskell.Report as Report
 import           Education.MakeMistakesToLearnHaskell.Text
 
 import qualified Options.Applicative as Opt
@@ -26,41 +28,68 @@ main = do
     printExerciseList
   else do
     cmd <- Opt.execParser (Opt.info (cmdParser <**> Opt.helper) Opt.idm)
-    withMainEnv $ \e ->
-      case cmd of
-        Show isTerminal n -> showExercise e isTerminal [n]
-        Verify path -> verifySource e [path]
+    case cmd of
+      (usesTerminal, Show n) ->
+        withMainEnv usesTerminal $ \e -> showExercise e n
+      (usesTerminal, Verify path) ->
+        withMainEnv usesTerminal $ \e -> verifySource e path
 
 
-withMainEnv :: (Env -> IO r) -> IO r
-withMainEnv doAction = do
+withMainEnv :: CommonOptions -> (Env -> IO r) -> IO r
+withMainEnv copts doAction = do
   d <- Env.getEnv homePathEnvVarName <|> Dir.getXdgDirectory Dir.XdgData appName
   Dir.createDirectoryIfMissing True d
+
+  let openB =
+        if enableBrowser copts
+          then Browser.openBrowser . Text.unpack
+          else const $ return False
+
   IO.withFile (d </> "debug.log") IO.WriteMode $ \h -> do
     let e = defaultEnv
               { logDebug = ByteString.hPutStr h . (<> "\n")
               , appHomePath = d
               , runHaskell = RunHaskell.runFile e
+              , confirm = \prompt -> do
+                  Text.putStrLn $ prompt <> " (y/n)"
+                  handle ((const $ return False) :: IOException -> IO Bool) $ do
+                    ans <- getChar
+                    return $ ans == 'y' || ans == 'Y'
+              , openWithBrowser = openB
+              , say = Text.putStrLn
               , runGhc = Ghc.runFile e
               }
     doAction e
 
+newtype CommonOptions = CommonOptions { enableBrowser :: Bool }
+
+
 data Cmd
-  = Show Bool String
+  = Show Exercise.Name
   | Verify FilePath
   deriving (Eq, Show)
 
-optTerminalP :: Opt.Parser Bool
-optTerminalP = Opt.switch $ Opt.long "terminal" <> Opt.help "display to terminal"
 
-showCmdP :: Opt.Parser Cmd
-showCmdP = Show <$> optTerminalP
-                <*> Opt.argument Opt.str (Opt.metavar "<number>")
+commonOptionsP :: Opt.Parser CommonOptions
+commonOptionsP =
+  fmap (CommonOptions . not)
+    . Opt.switch
+    $ Opt.long "terminal" <> Opt.help "Display HTML/URL on terminal (Don't launch browser)."
 
-verifyCmdP :: Opt.Parser Cmd
-verifyCmdP = Verify <$> Opt.argument Opt.str (Opt.metavar "<filepath>")
 
-cmdParser :: Opt.Parser Cmd
+showCmdP :: Opt.Parser (CommonOptions, Cmd)
+showCmdP = (,)
+  <$> commonOptionsP
+  <*> (Show <$> Opt.argument Opt.str (Opt.metavar "<number>"))
+
+
+verifyCmdP :: Opt.Parser (CommonOptions, Cmd)
+verifyCmdP = (,)
+  <$> commonOptionsP
+  <*> (Verify <$> Opt.argument Opt.str (Opt.metavar "<filepath>"))
+
+
+cmdParser :: Opt.Parser (CommonOptions, Cmd)
 cmdParser = Opt.hsubparser
   $  Opt.command "show" (Opt.info showCmdP (Opt.progDesc "Show Exercise"))
   <> Opt.command "verify" (Opt.info verifyCmdP (Opt.progDesc "Verify Exercise"))
@@ -78,9 +107,8 @@ printExerciseList = do
   Text.putStrLn $ "\nRun `" <> Text.pack appName <> " show <the exercise number>` to try the exercise."
 
 
-verifySource :: Env -> [FilePath] -> IO ()
-verifySource _ [] = die "Specify the Haskell source file to veirfy!"
-verifySource e (file : _) = do
+verifySource :: Env -> FilePath -> IO ()
+verifySource e file = do
   currentExercise <- Exercise.loadLastShown e
   result <- Exercise.verify currentExercise e file
   case result of
@@ -92,13 +120,13 @@ verifySource e (file : _) = do
         showExampleSolution currentExercise
         Exit.exitSuccess
 
-      Exercise.Fail details -> do
+      Exercise.Fail code details -> do
         Text.putStrLn $ Exercise.formatFailure details
         withSGR [SetColor Foreground Vivid Red] $
           putStrLn "\nFAIL: Your solution didn't pass. Try again!"
         putStrLn $ "HINT: Verified the exercise " ++ Exercise.name currentExercise ++ ". Note I verify the last `mmlh show`-ed exercise.\n"
 
-        -- TODO: ask if ask for a help
+        Report.printUrlIfAsked e (Exercise.name currentExercise) code details
         Exit.exitFailure
 
       Exercise.Error details -> do
@@ -127,16 +155,15 @@ verifySource e (file : _) = do
         Text.putStr =<< Exercise.loadExampleSolution ex
 
 
-showExercise :: Env -> Bool -> [String] -> IO ()
-showExercise _ _ [] = die "Specify an exercise number to show"
-showExercise env isTerminal (n : _) = do
+showExercise :: Env -> Exercise.Name -> IO ()
+showExercise e n = do
   d <- Exercise.loadDescriptionByName n
         >>= dieWhenNothing ("Exercise id " ++ n ++ " not found!")
-  Exercise.saveLastShownName env n
-  showMarkdown d isTerminal n
+  Exercise.saveLastShownName e n
+  showMarkdown e d n
 
-showMarkdown :: Text -> Bool -> String -> IO ()
-showMarkdown md isTerminal n = do
+showMarkdown :: Env -> Text -> String -> IO ()
+showMarkdown e md n = do
   cssPath <- ("file://" <>) . TextS.pack <$> Paths.getDataFileName "assets/exercise.css"
   let htmlBody = CMark.commonmarkToHtml [CMark.optSafe] $ Text.toStrict md
       htmlHead = TextS.unlines
@@ -160,11 +187,7 @@ showMarkdown md isTerminal n = do
 
   writeUtf8FileS path (htmlHead <> htmlBody <> htmlFoot)
 
-  browserLaunched <-
-    if not isTerminal then
-      Browser.openBrowser path
-    else
-      return False
+  browserLaunched <- openWithBrowser e (Text.pack path)
 
   unless browserLaunched $
     Text.putStr $ removeAllTrailingSpace md

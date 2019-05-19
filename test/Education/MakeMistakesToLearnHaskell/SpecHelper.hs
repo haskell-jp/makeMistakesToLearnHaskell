@@ -10,7 +10,7 @@ import           Education.MakeMistakesToLearnHaskell.SpecEnv (setRunHaskellFail
 
 
 shouldFail :: Exercise.Result -> IO Exercise.Details
-shouldFail (Exercise.Fail d) = return $ Exercise.formatFailure d
+shouldFail (Exercise.Fail _code d) = return $ Exercise.formatFailure d
 shouldFail other = fail $ "Unexpected exercise result: " ++ show other
 
 

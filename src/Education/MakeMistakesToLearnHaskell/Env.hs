@@ -12,6 +12,7 @@ module Education.MakeMistakesToLearnHaskell.Env
 where
 
 #include <imports/external.hs>
+#include <imports/io.hs>
 
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 
@@ -28,6 +29,9 @@ data Env = Env
   , appHomePath :: FilePath
   , runHaskell :: CommandParameters -> IO (Either CommandError (ByteString, ByteString))
   , runGhc :: CommandParameters -> IO (Either CommandError (ByteString, ByteString))
+  , confirm :: Text -> IO Bool
+  , openWithBrowser :: Text -> IO Bool
+  , say :: Text -> IO ()
   , envQcMaxSuccessSize :: Int
   }
 
@@ -37,6 +41,11 @@ defaultEnv = Env
   , appHomePath = error "Set appHomePath to defaultEnv"
   , runHaskell = error "Set runHaskell to defaultEnv"
   , runGhc = error "Set runGhc to defaultEnv"
+  , confirm =
+      \prompt -> Text.putStrLn ("default Env.confirm: " <> prompt) >> return True
+  , openWithBrowser =
+      \url -> Text.putStrLn ("default Env.openWithBrowser: " <> url) >> return True
+  , say = Text.putStrLn
   , envQcMaxSuccessSize = 20
   }
 

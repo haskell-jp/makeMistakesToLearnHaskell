@@ -15,6 +15,7 @@ module Education.MakeMistakesToLearnHaskell.Exercise
 
 
 #include <imports/external.hs>
+#include <imports/io.hs>
 
 import           Education.MakeMistakesToLearnHaskell.Exercise.Core
 import           Education.MakeMistakesToLearnHaskell.Env

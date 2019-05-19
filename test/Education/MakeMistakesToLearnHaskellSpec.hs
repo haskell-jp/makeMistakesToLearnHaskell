@@ -56,23 +56,23 @@ spec =
     context "given \"y\" from stdin" $ do
       it "given a not-compilable answer of exercise 5, show FAIL with the URL to submit an issue to haskell-jp/" $ do
         void $ runMmlh ["show", "--terminal", "5"] ""
-        runMmlh ["verify", "test/assets/common/empty.hs"] "y\n"
+        runMmlh ["verify", "--terminal", "test/assets/common/empty.hs"] "y\n"
           >>= shouldExitWithMessages [expectedGitHubUrl "5"]
 
       it "given a not-compilable answer of exercise 6, show FAIL" $ do
         void $ runMmlh ["show", "--terminal", "6"] ""
-        runMmlh ["verify", "test/assets/common/empty.hs"] "y\n"
+        runMmlh ["verify", "--terminal", "test/assets/common/empty.hs"] "y\n"
           >>= shouldExitWithMessages [expectedGitHubUrl "6"]
 
     context "given nothing from stdin" $ do
       it "given a not-compilable answer of exercise 5, show FAIL without any URL to GitHub." $ do
         void $ runMmlh ["show", "--terminal", "5"] ""
-        runMmlh ["verify", "test/assets/common/empty.hs"] ""
+        runMmlh ["verify", "--terminal", "test/assets/common/empty.hs"] ""
           >>= shouldNotExitWithMessages [expectedGitHubUrl "5"]
 
       it "given a not-compilable answer of exercise 6, show FAIL without any URL to GitHub." $ do
         void $ runMmlh ["show", "--terminal", "6"] ""
-        runMmlh ["verify", "test/assets/common/empty.hs"] ""
+        runMmlh ["verify", "--terminal", "test/assets/common/empty.hs"] ""
           >>= shouldNotExitWithMessages [expectedGitHubUrl "6"]
 
 

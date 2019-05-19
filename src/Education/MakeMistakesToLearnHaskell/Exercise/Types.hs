@@ -21,7 +21,7 @@ data Exercise =
 
 data Result =
     Error !Details
-  | Fail !FailBy
+  | Fail !SourceCode !FailBy
   | Success !Details
   | NotVerified
   | NotYetImplemented

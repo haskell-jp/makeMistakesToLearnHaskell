@@ -6,13 +6,13 @@ import           Control.Applicative ((<|>), optional, (<**>))
 import qualified Control.Error as Error
 import           Control.Exception
                    ( Exception
-                   , SomeException
+                   , IOException
                    , bracket_
-                   , catch
+                   , handle
                    , throwIO
                    , throw
                    )
-import           Control.Monad (void, unless)
+import           Control.Monad (void, unless, when)
 import           Control.Monad.IO.Class (liftIO)
 import qualified Control.Monad.Trans.Maybe as MaybeT
 import           Data.Bool (bool)
@@ -31,15 +31,14 @@ import           Data.Monoid ((<>))
 import qualified Data.Text.Encoding.Error as TextEncoding
 import           Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as Text
-import qualified Data.Text.Lazy.IO as Text
 import qualified Data.Text.Lazy.Encoding as TextEncoding
 import qualified Data.Text as TextS
-import qualified Data.Text.IO as TextS
 import           Data.Typeable (Typeable)
 import qualified Debug.Trace as Debug
 import           GHC.Generics (Generic)
 import qualified GHC.SyntaxHighlighter as GHC
 import           Numeric.Natural (Natural)
+import qualified Network.URI.Encode as Uri
 import qualified Paths_makeMistakesToLearnHaskell as Paths
 import           Safe (headMay)
 import qualified System.Directory as Dir
