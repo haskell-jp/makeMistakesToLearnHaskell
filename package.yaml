@@ -15,6 +15,7 @@ data-files:
 extra-source-files:
 - README.md
 - src/imports/*.hs
+- src/imports/external/*.hs
 - src/test/imports/*.hs
 # test data here. see https://stackoverflow.com/questions/29361413/including-data-files-only-in-cabal-test-suites
 - test/assets/1/*.hs
@@ -34,6 +35,7 @@ library:
   - Education.MakeMistakesToLearnHaskell.Env
   - Education.MakeMistakesToLearnHaskell.Evaluator.Types
   - Education.MakeMistakesToLearnHaskell.Exercise
+  - Education.MakeMistakesToLearnHaskell.Exercise.FormatMessage
   - Education.MakeMistakesToLearnHaskell.Exercise.Types
   # ghc-options:          -Wno-unused-imports
   # Why doesn't -Wno-unused-imports work?
@@ -57,6 +59,7 @@ library:
   - text
   - transformers
   - typed-process
+  - uri-encode
   when:
   - condition: os(windows)
     dependencies:

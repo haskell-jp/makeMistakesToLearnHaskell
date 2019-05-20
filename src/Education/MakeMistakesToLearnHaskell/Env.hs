@@ -3,7 +3,7 @@
 module Education.MakeMistakesToLearnHaskell.Env
   ( Env (..)
   , defaultEnv
-  , RunHaskellParameters(runHaskellParametersArgs, runHaskellParametersStdin)
+  , CommandParameters(commandParametersArgs, commandParametersStdin)
   , defaultRunHaskellParameters
   , appName
   , homePathEnvVarName
@@ -12,21 +12,26 @@ module Education.MakeMistakesToLearnHaskell.Env
 where
 
 #include <imports/external.hs>
+#include <imports/io.hs>
 
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 
-data RunHaskellParameters = RunHaskellParameters
-  { runHaskellParametersArgs :: ![String]
-  , runHaskellParametersStdin :: !ByteString
+data CommandParameters = CommandParameters
+  { commandParametersArgs :: ![String]
+  , commandParametersStdin :: !ByteString
   }
 
-defaultRunHaskellParameters :: RunHaskellParameters
-defaultRunHaskellParameters = RunHaskellParameters [] ""
+defaultRunHaskellParameters :: CommandParameters
+defaultRunHaskellParameters = CommandParameters [] ""
 
 data Env = Env
   { logDebug :: ByteString -> IO ()
   , appHomePath :: FilePath
-  , runHaskell :: RunHaskellParameters -> IO (Either RunHaskellError (ByteString, ByteString))
+  , runHaskell :: CommandParameters -> IO (Either CommandError (ByteString, ByteString))
+  , runGhc :: CommandParameters -> IO (Either CommandError (ByteString, ByteString))
+  , confirm :: Text -> IO Bool
+  , openWithBrowser :: Text -> IO Bool
+  , say :: Text -> IO ()
   , envQcMaxSuccessSize :: Int
   }
 
@@ -35,6 +40,12 @@ defaultEnv = Env
   { logDebug = error "Set logDebug to defaultEnv"
   , appHomePath = error "Set appHomePath to defaultEnv"
   , runHaskell = error "Set runHaskell to defaultEnv"
+  , runGhc = error "Set runGhc to defaultEnv"
+  , confirm =
+      \prompt -> Text.putStrLn ("default Env.confirm: " <> prompt) >> return True
+  , openWithBrowser =
+      \url -> Text.putStrLn ("default Env.openWithBrowser: " <> url) >> return True
+  , say = Text.putStrLn
   , envQcMaxSuccessSize = 20
   }
 

@@ -15,9 +15,9 @@ module Education.MakeMistakesToLearnHaskell.Exercise
 
 
 #include <imports/external.hs>
+#include <imports/io.hs>
 
 import           Education.MakeMistakesToLearnHaskell.Exercise.Core
-import           Education.MakeMistakesToLearnHaskell.Diagnosis
 import           Education.MakeMistakesToLearnHaskell.Env
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Regex
 import qualified Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell as RunHaskell

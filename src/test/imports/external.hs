@@ -4,6 +4,7 @@ import           Test.Main
                    ( captureProcessResult
                    , withArgs
                    , withEnv
+                   , withStdin
                    , ProcessResult(ProcessResult, prStdout, prStderr, prExitCode, prException)
                    )
 
