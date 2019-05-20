@@ -22,11 +22,11 @@ buildUrl name code fb =
 
 
 buildBody :: Exercise.SourceCode -> Exercise.FailBy -> Text
-buildBody code fb = Text.unlines
+buildBody code fb = Text.strip $ Text.unlines
   ["# Answer"
   , ""
   , "```"
-  , code
+  , Text.strip code
   , "```"
   , ""
   , case fb of
@@ -34,14 +34,14 @@ buildBody code fb = Text.unlines
           [ "# Cause: Wrong Output"
           , ""
           , "```"
-          , out
+          , Text.strip out
           , "```"
           ]
         Exercise.CommandFailed cname cout diag -> Text.unlines
           [ "# Cause: `" <> Text.pack cname <> "` failed."
           , ""
           , "```"
-          , cout
+          , Text.strip cout
           , "```"
           , ""
           , if Text.null diag
@@ -50,7 +50,7 @@ buildBody code fb = Text.unlines
                 [ "## Diagnosis"
                 , ""
                 , "```"
-                , diag
+                , Text.strip diag
                 , "```"
                 ]
           ]
