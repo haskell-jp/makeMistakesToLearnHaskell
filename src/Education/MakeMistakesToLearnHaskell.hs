@@ -29,10 +29,10 @@ main = do
   else do
     cmd <- Opt.execParser (Opt.info (cmdParser <**> Opt.helper) Opt.idm)
     case cmd of
-      (usesTerminal, Show n) ->
-        withMainEnv usesTerminal $ \e -> showExercise e n
-      (usesTerminal, Verify path) ->
-        withMainEnv usesTerminal $ \e -> verifySource e path
+      (copts, Show n) ->
+        withMainEnv copts $ \e -> showExercise e n
+      (copts, Verify path) ->
+        withMainEnv copts $ \e -> verifySource e path
 
 
 withMainEnv :: CommonOptions -> (Env -> IO r) -> IO r
