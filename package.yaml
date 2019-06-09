@@ -41,6 +41,7 @@ library:
   # Why doesn't -Wno-unused-imports work?
   dependencies:
   - base >=4.7 && <5
+  - mmlh-commons
   # TODO: Decide version
   - ansi-terminal
   - QuickCheck
