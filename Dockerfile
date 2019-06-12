@@ -7,5 +7,3 @@ RUN mkdir -p /opt/mmlh-reporter/
 COPY ./dist/mmlh-reporter /opt/mmlh-reporter/
 
 WORKDIR /opt/mmlh-reporter/
-
-ENTRYPOINT /opt/mmlh-reporter/mmlh-reporter
