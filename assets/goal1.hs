@@ -1,9 +1,3 @@
-#!/bin/env stack
-{-
-  stack script --resolver=lts-11.13
-    --package split
-    --package containers
--}
 import Data.List.Split
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map
@@ -13,7 +7,7 @@ import System.Environment (getArgs)
 import System.IO (BufferMode(..), hSetBuffering, stdout)
 
 data Entry =
-  Entry { category :: String, price :: Integer } deriving (Eq, Show)
+  Entry { category :: String, price :: Integer } deriving Show
 
 main = do
   files <- getArgs
@@ -23,7 +17,7 @@ main = do
       return (map toTuple (parseEntries contents))
     )
   let summary = Map.fromListWith (\x y -> x + y) (concat entries)
-  putStr (formatSummry summary)
+  putStr (formatSummary summary)
 
 toTuple :: Entry -> (String, Integer)
 toTuple entry = (category entry, price entry)
@@ -37,8 +31,8 @@ parseEntry s =
     [c, sv] -> Entry c (read sv)
     _ -> error ("Invalid entry: " ++ show s)
 
-formatSummry :: Map String Integer -> String
-formatSummry summary = unlines (map formatSummaryItem (Map.toList summary))
+formatSummary :: Map String Integer -> String
+formatSummary summary = unlines (map formatSummaryItem (Map.toList summary))
 
 formatSummaryItem :: (String, Integer) -> String
 formatSummaryItem (cat, total) = cat ++ "\t" ++ show total
