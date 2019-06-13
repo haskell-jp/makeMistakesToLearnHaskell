@@ -59,7 +59,10 @@ type GithubAccessToken = String
 
 
 startApp :: IO ()
-startApp = run 8080 =<< app <$> getEnv "GITHUB_ACCESS_TOKEN"
+startApp = do
+  a <- app <$> getEnv "GITHUB_ACCESS_TOKEN"
+  p <- read <$> getEnv "PORT"
+  run p a
 
 
 app :: GithubAccessToken -> Application
