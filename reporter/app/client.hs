@@ -11,6 +11,7 @@ import           Network.HTTP.Client                                   (defaultM
 -- import           Servant.API
 import           Options.Generic                                       (ParseRecord,
                                                                         getRecord)
+import           Servant.API                                           ((:<|>) ((:<|>)))
 import           Servant.Client                                        (ClientM,
                                                                         client,
                                                                         mkClientEnv,
@@ -34,7 +35,7 @@ data Args = Args
 instance ParseRecord Args
 
 postReport :: Report -> ClientM Result
-postReport = client api
+_ :<|> postReport = client api
 
 
 main :: IO ()

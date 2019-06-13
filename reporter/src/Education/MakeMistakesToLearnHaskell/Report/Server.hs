@@ -52,7 +52,9 @@ newtype Result = Result { reportUrl :: T.Text } deriving (Eq, Show)
 $(AT.deriveJSON AT.defaultOptions ''Result)
 
 
-type API = "reports" :> ReqBody '[JSON] Report :> Post '[JSON] Result
+type API =
+  Get '[PlainText] T.Text
+    :<|> "reports" :> ReqBody '[JSON] Report :> Post '[JSON] Result
 
 
 type GithubAccessToken = String
@@ -74,7 +76,11 @@ api = Proxy
 
 
 server :: GithubAccessToken -> Server API
-server = postReport
+server tok = pong :<|> postReport tok
+
+
+pong :: Handler T.Text
+pong = return "It works!"
 
 
 postReport :: GithubAccessToken -> Report -> Handler Result
