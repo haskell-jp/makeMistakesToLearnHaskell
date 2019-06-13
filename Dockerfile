@@ -8,4 +8,4 @@ COPY ./dist/mmlh-reporter /opt/mmlh-reporter/
 
 WORKDIR /opt/mmlh-reporter/
 
-ENTRYPOINT /opt/mmlh-reporter/mmlh-reporter
+CMD /opt/mmlh-reporter/mmlh-reporter
