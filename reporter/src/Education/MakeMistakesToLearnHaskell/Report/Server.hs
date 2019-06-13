@@ -80,7 +80,7 @@ server tok = pong :<|> postReport tok
 
 
 pong :: Handler T.Text
-pong = return "It works!"
+pong = return "It works!\n"
 
 
 postReport :: GithubAccessToken -> Report -> Handler Result
