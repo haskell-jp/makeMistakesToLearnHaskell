@@ -26,10 +26,8 @@ import           GHC.Generics                                          (Generic)
 import           Network.Wai
 import           Network.Wai.Handler.Warp
 import           Servant
-import           System.Directory                                      (createDirectory,
-                                                                        doesDirectoryExist,
+import           System.Directory                                      (doesDirectoryExist,
                                                                         doesFileExist,
-                                                                        withCurrentDirectory,
                                                                         withCurrentDirectory)
 import           System.Environment                                    (getEnv)
 import qualified System.FileLock                                       as FL
@@ -87,7 +85,7 @@ postReport :: GithubAccessToken -> Report -> Handler Result
 postReport at r = liftIO $ do
   e <- doesDirectoryExist $ repositoryName ++ "/.git"
   unless e $
-    runGit_ ["clone", "--depth", "1", "--branch", "reports", repositoryUrl at]
+    runGit_ ["clone", "--depth", "1", repositoryUrl at]
 
   withCurrentDirectory repositoryName . locking $ do
     createReportCommitToGithub r
@@ -97,13 +95,11 @@ postReport at r = liftIO $ do
 
 createReportCommitToGithub :: MonadIO m => Report -> m ()
 createReportCommitToGithub r = liftIO $ do
-  dname <- show <$> U.getULID
-  createDirectory dname
-  withCurrentDirectory dname $ do
-    TI.writeFile "answer.hs" $ exerciseAnswer r
-    writeFailBy $ exerciseFailBy r
-    runGit_ ["add", "."]
-    runGit_ ["commit", "-m", "Exercise " ++ exerciseName r]
+  bname <- show <$> U.getULID
+  runGit_ ["checkout", "-b", bname]
+  TI.writeFile "answer.hs" $ exerciseAnswer r
+  writeFailBy $ exerciseFailBy r
+  runGit_ ["commit", "-am", "Exercise " ++ exerciseName r]
 
 
 writeFailBy :: Exercise.FailBy -> IO ()
