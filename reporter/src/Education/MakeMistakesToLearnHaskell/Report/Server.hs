@@ -60,37 +60,38 @@ type GithubAccessToken = String
 
 startApp :: IO ()
 startApp = do
-  a <- app <$> getEnv "GITHUB_ACCESS_TOKEN"
+  at <- getEnv "GITHUB_ACCESS_TOKEN"
   p <- read <$> getEnv "PORT"
-  run p a
+
+  runGit_ ["config", "--global", "user.email", "whosekiteneverfly+haskelljp@gmail.com"]
+  runGit_ ["config", "--global", "user.name", "Haskell-jp Bot"]
+
+  e <- doesDirectoryExist $ repositoryName ++ "/.git"
+  unless e $
+    runGit_ ["clone", "--depth", "1", repositoryUrl at]
+
+  run p app
 
 
-app :: GithubAccessToken -> Application
-app = serve api . server
+app :: Application
+app = serve api server
 
 
 api :: Proxy API
 api = Proxy
 
 
-server :: GithubAccessToken -> Server API
-server tok = pong :<|> postReport tok
+server :: Server API
+server = pong :<|> postReport
 
 
 pong :: Handler T.Text
 pong = return "It works!\n"
 
 
-postReport :: GithubAccessToken -> Report -> Handler Result
-postReport at r = liftIO $ do
-  runGit_ ["config", "--global user.email", "whosekiteneverfly+haskelljp@gmail.com"]
-  runGit_ ["config", "--global user.name", "Haskell-jp Bot"]
-
-  e <- doesDirectoryExist $ repositoryName ++ "/.git"
-  unless e $
-    runGit_ ["clone", "--depth", "1", repositoryUrl at]
-
-  withCurrentDirectory repositoryName . locking $ do
+postReport :: Report -> Handler Result
+postReport r =
+  liftIO . withCurrentDirectory repositoryName . locking $ do
     createReportCommitToGithub r
     runGit_ ["push", "-u"]
     resultFromSha <$> getHeadSha
