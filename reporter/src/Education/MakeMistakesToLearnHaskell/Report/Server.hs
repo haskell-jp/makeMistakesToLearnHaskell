@@ -101,17 +101,26 @@ createReportCommitToGithub :: MonadIO m => Report -> m ()
 createReportCommitToGithub r = liftIO $ do
   bname <- show <$> U.getULID
   runGit_ ["checkout", "-b", bname]
-  TI.writeFile "answer.hs" $ exerciseAnswer r
-  writeFailBy $ exerciseFailBy r
-  runGit_ ["commit", "-am", "Exercise " ++ exerciseName r]
+
+  let answerFile = "answer.hs"
+  TI.writeFile answerFile $ exerciseAnswer r
+  otherFiles <- writeFailBy $ exerciseFailBy r
+  runGit_ $ "add" : answerFile : otherFiles
+
+  runGit_ ["commit", "-m", "Exercise " ++ exerciseName r]
 
 
-writeFailBy :: Exercise.FailBy -> IO ()
-writeFailBy (Exercise.WrongOutput d) =
-  TI.writeFile "wrong-output.details.txt" d
+writeFailBy :: Exercise.FailBy -> IO [FilePath]
+writeFailBy (Exercise.WrongOutput d) = do
+  let file = "wrong-output.details.txt"
+  TI.writeFile file d
+  return [file]
 writeFailBy (Exercise.CommandFailed cmd dCmd dDiag) = do
-  TI.writeFile (cmd ++ ".output.txt") dCmd
-  TI.writeFile "diagnosis.txt" dDiag
+  let outputFile = cmd ++ ".output.txt"
+      diagFile = "diagnosis.txt"
+  TI.writeFile outputFile dCmd
+  TI.writeFile diagFile dDiag
+  return [outputFile, diagFile]
 
 
 getHeadSha :: MonadIO m => m T.Text
