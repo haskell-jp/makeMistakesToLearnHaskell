@@ -6,9 +6,8 @@ import           Control.Monad.IO.Class                                (liftIO)
 import qualified Data.Text.Lazy                                        as T
 import qualified Data.Text.Lazy.IO                                     as TI
 import           GHC.Generics                                          (Generic)
-import           Network.HTTP.Client                                   (defaultManagerSettings,
-                                                                        newManager)
--- import           Servant.API
+import           Network.HTTP.Client                                   (newManager)
+import           Network.HTTP.Client.TLS                               (tlsManagerSettings)
 import           Options.Generic                                       (ParseRecord,
                                                                         getRecord)
 import           Servant.API                                           ((:<|>) ((:<|>)))
@@ -40,7 +39,7 @@ _ :<|> postReport = client api
 
 main :: IO ()
 main = do
-  manager <- newManager defaultManagerSettings
+  manager <- newManager tlsManagerSettings
   args <- getRecord "Post report"
   env <- mkClientEnv manager <$> parseBaseUrl (endpoint args)
   let r = Report
