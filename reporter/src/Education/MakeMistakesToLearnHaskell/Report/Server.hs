@@ -92,16 +92,18 @@ pong = return "It works!\n"
 postReport :: Report -> Handler Result
 postReport r =
   liftIO . withCurrentDirectory repositoryName . locking $ do
+    bname <- show <$> U.getULID
+    runGit_ ["checkout", "-b", bname]
+
     createReportCommitToGithub r
+
+    runGit_ ["push", "--set-upstream", "origin", bname]
     runGit_ ["push", "-u"]
     resultFromSha <$> getHeadSha
 
 
-createReportCommitToGithub :: MonadIO m => Report -> m ()
+createReportCommitToGithub :: Report -> IO ()
 createReportCommitToGithub r = liftIO $ do
-  bname <- show <$> U.getULID
-  runGit_ ["checkout", "-b", bname]
-
   let answerFile = "answer.hs"
   TI.writeFile answerFile $ exerciseAnswer r
   otherFiles <- writeFailBy $ exerciseFailBy r
