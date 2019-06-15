@@ -83,6 +83,9 @@ pong = return "It works!\n"
 
 postReport :: GithubAccessToken -> Report -> Handler Result
 postReport at r = liftIO $ do
+  runGit_ ["config", "--global user.email", "whosekiteneverfly+haskelljp@gmail.com"]
+  runGit_ ["config", "--global user.name", "Haskell-jp Bot"]
+
   e <- doesDirectoryExist $ repositoryName ++ "/.git"
   unless e $
     runGit_ ["clone", "--depth", "1", repositoryUrl at]
