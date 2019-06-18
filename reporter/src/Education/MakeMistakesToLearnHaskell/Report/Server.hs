@@ -5,12 +5,13 @@
 {-# LANGUAGE TypeOperators     #-}
 module Education.MakeMistakesToLearnHaskell.Report.Server
     ( Report (..)
-    , Result
-    , reportUrl
+    , Result (..)
     , API
     , startApp
     , app
     , api
+
+    , startStub
     ) where
 
 import           Control.Monad                                         (unless)
@@ -73,6 +74,10 @@ startApp = do
   run p app
 
 
+startStub :: Int -> IO ()
+startStub port = run port $ serve api stubServer
+
+
 app :: Application
 app = serve api server
 
@@ -83,6 +88,18 @@ api = Proxy
 
 server :: Server API
 server = pong :<|> postReport
+
+
+stubServer :: Server API
+stubServer = stubPong :<|> stubPostReport
+
+
+stubPong :: Handler T.Text
+stubPong = return "STUB SERVER: It works!\n"
+
+
+stubPostReport :: Report -> Handler Result
+stubPostReport r = return . Result . T.pack $ show r
 
 
 pong :: Handler T.Text

@@ -42,6 +42,7 @@ library:
   dependencies:
   - base >=4.7 && <5
   - mmlh-commons
+  - mmlh-reporter
   # TODO: Decide version
   - ansi-terminal
   - QuickCheck
@@ -92,6 +93,7 @@ tests:
     dependencies:
     - base
     - makeMistakesToLearnHaskell
+    - mmlh-reporter
     - bytestring
     - directory
     - filepath

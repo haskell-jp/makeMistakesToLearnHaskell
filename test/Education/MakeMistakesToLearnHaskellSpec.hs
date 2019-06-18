@@ -4,6 +4,8 @@ module Education.MakeMistakesToLearnHaskellSpec (main, spec) where
 
 #include <test/imports/external.hs>
 
+import           Education.MakeMistakesToLearnHaskell.Report.Server (startStub)
+
 import qualified Education.MakeMistakesToLearnHaskell
 import           Education.MakeMistakesToLearnHaskell.Env
 
@@ -11,7 +13,9 @@ import           Education.MakeMistakesToLearnHaskell.Env
 -- `main` is here so that this module can be run from GHCi on its own.  It is
 -- not needed for automatic spec discovery.
 main :: IO ()
-main = hspec spec
+main = do
+  _ <- forkIO $ startStub 191821
+  hspec spec
 
 
 spec :: Spec
@@ -81,9 +85,10 @@ runMmlh args stdinDat = do
   Dir.createDirectoryIfMissing False "./tmp/"
   let env = [(homePathEnvVarName, Just "./tmp/")]
   withArgs args
-    $ withStdin stdinDat
-    $ withEnv env
-    $ captureProcessResult Education.MakeMistakesToLearnHaskell.main
+    . withStdin stdinDat
+    . withEnv env
+    . captureProcessResult
+    $ Education.MakeMistakesToLearnHaskell.mainFromReportServer "http://127.0.0.1:191821"
 
 
 includes :: ByteString'.ByteString -> ByteString'.ByteString -> Bool

@@ -1,12 +1,15 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
 module Education.MakeMistakesToLearnHaskell
-  ( main
+  ( productionMain
+  , mainFromReportServer
   ) where
 
 
 #include <imports/external.hs>
 #include <imports/io.hs>
+
+import           Education.MakeMistakesToLearnHaskell.Report.Client    (EndpointUrl)
 
 import           Education.MakeMistakesToLearnHaskell.Env
 import qualified Education.MakeMistakesToLearnHaskell.Exercise as Exercise
@@ -20,8 +23,12 @@ import           Education.MakeMistakesToLearnHaskell.Text
 import qualified Options.Applicative as Opt
 import           System.Console.ANSI
 
-main :: IO ()
-main = do
+productionMain :: IO ()
+productionMain = mainFromReportServer "https://mmlh-reporter.herokuapp.com/"
+
+mainFromReportServer :: EndpointUrl -> IO ()
+mainFromReportServer defaultHost = do
+  print defaultHost
   avoidCodingError
   args <- Env.getArgs
   if null args then
@@ -30,15 +37,17 @@ main = do
     cmd <- Opt.execParser (Opt.info (cmdParser <**> Opt.helper) Opt.idm)
     case cmd of
       (copts, Show n) ->
-        withMainEnv copts $ \e -> showExercise e n
+        withMainEnv defaultHost copts $ \e -> showExercise e n
       (copts, Verify path) ->
-        withMainEnv copts $ \e -> verifySource e path
+        withMainEnv defaultHost copts $ \e -> verifySource e path
 
 
-withMainEnv :: CommonOptions -> (Env -> IO r) -> IO r
-withMainEnv copts doAction = do
+withMainEnv :: EndpointUrl -> CommonOptions -> (Env -> IO r) -> IO r
+withMainEnv defaultHost copts doAction = do
   d <- Env.getEnv homePathEnvVarName <|> Dir.getXdgDirectory Dir.XdgData appName
   Dir.createDirectoryIfMissing True d
+
+  host <- Env.getEnv reportServerEnvVarName <|> pure defaultHost
 
   let openB =
         if enableBrowser copts
@@ -58,6 +67,7 @@ withMainEnv copts doAction = do
               , openWithBrowser = openB
               , say = Text.putStrLn
               , runGhc = Ghc.runFile e
+              , postReport = IO.postReport host
               }
     doAction e
 
