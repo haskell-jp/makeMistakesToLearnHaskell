@@ -8,12 +8,12 @@ main = go M.empty
     command <- getLine
     case parseCommand command of
         Just (Add k v) -> do
-          putStrLn $ "Adding " ++ show v ++ " to " ++ show k ++ "."
+          putStrLn ("Adding " ++ show v ++ " to " ++ show k ++ ".")
           go (M.insertWith (\v1 v2 -> v1 + v2) k v m)
         Just (Get k) -> do
           case M.lookup k m of
               Just v ->
-                putStrLn $ k ++ " => " ++ show v
+                putStrLn (k ++ " => " ++ show v)
               _ ->
                 putStrLn "Error: no item found"
           go m
