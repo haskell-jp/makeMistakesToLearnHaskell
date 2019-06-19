@@ -45,6 +45,7 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Ex13
 import Education.MakeMistakesToLearnHaskell.Exercise.Ex14
 import Education.MakeMistakesToLearnHaskell.Exercise.Ex15
 import Education.MakeMistakesToLearnHaskell.Exercise.Ex16
+import Education.MakeMistakesToLearnHaskell.Exercise.Ex16_5
 import Education.MakeMistakesToLearnHaskell.Exercise.Ex17
 import Education.MakeMistakesToLearnHaskell.Exercise.Ex18
 
@@ -67,6 +68,7 @@ exercises = map (\e -> (name e, e))
   , exercise14
   , exercise15
   , exercise16
+  , exercise16_5
   , exercise17
   , exercise18
   ]
