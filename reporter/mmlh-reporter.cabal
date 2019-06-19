@@ -1,0 +1,72 @@
+name:                mmlh-reporter
+version:             0.1.0.0
+-- synopsis:
+-- description:
+homepage:            https://github.com/haskell-jp/makeMistakesToLearnHaskell/tree/master/reporter#readme
+license:             Apache-2.0
+license-file:        LICENSE
+author:              Japan Haskell User Group
+maintainer:          Yuji Yamamoto <whosekiteneverfly@gmail.com>
+copyright:           2019 Japan Haskell User Group
+category:            Web
+build-type:          Simple
+extra-source-files:  README.md
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Education.MakeMistakesToLearnHaskell.Report.Server
+                     , Education.MakeMistakesToLearnHaskell.Report.Client
+  build-depends:       base >= 4.7 && < 5
+                     , aeson
+                     , bytestring
+                     , directory
+                     , filelock
+                     , http-client
+                     , http-client-tls
+                     , mmlh-commons
+                     , servant
+                     , servant-client
+                     , servant-server
+                     , text
+                     , typed-process
+                     , ulid
+                     , wai
+                     , warp
+  default-language:    Haskell2010
+
+executable mmlh-reporter
+  hs-source-dirs:      app
+  main-is:             server.hs
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , mmlh-reporter
+  default-language:    Haskell2010
+
+executable mmlh-reporter-test-client
+  hs-source-dirs:      app
+  main-is:             client.hs
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , mmlh-reporter
+                     , mmlh-commons
+                     , optparse-generic
+                     , text
+  default-language:    Haskell2010
+
+test-suite mmlh-reporter-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             Spec.hs
+  build-depends:       base
+                     , mmlh-reporter
+                     , hspec
+                     , hspec-wai
+                     , hspec-wai-json
+                     , aeson
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  default-language:    Haskell2010
+
+source-repository head
+  type:     git
+  location: https://github.com/haskell-jp/makeMistakesToLearnHaskell
