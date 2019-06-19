@@ -35,4 +35,4 @@ formatSummary :: Map String Integer -> String
 formatSummary summary = unlines (map formatSummaryItem (Map.toList summary))
 
 formatSummaryItem :: (String, Integer) -> String
-formatSummaryItem (cat, total) = cat ++ "\t" ++ show total
+formatSummaryItem catTotal = fst catTotal ++ "\t" ++ show (snd catTotal)
