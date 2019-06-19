@@ -46,6 +46,7 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Ex14
 import Education.MakeMistakesToLearnHaskell.Exercise.Ex15
 import Education.MakeMistakesToLearnHaskell.Exercise.Ex16
 import Education.MakeMistakesToLearnHaskell.Exercise.Ex17
+import Education.MakeMistakesToLearnHaskell.Exercise.Ex18
 
 exercises :: [(Name, Exercise)]
 exercises = map (\e -> (name e, e))
@@ -67,6 +68,7 @@ exercises = map (\e -> (name e, e))
   , exercise15
   , exercise16
   , exercise17
+  , exercise18
   ]
 
 loadHeaders :: IO [Text]
