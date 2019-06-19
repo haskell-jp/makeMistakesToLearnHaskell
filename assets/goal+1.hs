@@ -6,6 +6,7 @@
 -}
 import Data.List.Split
 import Data.Map.Strict (Map)
+import Data.Maybe (mapMaybe)
 import qualified Data.Map.Strict as Map
 import Data.Traversable (for)
 import System.Environment (getArgs)
@@ -19,7 +20,7 @@ main = do
   files <- getArgs
   entries <-
     for files $ \path ->
-      (map toTuple (parseEntries <$> readFile path))
+      map toTuple . parseEntries <$> readFile path
   let summary = Map.fromListWith (+) (concat entries)
   putStr $ formatSummry summary
 
@@ -27,7 +28,7 @@ toTuple :: Entry -> (String, Integer)
 toTuple entry = (category entry, price entry)
 
 parseEntries :: String -> [Entry]
-parseEntries s = map parseEntry (lines s)
+parseEntries s = mapMaybe parseEntry (lines s)
 
 parseEntry :: String -> Maybe Entry
 parseEntry s =
