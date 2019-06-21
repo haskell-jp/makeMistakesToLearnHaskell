@@ -28,7 +28,6 @@ productionMain = mainFromReportServer "https://mmlh-reporter.herokuapp.com/"
 
 mainFromReportServer :: EndpointUrl -> IO ()
 mainFromReportServer defaultHost = do
-  print defaultHost
   avoidCodingError
   args <- Env.getArgs
   if null args then
