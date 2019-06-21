@@ -62,7 +62,7 @@ type GithubAccessToken = String
 startApp :: IO ()
 startApp = do
   at <- getEnv "GITHUB_ACCESS_TOKEN"
-  p <- read <$> getEnv "PORT"
+  p <- read <$> getEnv "PORT" -- Apps running on Heroku must read the port number by this envvar.
 
   runGit_ ["config", "--global", "user.email", "whosekiteneverfly+haskelljp@gmail.com"]
   runGit_ ["config", "--global", "user.name", "Haskell-jp Bot"]
