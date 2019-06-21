@@ -10,16 +10,19 @@ import qualified Education.MakeMistakesToLearnHaskell
 import           Education.MakeMistakesToLearnHaskell.Env
 
 
+testServerPort :: Int
+testServerPort = 9125
+
+
 -- `main` is here so that this module can be run from GHCi on its own.  It is
 -- not needed for automatic spec discovery.
 main :: IO ()
-main = do
-  _ <- forkIO $ startStub 191821
-  hspec spec
+main = hspec spec
 
 
 spec :: Spec
-spec =
+spec = do
+  _ <- runIO . forkIO $ startStub testServerPort
   describe "mmlh verify" $ do
     it "given the correct answer of exercise 1, show SUCCESS" $ do
       void $ runMmlh ["show", "--terminal", "1"] ""
@@ -54,30 +57,31 @@ spec =
         >>= shouldExitWithMessages msgs
 
 
-    let expectedGitHubUrl n =
-          "https://github.com/haskell-jp/makeMistakesToLearnHaskell-support/issues/new?labels=support&title=Exercise%20" <> n <> "&body="
+    -- Response from the report server. The stub server actually desen't return a URL. But the production server is expected to.
+    let expectedMessage n =
+          "Open Report {exerciseName = \"" <> n <> "\", exerciseAnswer = \"\", exerciseFailBy = CommandFailed \""
 
     context "given \"y\" from stdin" $ do
       it "given a not-compilable answer of exercise 5, show FAIL with the URL to submit an issue to haskell-jp/" $ do
         void $ runMmlh ["show", "--terminal", "5"] ""
         runMmlh ["verify", "--terminal", "test/assets/common/empty.hs"] "y\n"
-          >>= shouldExitWithMessages [expectedGitHubUrl "5"]
+          >>= shouldExitWithMessages [expectedMessage "5"]
 
-      it "given a not-compilable answer of exercise 6, show FAIL" $ do
+      it "given a not-compilable answer of exercise 6, show FAIL with the URL to submit an issue to haskell-jp/" $ do
         void $ runMmlh ["show", "--terminal", "6"] ""
         runMmlh ["verify", "--terminal", "test/assets/common/empty.hs"] "y\n"
-          >>= shouldExitWithMessages [expectedGitHubUrl "6"]
+          >>= shouldExitWithMessages [expectedMessage "6"]
 
     context "given nothing from stdin" $ do
       it "given a not-compilable answer of exercise 5, show FAIL without any URL to GitHub." $ do
         void $ runMmlh ["show", "--terminal", "5"] ""
         runMmlh ["verify", "--terminal", "test/assets/common/empty.hs"] ""
-          >>= shouldNotExitWithMessages [expectedGitHubUrl "5"]
+          >>= shouldNotExitWithMessages ["Open Report"]
 
       it "given a not-compilable answer of exercise 6, show FAIL without any URL to GitHub." $ do
         void $ runMmlh ["show", "--terminal", "6"] ""
         runMmlh ["verify", "--terminal", "test/assets/common/empty.hs"] ""
-          >>= shouldNotExitWithMessages [expectedGitHubUrl "6"]
+          >>= shouldNotExitWithMessages ["Open Report"]
 
 
 runMmlh :: [String] -> ByteString'.ByteString -> IO ProcessResult
@@ -88,7 +92,8 @@ runMmlh args stdinDat = do
     . withStdin stdinDat
     . withEnv env
     . captureProcessResult
-    $ Education.MakeMistakesToLearnHaskell.mainFromReportServer "http://127.0.0.1:191821"
+    . Education.MakeMistakesToLearnHaskell.mainFromReportServer
+    $ "http://localhost:" ++ show testServerPort
 
 
 includes :: ByteString'.ByteString -> ByteString'.ByteString -> Bool
