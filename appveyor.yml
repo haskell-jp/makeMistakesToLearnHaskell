@@ -26,7 +26,7 @@ cache:
 - "c:\\sr"
 
 test_script:
-- chcp 932
+- chcp 65001
 - stack setup > nul
 # The ugly echo "" hack is to avoid complaints about 0 being an invalid file
 # descriptor
