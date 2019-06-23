@@ -27,10 +27,8 @@ cache:
 - "c:\\sr"
 
 test_script:
-- chcp 65001
-- stack setup > nul
-- stack build --jobs 1 zlib
 - chcp 932
+- stack setup > nul
 # The ugly echo "" hack is to avoid complaints about 0 being an invalid file
 # descriptor
-- echo "" | stack --no-terminal test --jobs 1 --pedantic
+- echo "" | stack --no-interleaved-output --no-terminal test --jobs 1 --pedantic
