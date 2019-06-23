@@ -7,6 +7,7 @@ module Education.MakeMistakesToLearnHaskell.Env
   , defaultRunHaskellParameters
   , appName
   , homePathEnvVarName
+  , reportServerEnvVarName
   , avoidCodingError
   )
 where
@@ -14,6 +15,7 @@ where
 #include <imports/external.hs>
 #include <imports/io.hs>
 
+import           Education.MakeMistakesToLearnHaskell.Report.Client    (Report, Result(Result), ReportClientError)
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 
 data CommandParameters = CommandParameters
@@ -33,6 +35,7 @@ data Env = Env
   , openWithBrowser :: Text -> IO Bool
   , say :: Text -> IO ()
   , envQcMaxSuccessSize :: Int
+  , postReport :: Report -> IO (Either ReportClientError Result)
   }
 
 defaultEnv :: Env
@@ -47,6 +50,9 @@ defaultEnv = Env
       \url -> Text.putStrLn ("default Env.openWithBrowser: " <> url) >> return True
   , say = Text.putStrLn
   , envQcMaxSuccessSize = 20
+  , postReport = \r -> do
+      putStrLn $ "default postReport: " ++ show r
+      return . Right $ Result "http://example.com/mmlh-reporter-example"
   }
 
 appName :: String
@@ -55,6 +61,10 @@ appName = "mmlh"
 
 homePathEnvVarName :: String
 homePathEnvVarName = "MAKE_MISTAKES_TO_LEARN_HASKELL_HOME"
+
+
+reportServerEnvVarName :: String
+reportServerEnvVarName = "MAKE_MISTAKES_TO_LEARN_HASKELL_REPORT_SERVER"
 
 avoidCodingError :: IO ()
 #ifdef mingw32_HOST_OS

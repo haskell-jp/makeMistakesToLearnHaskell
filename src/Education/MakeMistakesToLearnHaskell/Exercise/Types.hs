@@ -1,9 +1,16 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
-module Education.MakeMistakesToLearnHaskell.Exercise.Types where
+module Education.MakeMistakesToLearnHaskell.Exercise.Types
+  ( module Education.MakeMistakesToLearnHaskell.Commons.Exercise
+  , Exercise (..)
+  , Result (..)
+  , Record (..)
+  , Diagnosis
+  ) where
 
 #include <imports/external.hs>
 
+import           Education.MakeMistakesToLearnHaskell.Commons.Exercise
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 import           Education.MakeMistakesToLearnHaskell.Env
 
@@ -27,22 +34,8 @@ data Result =
   | NotYetImplemented
   deriving (Eq, Show)
 
-data FailBy =
-    WrongOutput !Details
-  | CommandFailed
-      String   -- ^ Command name
-      !Details -- ^ Output by command
-      !Details -- ^ Diagnosis message
-  deriving (Eq, Show)
-
 newtype Record = Record
   { lastShownName :: Name
   } deriving (Show, Read)
-
-type Details = Text
-
-type SourceCode = Text
-
-type Name = String
 
 type Diagnosis = SourceCode -> Details -> Details

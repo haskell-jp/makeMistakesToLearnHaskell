@@ -1,8 +1,9 @@
 .stack-work/
 cabal-helper*.build
 /tmp/
+/dist/
 
 *.exe
 *.o
 *.hi
-*.cabal
+/makeMistakesToLearnHaskell.cabal
