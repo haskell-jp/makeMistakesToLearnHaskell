@@ -29,7 +29,7 @@ cache:
 test_script:
 - chcp 65001
 - stack setup > nul
-- stack build --jobs zlib
+- stack build --jobs 1 zlib
 - chcp 932
 # The ugly echo "" hack is to avoid complaints about 0 being an invalid file
 # descriptor
