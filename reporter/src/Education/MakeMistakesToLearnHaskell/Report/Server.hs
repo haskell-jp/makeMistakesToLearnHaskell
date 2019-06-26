@@ -135,13 +135,13 @@ createReportCommitToGithub r = liftIO $ do
 writeFailBy :: Exercise.FailBy -> IO [FilePath]
 writeFailBy (Exercise.WrongOutput d) = do
   let file = "wrong-output.details.txt"
-  TI.writefile file d
+  TI.writeFile file d
   return [file]
 writeFailBy (Exercise.CommandFailed cmd dCmd dDiag) = do
   let outputFile = cmd ++ ".output.txt"
       diagFile = "diagnosis.txt"
-  TI.writefile outputFile dCmd
-  TI.writefile diagFile dDiag
+  TI.writeFile outputFile dCmd
+  TI.writeFile diagFile dDiag
   return [outputFile, diagFile]
 
 
@@ -161,7 +161,7 @@ locking act = handle (\e -> print (e :: SomeException) >> throwIO e) $ do
 
 
 resultFromSha :: T.Text -> Result
-resultFromSha = Result . ("https://github.com/haskell-jp-bot/makeMistakesToLearnHaskell-support/commit/" <>)
+resultFromSha = Result . ("https://github.com/haskell-jp/makeMistakesToLearnHaskell-support/commit/" <>)
 
 
 runGit_ :: MonadIO m => [String] -> m ()
@@ -174,4 +174,4 @@ repositoryName = "makeMistakesToLearnHaskell-support"
 
 repositoryUrl :: GithubAccessToken -> String
 repositoryUrl at =
-  "https://haskell-jp-bot:" ++ at ++ "@github.com/haskell-jp-bot/" ++ repositoryName ++ ".git"
+  "https://haskell-jp-bot:" ++ at ++ "@github.com/haskell-jp/" ++ repositoryName ++ ".git"
