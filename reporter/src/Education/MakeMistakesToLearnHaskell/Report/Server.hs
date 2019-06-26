@@ -149,7 +149,7 @@ getHeadSha :: MonadIO m => m T.Text
 getHeadSha = do
   (out, err) <- P.readProcess_ $ P.proc "git" ["rev-parse", "HEAD"]
   liftIO $ B.putStr err
-  return $ TE.decodeUtf8 out
+  return . T.strip $ TE.decodeUtf8 out
 
 
 locking :: IO a -> IO a
