@@ -14,6 +14,9 @@ module Education.MakeMistakesToLearnHaskell.Report.Server
     , startStub
     ) where
 
+import           Control.Exception                                     (SomeException,
+                                                                        handle,
+                                                                        throwIO)
 import           Control.Monad                                         (unless)
 import           Control.Monad.IO.Class                                (MonadIO,
                                                                         liftIO)
@@ -132,13 +135,13 @@ createReportCommitToGithub r = liftIO $ do
 writeFailBy :: Exercise.FailBy -> IO [FilePath]
 writeFailBy (Exercise.WrongOutput d) = do
   let file = "wrong-output.details.txt"
-  TI.writeFile file d
+  TI.writefile file d
   return [file]
 writeFailBy (Exercise.CommandFailed cmd dCmd dDiag) = do
   let outputFile = cmd ++ ".output.txt"
       diagFile = "diagnosis.txt"
-  TI.writeFile outputFile dCmd
-  TI.writeFile diagFile dDiag
+  TI.writefile outputFile dCmd
+  TI.writefile diagFile dDiag
   return [outputFile, diagFile]
 
 
@@ -150,7 +153,7 @@ getHeadSha = do
 
 
 locking :: IO a -> IO a
-locking act = do
+locking act = handle (\e -> print (e :: SomeException) >> throwIO e) $ do
   let lockFile = ".mmlh-report-server.lock"
   e <- doesFileExist lockFile
   unless e $ writeFile lockFile ""
