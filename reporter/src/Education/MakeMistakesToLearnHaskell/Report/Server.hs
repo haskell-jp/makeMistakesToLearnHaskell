@@ -26,6 +26,7 @@ import qualified Data.Text.Lazy                                        as T
 import qualified Data.Text.Lazy.Encoding                               as TE
 import qualified Data.Text.Lazy.IO                                     as TI
 import qualified Data.ULID                                             as U
+import           Data.String.AnsiEscapeCodes.Strip.Text.Lazy           (stripAnsiEscapeCodes)
 import           GHC.Generics                                          (Generic)
 import           Network.Wai
 import           Network.Wai.Handler.Warp
@@ -125,7 +126,7 @@ postReport r =
 createReportCommitToGithub :: Report -> IO ()
 createReportCommitToGithub r = liftIO $ do
   let answerFile = "answer.hs"
-  TI.writeFile answerFile $ exerciseAnswer r
+  TI.writeFile answerFile . stripAnsiEscapeCodes $ exerciseAnswer r
   otherFiles <- writeFailBy $ exerciseFailBy r
   runGit_ $ "add" : answerFile : otherFiles
 
@@ -140,8 +141,8 @@ writeFailBy (Exercise.WrongOutput d) = do
 writeFailBy (Exercise.CommandFailed cmd dCmd dDiag) = do
   let outputFile = cmd ++ ".output.txt"
       diagFile = "diagnosis.txt"
-  TI.writeFile outputFile dCmd
-  TI.writeFile diagFile dDiag
+  TI.writeFile outputFile $ stripAnsiEscapeCodes dCmd
+  TI.writeFile diagFile $ stripAnsiEscapeCodes dDiag
   return [outputFile, diagFile]
 
 
