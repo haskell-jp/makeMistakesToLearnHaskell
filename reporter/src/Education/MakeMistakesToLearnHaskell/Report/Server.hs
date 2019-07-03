@@ -14,6 +14,9 @@ module Education.MakeMistakesToLearnHaskell.Report.Server
     , startStub
     ) where
 
+import           Control.Exception                                     (SomeException,
+                                                                        handle,
+                                                                        throwIO)
 import           Control.Monad                                         (unless)
 import           Control.Monad.IO.Class                                (MonadIO,
                                                                         liftIO)
@@ -23,6 +26,7 @@ import qualified Data.Text.Lazy                                        as T
 import qualified Data.Text.Lazy.Encoding                               as TE
 import qualified Data.Text.Lazy.IO                                     as TI
 import qualified Data.ULID                                             as U
+import           Data.String.AnsiEscapeCodes.Strip.Text.Lazy           (stripAnsiEscapeCodes)
 import           GHC.Generics                                          (Generic)
 import           Network.Wai
 import           Network.Wai.Handler.Warp
@@ -122,7 +126,7 @@ postReport r =
 createReportCommitToGithub :: Report -> IO ()
 createReportCommitToGithub r = liftIO $ do
   let answerFile = "answer.hs"
-  TI.writeFile answerFile $ exerciseAnswer r
+  TI.writeFile answerFile . stripAnsiEscapeCodes $ exerciseAnswer r
   otherFiles <- writeFailBy $ exerciseFailBy r
   runGit_ $ "add" : answerFile : otherFiles
 
@@ -137,8 +141,8 @@ writeFailBy (Exercise.WrongOutput d) = do
 writeFailBy (Exercise.CommandFailed cmd dCmd dDiag) = do
   let outputFile = cmd ++ ".output.txt"
       diagFile = "diagnosis.txt"
-  TI.writeFile outputFile dCmd
-  TI.writeFile diagFile dDiag
+  TI.writeFile outputFile $ stripAnsiEscapeCodes dCmd
+  TI.writeFile diagFile $ stripAnsiEscapeCodes dDiag
   return [outputFile, diagFile]
 
 
@@ -146,11 +150,11 @@ getHeadSha :: MonadIO m => m T.Text
 getHeadSha = do
   (out, err) <- P.readProcess_ $ P.proc "git" ["rev-parse", "HEAD"]
   liftIO $ B.putStr err
-  return $ TE.decodeUtf8 out
+  return . T.strip $ TE.decodeUtf8 out
 
 
 locking :: IO a -> IO a
-locking act = do
+locking act = handle (\e -> print (e :: SomeException) >> throwIO e) $ do
   let lockFile = ".mmlh-report-server.lock"
   e <- doesFileExist lockFile
   unless e $ writeFile lockFile ""
@@ -158,7 +162,7 @@ locking act = do
 
 
 resultFromSha :: T.Text -> Result
-resultFromSha = Result . ("https://github.com/haskell-jp-bot/makeMistakesToLearnHaskell-support/commit/" <>)
+resultFromSha = Result . ("https://github.com/haskell-jp/makeMistakesToLearnHaskell-support/commit/" <>)
 
 
 runGit_ :: MonadIO m => [String] -> m ()
@@ -171,4 +175,4 @@ repositoryName = "makeMistakesToLearnHaskell-support"
 
 repositoryUrl :: GithubAccessToken -> String
 repositoryUrl at =
-  "https://haskell-jp-bot:" ++ at ++ "@github.com/haskell-jp-bot/" ++ repositoryName ++ ".git"
+  "https://haskell-jp-bot:" ++ at ++ "@github.com/haskell-jp/" ++ repositoryName ++ ".git"

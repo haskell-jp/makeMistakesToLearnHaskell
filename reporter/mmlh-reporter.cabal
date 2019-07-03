@@ -28,6 +28,7 @@ library
                      , servant
                      , servant-client
                      , servant-server
+                     , strip-ansi-escape
                      , text
                      , typed-process
                      , ulid

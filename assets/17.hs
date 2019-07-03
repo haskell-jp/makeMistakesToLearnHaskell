@@ -19,7 +19,7 @@ main = go M.empty
           go m
         Just Quit ->
           putStrLn "Bye."
-        _ -> do
+        Nothing -> do
           putStrLn "Error: Invalid Command"
           go m
 
@@ -34,7 +34,7 @@ parseCommand s =
       ["add", k, mv] ->
         case readMaybe mv of
             Just v -> Just (Add k v)
-            _ -> Nothing
+            Nothing -> Nothing
       ["get", k] -> Just (Get k)
       ["quit"] -> Just Quit
       _ -> Nothing
