@@ -68,12 +68,12 @@ startApp = do
   at <- getEnv "GITHUB_ACCESS_TOKEN"
   p <- read <$> getEnv "PORT" -- Apps running on Heroku must read the port number by this envvar.
 
-  runGit_ ["config", "--global", "user.email", "whosekiteneverfly+haskelljp@gmail.com"]
-  runGit_ ["config", "--global", "user.name", "Haskell-jp Bot"]
-
   e <- doesDirectoryExist $ repositoryName ++ "/.git"
-  unless e $
+  unless e $ do
     runGit_ ["clone", "--depth", "1", repositoryUrl at]
+    withCurrentDirectory repositoryName $ do
+      runGit_ ["config", "user.email", "whosekiteneverfly+haskelljp@gmail.com"]
+      runGit_ ["config", "user.name", "Haskell-jp Bot"]
 
   run p app
 
