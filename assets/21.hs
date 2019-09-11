@@ -1,33 +1,26 @@
 import qualified Data.Map.Strict    as M
 import           System.Environment (getArgs)
 
-data Result = Result
-  { fruit       :: String
-  , birthday    :: String
-  , mailAddress :: String
-  , prefecture  :: String
-  }
-
 fruitDictionary :: M.Map String String
 fruitDictionary = M.fromList
-  [ ("aki"      , "りんご")
-  , ("asami"    , "みかん")
-  , ("ouga"     , "バナナ")
-  , ("kazuyo"   , "桃")
-  , ("kazuo"    , "ブドウ")
-  , ("kimiko"   , "りんご")
-  , ("ken"      , "柿")
-  , ("saki"     , "パイナップル")
-  , ("shunsuke" , "ブドウ")
-  , ("sousuke"  , "梨")
-  , ("teppei"   , "ライチ")
-  , ("natsumi"  , "みかん")
-  , ("masashi"  , "桃")
-  , ("meibi"    , "メロン")
-  , ("yu"       , "グレープフルーツ")
-  , ("yuji"     , "りんご")
-  , ("yoshimasa", "バナナ")
-  , ("rio"      , "バナナ")
+  [ ("aki"      , "apple")
+  , ("asami"    , "orange")
+  , ("ouga"     , "banana")
+  , ("kazuyo"   , "peach")
+  , ("kazuo"    , "grape")
+  , ("kimiko"   , "apple")
+  , ("ken"      , "kaki")
+  , ("saki"     , "pineapple")
+  , ("shunsuke" , "grape")
+  , ("sousuke"  , "pear")
+  , ("teppei"   , "liche")
+  , ("natsumi"  , "orange")
+  , ("masashi"  , "peach")
+  , ("meibi"    , "melon")
+  , ("yu"       , "grape fruit")
+  , ("yuji"     , "apple")
+  , ("yoshimasa", "banana")
+  , ("rio"      , "banana")
   ]
 
 birthdayDictionary :: M.Map String String
@@ -75,24 +68,24 @@ mailAddressDictionary = M.fromList
 
 prefectureDictionary :: M.Map String String
 prefectureDictionary = M.fromList
-  [ ("aki"      , "福岡県")
-  , ("asami"    , "茨城県")
-  , ("ouga"     , "栃木県")
-  , ("kazuyo"   , "神奈川県")
-  , ("kazuo"    , "神奈川県")
-  , ("kimiaki"  , "岡山県")
-  , ("kimiko"   , "群馬県")
-  , ("ken"      , "福岡県")
-  , ("saki"     , "福井県")
-  , ("shunsuke" , "栃木県")
-  , ("sousuke"  , "和歌山県")
-  , ("teppei"   , "神奈川県")
-  , ("natsumi"  , "栃木県")
-  , ("masashi"  , "青森県")
-  , ("meibi"    , "栃木県")
-  , ("yu"       , "東京都")
-  , ("yoshimasa", "三重県")
-  , ("rio"      , "北海道")
+  [ ("aki"      , "Fukuoka")
+  , ("asami"    , "Ibaraki")
+  , ("ouga"     , "Tochigi")
+  , ("kazuyo"   , "Kanagawa")
+  , ("kazuo"    , "Kanagawa")
+  , ("kimiaki"  , "Okayama")
+  , ("kimiko"   , "Gunma")
+  , ("ken"      , "Fukuoka")
+  , ("saki"     , "Fukui")
+  , ("shunsuke" , "Tochigi")
+  , ("sousuke"  , "Wakayama")
+  , ("teppei"   , "Kanagawa")
+  , ("natsumi"  , "Tochigi")
+  , ("masashi"  , "Aomori")
+  , ("meibi"    , "Tochigi")
+  , ("yu"       , "Tokyo")
+  , ("yoshimasa", "Mie")
+  , ("rio"      , "Hokkaido")
   ]
 
 main :: IO ()
@@ -100,17 +93,20 @@ main = do
   args <- getArgs
   case args of
       [name] -> do
-        let mfavs = Result
+        let mResult = formatResult
               <$> M.lookup name fruitDictionary
               <*> M.lookup name birthdayDictionary
               <*> M.lookup name mailAddressDictionary
               <*> M.lookup name prefectureDictionary
-        case mfavs of
-            Just favs -> do
-              putStrLn $ "fruit: " ++ fruit favs
-              putStrLn $ "birthday: " ++ birthday favs
-              putStrLn $ "mailAddress: " ++ mailAddress favs
-              putStrLn $ "prefecture: " ++ prefecture favs
-            Nothing ->
-              putStrLn "Not found. He/She might be shy."
-      _ -> error $  "Invalid arguments: " ++ show args
+        case mResult of
+            Just result -> putStr result
+            Nothing     -> putStrLn "Not found. He/She might be shy."
+      _ -> error $ "Invalid arguments: " ++ show args
+
+formatResult :: String -> String -> String -> String -> String
+formatResult fruit birthday mailAddress prefecture = unlines
+  [ "fruit: " ++ fruit
+  , "birthday: " ++ birthday
+  , "mailAddress: " ++ mailAddress
+  , "prefecture: " ++ prefecture
+  ]
