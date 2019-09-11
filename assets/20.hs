@@ -1,7 +1,11 @@
 main :: IO ()
 main =
-  print =<< (yearlyRate <$> (read <$> getLine) <*> (read <$> getLine) <*> (read <$> getLine))
-
+  print =<<
+    ( yearlyRate
+        <$> (read <$> getLine)
+        <*> (read <$> getLine)
+        <*> (read <$> getLine)
+    )
 
 -- https://support.microsoft.com/ja-jp/help/141695/xl-how-to-calculate-compound-interest
 yearlyRate :: Double -> Double -> Integer -> Double
