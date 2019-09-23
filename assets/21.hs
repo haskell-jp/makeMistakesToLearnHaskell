@@ -71,7 +71,6 @@ prefectureDictionary = M.fromList
   [ ("aki"      , "Fukuoka")
   , ("asami"    , "Ibaraki")
   , ("ouga"     , "Tochigi")
-  , ("kazuyo"   , "Kanagawa")
   , ("kazuo"    , "Kanagawa")
   , ("kimiaki"  , "Okayama")
   , ("kimiko"   , "Gunma")
