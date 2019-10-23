@@ -33,12 +33,13 @@ mainFromReportServer defaultHost = do
   if null args then
     printExerciseList
   else do
-    cmd <- Opt.execParser (Opt.info (cmdParser <**> Opt.helper) Opt.idm)
-    case cmd of
-      (copts, Show n) ->
-        withMainEnv defaultHost copts $ \e -> showExercise e n
-      (copts, Verify path) ->
-        withMainEnv defaultHost copts $ \e -> verifySource e path
+    (copts, cmd) <- Opt.execParser (Opt.info (cmdParser <**> Opt.helper) Opt.idm)
+    withMainEnv defaultHost copts $ \e ->
+      case cmd of
+        Show n ->
+          showExercise e n
+        Verify path ->
+          verifySource e path
 
 
 withMainEnv :: EndpointUrl -> CommonOptions -> (Env -> IO r) -> IO r
