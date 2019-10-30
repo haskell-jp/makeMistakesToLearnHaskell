@@ -36,3 +36,24 @@
     - Record of Functionsというテクニックを使って定義。ファイルへの書き込みを伴う関数など、テスト時に実行したくない関数を差し替えられるように定義した型。
     - Javaの文化圏で言うとDIコンテナーが近い
 - `withMainEnv`関数の中身を読んでいるところ。`Env`型の値を定義する箇所を読み始めるところまで
+
+# 2019/10/30 社内コードリーディング勉強会の記録
+
+## 読んだ・解説した箇所
+
+- Education.MakeMistakesToLearnHaskell.Env:
+    - `CommandParameters`型の`!`:
+        - <https://github.com/takenobu-hs/haskell-symbol-search-cheatsheet>
+        - Haskellの記号関数以外で `!` が出てきたら、「正格評価絡み」
+- 例外の定義の仕方
+    - `Exception`型クラスのインスタンスにする
+- 掘った関数
+    - `Education.MakeMistakesToLearnHaskell.productionMain`
+        - `mainFromReportServer`
+            - `withMainEnv`
+                - `Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell.runFile`
+                    - `Education.MakeMistakesToLearnHaskell.Evaluator.Types.CommandParameters`
+                    - `Education.MakeMistakesToLearnHaskell.Evaluator.Types.CommandError`
+                    - `Education.MakeMistakesToLearnHaskell.Evaluator.Command.resolveHaskellProcessor`
+                    - `Education.MakeMistakesToLearnHaskell.Evaluator.Command.runFileWith`
+                - `Education.MakeMistakesToLearnHaskell.Evaluator.Ghc.runFile`

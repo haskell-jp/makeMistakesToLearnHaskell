@@ -13,7 +13,7 @@ import           Education.MakeMistakesToLearnHaskell.Env
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 
 
-runFileWith :: String -> [String] -> Env -> CommandParameters -> IO (Either CommandError (ByteString, ByteString))
+runFileWith :: CommandName -> [String] -> Env -> CommandParameters -> IO (Either CommandError (ByteString, ByteString))
 runFileWith cname [] _e _rhp = return . Left $ CommandNotFound cname
 runFileWith cname (actualCommand : initialArgs) e rhp = do
   let prc =
@@ -26,7 +26,7 @@ runFileWith cname (actualCommand : initialArgs) e rhp = do
       ExitFailure i -> Left $ CommandFailure cname i err
 
 
-resolveHaskellProcessor :: String -> [String] -> IO [String]
+resolveHaskellProcessor :: CommandName -> [String] -> IO [String]
 resolveHaskellProcessor cname options = do
   stack <- Dir.findExecutable "stack"
   case stack of

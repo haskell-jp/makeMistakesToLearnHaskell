@@ -3,6 +3,7 @@
 module Education.MakeMistakesToLearnHaskell.Evaluator.Types
   ( ErrorCode
   , ErrorMessage
+  , CommandName
   , CommandError(..)
   , SingleArgFunApp(..)
   , HasParens(..)
@@ -12,12 +13,13 @@ module Education.MakeMistakesToLearnHaskell.Evaluator.Types
 #include <imports/external.hs>
 
 
+type CommandName = String
 type ErrorCode = Int
 type ErrorMessage = ByteString
 
 
 data CommandError =
-  CommandNotFound String | CommandFailure String ErrorCode ErrorMessage deriving (Show, Typeable)
+  CommandNotFound CommandName | CommandFailure CommandName ErrorCode ErrorMessage deriving (Show, Typeable)
 
 instance Exception CommandError
 
