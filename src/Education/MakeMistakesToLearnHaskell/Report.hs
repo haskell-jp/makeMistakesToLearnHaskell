@@ -24,6 +24,6 @@ printUrlIfAsked e name code fb = do
           _ <- openWithBrowser e url
           say e $ "Open " <> url <> " with your browser!"
         Left err -> do
-          putStrLn "[WARN] Error when filing an issue at haskell-jp/makeMistakesToLearnHaskell-support."
-          putStrLn "[WARN] This can be a bug. Please report at https://github.com/haskell-jp/makeMistakesToLearnHaskell/issues with the error message below:"
-          print err
+          say e "[WARN] Error when filing an issue at haskell-jp/makeMistakesToLearnHaskell-support."
+          say e "[WARN] This can be a bug. Please report at https://github.com/haskell-jp/makeMistakesToLearnHaskell/issues with the error message below:"
+          say e . Text.pack $ show err

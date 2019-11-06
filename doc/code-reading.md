@@ -45,6 +45,7 @@
     - `CommandParameters`型の`!`:
         - <https://github.com/takenobu-hs/haskell-symbol-search-cheatsheet>
         - Haskellの記号関数以外で `!` が出てきたら、「正格評価絡み」
+            - 記号関数でも`!`がつくものは正格評価をするためのものであることが多い
 - 例外の定義の仕方
     - `Exception`型クラスのインスタンスにする
 - 掘った関数
@@ -57,3 +58,22 @@
                     - `Education.MakeMistakesToLearnHaskell.Evaluator.Command.resolveHaskellProcessor`
                     - `Education.MakeMistakesToLearnHaskell.Evaluator.Command.runFileWith`
                 - `Education.MakeMistakesToLearnHaskell.Evaluator.Ghc.runFile`
+
+# 2019/11/06 社内コードリーディング勉強会の記録
+
+## 読んだ・解説した箇所
+
+- ガード構文・if式
+    - 参考: <https://kazu-yamamoto.hatenablog.jp/entry/20110826/1314352340>
+    - パターンマッチにおけるパターンと、`->`や`=`の間に `|` を置くと書けるBool式
+    - GHC 8.6.5では、ガード構文に余計なケースを書いても警告が出ないらしい。でるべきでは？
+- 掘った関数
+    - ...
+        - `Education.MakeMistakesToLearnHaskell.withMainEnv`
+            - ...
+                - `Education.MakeMistakesToLearnHaskell.Evaluator.Command.runFileWith`
+                    - `Education.MakeMistakesToLearnHaskell.Evaluator.Command.fixingCodePage`
+- 質問
+    - `confirm`関数はわざわざDIするほどのものでもないような？
+        - 原則として`Education.MakeMistakesToLearnHaskell`モジュールにある関数以外は直接入出力を行うようなことをしない、という方針で作っているため、`Education.MakeMistakesToLearnHaskell.Report.printUrlIfAsked`から呼ばれる`confirm`関数も例に漏れず、直接入出力しないバージョンも作れるよう、DIできるようにしました。  
+          と、いいつつ今日の修正のとおり`printUrlIfAsked`でもちゃっかり`putStrLn`や`print`を呼んでましたし、YAGNIと言われればYAGNIな感もありますが...

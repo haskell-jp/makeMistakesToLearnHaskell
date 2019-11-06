@@ -45,19 +45,28 @@ fixingCodePage e action = do
   logDebug e $ "Fixing ConsoleOutputCP from " <> ByteString.pack (show cpOutSave)
 
   let utf8 = 65001
-      setInput = cpInSave /= utf8
-      setOutput = cpOutSave /= utf8
-      fixingInput
-        | setInput = bracket_
-            (Win32.setConsoleCP utf8)
-            (Win32.setConsoleCP cpInSave)
-        | otherwise = id
-      fixingOutput
-        | setOutput = bracket_
+
+      fixingInput act =
+        if cpInSave /= utf8
+          then
+            bracket_
+              (Win32.setConsoleCP utf8)
+              (Win32.setConsoleCP cpInSave)
+              act
+          else
+            act
+
+      fixingOutput act =
+        if cpOutSave /= utf8
+          then
+            bracket_
               (Win32.setConsoleOutputCP utf8)
               (Win32.setConsoleOutputCP cpOutSave)
-        | otherwise = id
+              act
+          else
+            act
+
   fixingInput $ fixingOutput action
 #else
-fixingCodePage _ = id
+fixingCodePage _ action = action
 #endif
