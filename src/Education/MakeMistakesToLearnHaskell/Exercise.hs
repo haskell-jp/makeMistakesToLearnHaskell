@@ -53,8 +53,8 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Ex20
 import Education.MakeMistakesToLearnHaskell.Exercise.Ex21
 import Education.MakeMistakesToLearnHaskell.Exercise.Ex22
 
-exercises :: [(Name, Exercise)]
-exercises = map (\e -> (name e, e))
+exercises :: [Exercise]
+exercises =
   [ exercise1
   , exercise2
   , exercise2_5
@@ -82,7 +82,7 @@ exercises = map (\e -> (name e, e))
   ]
 
 loadHeaders :: IO [Text]
-loadHeaders = mapM (loadHeader . snd) exercises
+loadHeaders = mapM loadHeader exercises
   where
     loadHeader ex = extractHeader ex =<< loadDescription ex
 
@@ -126,7 +126,7 @@ loadLastShown e =
 
 
 getByName :: Name -> Maybe Exercise
-getByName n = lookup n exercises
+getByName n = List.find ((== n) . name) exercises
 
 
 unsafeGetByName :: Name -> Exercise

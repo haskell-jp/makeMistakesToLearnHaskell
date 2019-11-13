@@ -63,7 +63,7 @@
 
 ## 読んだ・解説した箇所
 
-- ガード構文・if式
+- ガード構文・if式: TODO: 別途課題を設けよう
     - 参考: <https://kazu-yamamoto.hatenablog.jp/entry/20110826/1314352340>
     - パターンマッチにおけるパターンと、`->`や`=`の間に `|` を置くと書けるBool式
     - GHC 8.6.5では、ガード構文に余計なケースを書いても警告が出ないらしい。でるべきでは？
@@ -77,3 +77,21 @@
     - `confirm`関数はわざわざDIするほどのものでもないような？
         - 原則として`Education.MakeMistakesToLearnHaskell`モジュールにある関数以外は直接入出力を行うようなことをしない、という方針で作っているため、`Education.MakeMistakesToLearnHaskell.Report.printUrlIfAsked`から呼ばれる`confirm`関数も例に漏れず、直接入出力しないバージョンも作れるよう、DIできるようにしました。  
           と、いいつつ今日の修正のとおり`printUrlIfAsked`でもちゃっかり`putStrLn`や`print`を呼んでましたし、YAGNIと言われればYAGNIな感もありますが...
+
+# 2019/11/13 社内コードリーディング勉強会の記録
+
+- `const`関数
+- `liftIO`関数
+- `stack.yaml`に管理したいパッケージを複数書けるので、それを利用してcommonsパッケージとreporterパッケージを別のパッケージとしてまとめて管理している
+- 掘った関数
+    - ...
+        - `Education.MakeMistakesToLearnHaskell.mainFromReporter`
+            - `Education.MakeMistakesToLearnHaskell.withMainEnv`
+                - `Education.MakeMistakesToLearnHaskell.Report.Client.postReport`（詳細は触れず）
+            - `Education.MakeMistakesToLearnHaskell.showExercise`
+                - `Education.MakeMistakesToLearnHaskell.Exercise.loadDescriptionByName`
+                    - `Education.MakeMistakesToLearnHaskell.Exercise.loadDescription`
+                        - `Education.MakeMistakesToLearnHaskell.Exercise.loadDescription`
+                            - `Education.MakeMistakesToLearnHaskell.Exercise.loadWithExtension`
+                                - `Education.MakeMistakesToLearnHaskell.Text.IO.readUtf8File`
+                - `Education.MakeMistakesToLearnHaskell.Error.dieWhenNothing`
