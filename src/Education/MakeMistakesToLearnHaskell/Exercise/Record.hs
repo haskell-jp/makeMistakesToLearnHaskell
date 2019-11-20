@@ -32,7 +32,7 @@ prepareRecordFilePath :: Env -> IO FilePath
 prepareRecordFilePath e = do
   let d = appHomePath e </> dirName
   Dir.createDirectoryIfMissing True d
-  return $ d </> "record.yaml"
+  return $ d </> "record.txt"
 
 
 dirName :: FilePath

@@ -95,3 +95,18 @@
                             - `Education.MakeMistakesToLearnHaskell.Exercise.loadWithExtension`
                                 - `Education.MakeMistakesToLearnHaskell.Text.IO.readUtf8File`
                 - `Education.MakeMistakesToLearnHaskell.Error.dieWhenNothing`
+
+# 2019/11/20 社内コードリーディング勉強会の記録
+
+- `</>`: パスをくっつける演算子
+- `<>`: `Semigroup`型クラスのインスタンスをくっつける演算子。Textや文字列、リストに`Sum`型など、いろいろなものを「くっつける」ことができる。
+- `OverloadedStrings`: Textなどを文字列リテラルでしゅっと書きたいときに使う。
+- 掘った関数
+    - ...
+        - `Education.MakeMistakesToLearnHaskell.mainFromReporter`
+            - `Education.MakeMistakesToLearnHaskell.showExercise`
+                - `Education.MakeMistakesToLearnHaskell.Exercise.Record.saveLastShownName`
+                    - `Education.MakeMistakesToLearnHaskell.Exercise.Record.prepareRecordFilePath`
+                        - `Education.MakeMistakesToLearnHaskell.Exercise.Record.dirName`
+                - `Education.MakeMistakesToLearnHaskell.showMarkdown`
+                    - `Education.MakeMistakesToLearnHaskell.writeUtf8FileS`
