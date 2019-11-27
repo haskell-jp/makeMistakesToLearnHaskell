@@ -17,7 +17,7 @@ loadLastShownName e = do
   path <- prepareRecordFilePath e
   exists <- Dir.doesFileExist path
   if exists then
-    fmap (lastShownName . read) $ readFile path
+    (lastShownName . read) <$> readFile path
   else
     return "1"
 

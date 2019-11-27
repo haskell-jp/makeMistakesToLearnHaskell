@@ -109,4 +109,27 @@
                     - `Education.MakeMistakesToLearnHaskell.Exercise.Record.prepareRecordFilePath`
                         - `Education.MakeMistakesToLearnHaskell.Exercise.Record.dirName`
                 - `Education.MakeMistakesToLearnHaskell.showMarkdown`
-                    - `Education.MakeMistakesToLearnHaskell.writeUtf8FileS`
+                    - `Education.MakeMistakesToLearnHaskell.Text.IO.writeUtf8FileS`
+
+# 2019/11/27 社内コードリーディング勉強会の記録
+
+- `Paths_makeMistakesToLearnHaskell`: `Paths_<pkgname>`
+    - モジュールをインストールするときに自動的に決まるパス。ソースコード以外のデータを格納するのに使う
+    - **TODO**: 正直なところやめたい。これのおかげでassetsディレクトリー以下のファイルを編集する度にrebuildが必要になってしまう
+- 掘った関数
+    - ...
+        - `Education.MakeMistakesToLearnHaskell.mainFromReporter`
+            - `Education.MakeMistakesToLearnHaskell.showExercise`
+                - `Education.MakeMistakesToLearnHaskell.showMarkdown`
+                    - `Education.MakeMistakesToLearnHaskell.Text.IO.writeUtf8FileS`
+                    - `Education.MakeMistakesToLearnHaskell.Text.removeAllTrailingSpace`
+            - `Education.MakeMistakesToLearnHaskell.verifySource`
+                - `Education.MakeMistakesToLearnHaskell.showMarkdown`
+                    - `Education.MakeMistakesToLearnHaskell.Exercise.loadLastShown`
+                        - `Education.MakeMistakesToLearnHaskell.Exercise.loadLastShownName`
+                        - `Education.MakeMistakesToLearnHaskell.Exercise.getByName`
+                            - `Education.MakeMistakesToLearnHaskell.Exercise.exercises`
+                            - `Education.MakeMistakesToLearnHaskell.Exercise.Types.Exercise`
+                                - `Education.MakeMistakesToLearnHaskell.Exercise.Types.verify`
+                                    - `Education.MakeMistakesToLearnHaskell.Exercise.Types.Result`
+                                        - `Education.MakeMistakesToLearnHaskell.Commons.Exercise.FailBy`

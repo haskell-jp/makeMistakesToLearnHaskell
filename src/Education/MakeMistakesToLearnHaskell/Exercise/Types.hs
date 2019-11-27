@@ -26,12 +26,17 @@ data Exercise =
     }
 
 
+-- | Result of exercise
 data Result =
-    Error !Details
-  | Fail !SourceCode !FailBy
-  | Success !Details
-  | NotVerified
-  | NotYetImplemented
+    Error -- ^ Something unexpected has happened.
+      !Details -- ^ The details of the error. Usually error messages from the ghc command etc.
+  | Fail -- ^ User's answer is wrong (or has type errors).
+      !SourceCode -- ^ User's answer as source code.
+      !FailBy -- ^ The reason why the answer is wrong.
+  | Success -- ^ User's answer is correct.
+      !Details
+  | NotVerified -- ^ This exercise doesn't have no verification. Go ahead!
+  | NotYetImplemented -- ^ Verification is not implemented yet. Sorry! Go ahead!
   deriving (Eq, Show)
 
 newtype Record = Record

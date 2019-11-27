@@ -22,5 +22,6 @@ decodeUtf8 = TextEncoding.decodeUtf8With handler
       throw $ TextEncoding.DecodeError cause nothing
 
 
+-- | See https://github.com/haskell-jp/makeMistakesToLearnHaskell/pull/51#issuecomment-435296461
 removeAllTrailingSpace :: Text -> Text
 removeAllTrailingSpace = Text.unlines . map Text.stripEnd . Text.lines

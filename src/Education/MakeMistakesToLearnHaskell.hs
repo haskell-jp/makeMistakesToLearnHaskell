@@ -174,14 +174,14 @@ showExercise e n = do
 
 showMarkdown :: Env -> Text -> String -> IO ()
 showMarkdown e md n = do
-  cssPath <- ("file://" <>) . TextS.pack <$> Paths.getDataFileName "assets/exercise.css"
+  cssPath <- TextS.pack <$> Paths.getDataFileName "assets/exercise.css"
   let htmlBody = CMark.commonmarkToHtml [CMark.optSafe] $ Text.toStrict md
       htmlHead = TextS.unlines
         [ "<!DOCTYPE html>"
         , "<html>"
         , "<head>"
         , "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />"
-        , "<link rel=\"stylesheet\" type=\"text/css\" href=\"" <> cssPath <> "\" />"
+        , "<link rel=\"stylesheet\" type=\"text/css\" href=\"file://" <> cssPath <> "\" />"
         , "</head>"
         , "<body>"
         , "<div id=\"container\">"
