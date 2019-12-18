@@ -124,12 +124,34 @@
                     - `Education.MakeMistakesToLearnHaskell.Text.IO.writeUtf8FileS`
                     - `Education.MakeMistakesToLearnHaskell.Text.removeAllTrailingSpace`
             - `Education.MakeMistakesToLearnHaskell.verifySource`
-                - `Education.MakeMistakesToLearnHaskell.showMarkdown`
-                    - `Education.MakeMistakesToLearnHaskell.Exercise.loadLastShown`
-                        - `Education.MakeMistakesToLearnHaskell.Exercise.loadLastShownName`
-                        - `Education.MakeMistakesToLearnHaskell.Exercise.getByName`
-                            - `Education.MakeMistakesToLearnHaskell.Exercise.exercises`
-                            - `Education.MakeMistakesToLearnHaskell.Exercise.Types.Exercise`
-                                - `Education.MakeMistakesToLearnHaskell.Exercise.Types.verify`
-                                    - `Education.MakeMistakesToLearnHaskell.Exercise.Types.Result`
-                                        - `Education.MakeMistakesToLearnHaskell.Commons.Exercise.FailBy`
+                - `Education.MakeMistakesToLearnHaskell.Exercise.loadLastShown`
+                    - `Education.MakeMistakesToLearnHaskell.Exercise.loadLastShownName`
+                    - `Education.MakeMistakesToLearnHaskell.Exercise.getByName`
+                        - `Education.MakeMistakesToLearnHaskell.Exercise.exercises`
+                        - `Education.MakeMistakesToLearnHaskell.Exercise.Types.Exercise`
+                            - `Education.MakeMistakesToLearnHaskell.Exercise.Types.verify`
+                                - `Education.MakeMistakesToLearnHaskell.Exercise.Types.Result`
+                                    - `Education.MakeMistakesToLearnHaskell.Commons.Exercise.FailBy`
+
+# 2019/12/18 社内コードリーディング勉強会の記録
+
+- レコードのアップデートは、関数呼び出しより結合の優先順位が高い
+    - e.g. `func record { field = "a" }` は
+        - `(func record) { field = "a" }` ではなく、
+        - `func (record { field = "a" })` と解釈される
+    - `let ... in ...`: `where`の代わりによく使われる代入用の構文。`where`や`do`における`let`に比べて使用頻度は低い
+- 掘った関数
+    - ...
+        - `Education.MakeMistakesToLearnHaskell.mainFromReporter`
+            - `Education.MakeMistakesToLearnHaskell.verifySource`
+                - ...
+                    - `Education.MakeMistakesToLearnHaskell.Exercise.Types.verify`
+                        - `Education.MakeMistakesToLearnHaskell.Exercise.Ex01.verify`
+                            - `Education.MakeMistakesToLearnHaskell.Exercise.Core.runHaskellExercise`
+                                - `Education.MakeMistakesToLearnHaskell.Exercise.Core.runHaskellExercise'`
+                                    - `Education.MakeMistakesToLearnHaskell.Exercise.Core.resultForUser'`
+                            - `Education.MakeMistakesToLearnHaskell.Exercise.Ex01.diag1`
+                                - `Education.MakeMistakesToLearnHaskell.Exercise.Types.Diagnosis`
+                                    - `Education.MakeMistakesToLearnHaskell.Commons.Exercise.Details`
+                                    - `Education.MakeMistakesToLearnHaskell.Commons.Exercise.SourceCode`
+

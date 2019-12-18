@@ -27,21 +27,12 @@ runHaskellExercise
   -> Env
   -> FilePath
   -> IO Result
-runHaskellExercise = runHaskellExercise' defaultRunHaskellParameters
-
-runHaskellExercise'
-  :: CommandParameters
-  -> Diagnosis
-  -> Text
-  -> Env
-  -> FilePath
-  -> IO Result
-runHaskellExercise' params diag right e prgFile = do
+runHaskellExercise diag right e prgFile = do
   code <- readUtf8File prgFile
-  result <- runHaskell e params { commandParametersArgs = [prgFile] }
+  result <- runHaskell e defaultRunHaskellParameters { commandParametersArgs = [prgFile] }
   return $ resultForUser diag code [] (const right) "" result
 
--- runHaskellExercise の入力有りバージョン
+-- | 'runHaskellExercise' with input to stdin
 runHaskellExerciseWithStdin
   :: Diagnosis
   -> Gen String
@@ -81,24 +72,26 @@ resultForUser
   -> Text
   -> Either CommandError (ByteString, ByteString)
   -> Result
-resultForUser _diag code messageFooter calcRight input (Right (outB, _errB {- TODO: print stderr -})) =
-  let out = canonicalizeNewlines outB
-      right = calcRight input
-      msg =
-        Text.unlines $
-          [ Text.replicate 80 "="
-          , "Your program's output: " <> Text.pack (show out) -- TODO: pretty print
-          , "      Expected output: " <> Text.pack (show right)
-          ] ++ messageFooter
-  in
-    if right == out
-      then Success $ "Nice output!\n\n" <> msg
-      else Fail code . WrongOutput $ "Wrong output!\n\n" <> msg
-resultForUser _diag _code _messageFooter _calcRight _minput (Left (Command.CommandNotFound cname)) =
-  Error $ Text.pack cname <> " command is not available.\nInstall stack or Haskell Platform."
-resultForUser diag code _messageFooter _calcRight _minput (Left (Command.CommandFailure cname _ msg)) =
-  let textMsg = decodeUtf8 msg
-   in Fail code . CommandFailed cname textMsg $ diag code textMsg
+resultForUser diag code messageFooter calcRight input result =
+  case result of
+      Right (outB, _errB {- TODO: print stderr -}) ->
+        let out = canonicalizeNewlines outB
+            right = calcRight input
+            msg =
+              Text.unlines $
+                [ Text.replicate 80 "="
+                , "Your program's output: " <> Text.pack (show out) -- TODO: pretty print
+                , "      Expected output: " <> Text.pack (show right)
+                ] ++ messageFooter
+        in
+          if right == out
+            then Success $ "Nice output!\n\n" <> msg
+            else Fail code . WrongOutput $ "Wrong output!\n\n" <> msg
+      Left (Command.CommandNotFound cname) ->
+        Error $ Text.pack cname <> " command is not available.\nInstall stack or Haskell Platform."
+      Left (Command.CommandFailure cname _ msg) ->
+        let textMsg = decodeUtf8 msg
+         in Fail code . CommandFailed cname textMsg $ diag code textMsg
 
 isInWords :: Text -> [Text] -> Bool
 isInWords wd = any (Text.isInfixOf wd)
