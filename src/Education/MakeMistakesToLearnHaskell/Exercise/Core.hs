@@ -28,8 +28,8 @@ runHaskellExercise
   -> FilePath
   -> IO Result
 runHaskellExercise diag right e prgFile = do
-  code <- readUtf8File prgFile
   result <- runHaskell e defaultRunHaskellParameters { commandParametersArgs = [prgFile] }
+  code <- readUtf8File prgFile
   return $ resultForUser diag code [] (const right) "" result
 
 -- | 'runHaskellExercise' with input to stdin
@@ -45,17 +45,18 @@ runHaskellExerciseWithStdin diag gen calcRight env prgFile = do
       maxSuccessSize = envQcMaxSuccessSize env
 
   resultRef <- newIORef $ error "Assertion failure: no result written after QuickCheck"
+  code <- readUtf8File prgFile
   qr <- quickCheckWithResult qcArgs $
-    QuickCheck.forAll gen $ \inputS ->
-      QuickCheck.withMaxSuccess maxSuccessSize $
+    QuickCheck.withMaxSuccess maxSuccessSize $
+      QuickCheck.forAll gen $ \inputS ->
         QuickCheck.ioProperty $ do
           let input = Text.pack inputS
               params = defaultRunHaskellParameters
                 { commandParametersArgs = [prgFile]
                 , commandParametersStdin = TextEncoding.encodeUtf8 input
                 }
-          code <- readUtf8File prgFile
-          result <- resultForUser diag code ["            For input: " <> Text.pack (show input)] calcRight input <$> runHaskell env params
+          commandResult <- runHaskell env params
+          let result = resultForUser diag code ["            For input: " <> Text.pack (show input)] calcRight input commandResult
           writeIORef resultRef result
           return $
             case result of

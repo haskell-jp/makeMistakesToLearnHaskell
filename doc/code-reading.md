@@ -155,3 +155,30 @@
                                     - `Education.MakeMistakesToLearnHaskell.Commons.Exercise.Details`
                                     - `Education.MakeMistakesToLearnHaskell.Commons.Exercise.SourceCode`
 
+# 2019/12/25 社内コードリーディング勉強会の記録
+
+- 掘った関数
+    - ...
+        - `Education.MakeMistakesToLearnHaskell.mainFromReporter`
+            - ...
+            - `Education.MakeMistakesToLearnHaskell.Exercise.Ex04`
+            - `Education.MakeMistakesToLearnHaskell.Exercise.Ex05`
+- 新しい課題の判定ロジックを作りにあたり、主に実装が必要なもの
+    - エラーメッセージを出す処理: ヒントメッセージを設定する箇所なので無理にやらなくてもよい。基本的には`runHaskell`コマンドが出力した結果をそのまま流す、だけでよい
+    - `calcRight`: 与えられた入力（標準入力）を受け取って「正しい答え」を返す関数。基本的には、模範解答と実質同等な関数になってしかるべき
+    - `gen`: `calcRight`（と、ユーザーの回答のプログラム）に対して渡す入力（標準入力）を生成するQuickCheckの`Gen`型の値
+- QuickCheckに関しては下記を参照
+    - `Gen`の定義方法や、基本的な使い方
+        - <https://haskell.e-bigmoon.com/stack/test/quickcheck.html>
+        - <https://haskell.e-bigmoon.com/stack/test/quickcheck2.html>
+    - `Arbitrary`の定義例
+        - <https://github.com/kazu-yamamoto/unit-test-example/blob/master/test/Base64Spec.hs>
+        - <https://github.com/kazu-yamamoto/unit-test-example/blob/master/markdown/ja/tutorial.md>
+    - 山本悠滋の知るコツ:
+        - `suchThat`と`==>`はなるべく使わない。生成する処理が遅くなってしまう可能性が高い
+        - `Gen`は`Monad`でもあるので、Applicativeスタイルが難しかったら`do`を使って書いても問題なし。
+- お願いしたこと
+    - 課題6から課題11までにおいて、ユーザーの回答のプログラムの標準入力として渡す文字列を生成する`Gen`を実装する
+        - Pull requestとして送っていただけるとありがたいが、実装した`Gen`を山本悠滋に何らかの形で送るだけでもかまわない
+        - もちろん、`calcRight`関数も実装して、完全な`ExNN.hs`ファイルを作ってPull requestを送っていただけると特にありがたい！
+    - 課題12以降は現状の`runHaskellExerciseWithStdin`では実装しきれない（標準エラー出力を判定できるようにしたり、コマンドライン引数を扱ったりするように実装しなければならない）ので、そこまでやらなくてもよし
