@@ -182,3 +182,19 @@
         - Pull requestとして送っていただけるとありがたいが、実装した`Gen`を山本悠滋に何らかの形で送るだけでもかまわない
         - もちろん、`calcRight`関数も実装して、完全な`ExNN.hs`ファイルを作ってPull requestを送っていただけると特にありがたい！
     - 課題12以降は現状の`runHaskellExerciseWithStdin`では実装しきれない（標準エラー出力を判定できるようにしたり、コマンドライン引数を扱ったりするように実装しなければならない）ので、そこまでやらなくてもよし
+
+# 2020/01/08 社内コードリーディング勉強会の記録
+
+- Hspec:
+    - MakeMistakesToLearnHaskellで使用しているテスティングフレームワーク
+    - RubyのRSpecと似た構文で書ける。
+        - `it`や`describe`や`shouldなんちゃら`という構文が似てる。
+        - 似てるのは構文だけで、RSpecに比べて遙かに機能は少なく、単純。
+    - ちなみにRSpecのSは大文字だけどHspecのsは小文字。
+    - 日本語での例は <https://github.com/kazu-yamamoto/unit-test-example/blob/master/markdown/ja/tutorial.md> がいいかも。
+- `fail`: `MonadFail`型クラスを実装した型全般で使える「失敗」を表すアクション。`IO`でとりあえず例外を起こしたいとき便利
+
+## 見つかった課題
+
+テスト実行時に、`NOPROXY`環境変数を設定し忘れているのか、プロキシの配下だとlocalhostに立てたテスト用サーバーにアクセスできてない。  
+[Issue起票済み](https://github.com/haskell-jp/makeMistakesToLearnHaskell/issues/107)
