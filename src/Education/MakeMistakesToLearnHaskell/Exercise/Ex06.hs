@@ -11,10 +11,10 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 
 exercise6 :: Exercise
-exercise6 = Exercise "6" notYetImplementedVeirificationExercise
+exercise6 = Exercise "6"
+          $ runHaskellExerciseWithStdin diag generator answer
 
 
-{-
 diag :: Diagnosis
 diag _code _msg = "" -- TODO: Not implemented
 
@@ -22,15 +22,19 @@ diag _code _msg = "" -- TODO: Not implemented
 generator :: Gen String
 generator =
   unlines <$> sequence
-    [ show <$> (arbitrary :: Gen Double)
-    , show <$> (arbitrary :: Gen Double)
-    , show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Int))
-    ]
+  [ QuickCheck.listOf $ QuickCheck.oneof [QuickCheck.choose ('a','z'),  QuickCheck.choose ('A','Z')]
+  , show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Int))
+  ]
 
+data Entry = Entry
+  { category :: String
+  , price :: Integer
+  }
 
 answer :: Text -> Text
-answer input = Text.pack $ show (body :: Double) <> "\n"
-  where
-    [principal, interestRate, years] = lines $ Text.unpack input
-    body = read principal * (1 + read interestRate / 100) ^ (read years :: Integer)
--}
+answer input = Text.pack $ (lineCategory :: String) <> "\n" <> (linePrice :: String) <> "\n"
+ where
+  [cat, priceStr] = lines $ Text.unpack input
+  entry = Entry { category = cat, price = read priceStr }
+  lineCategory = "Category: " <> category entry
+  linePrice = "Price: " <> show (price entry)

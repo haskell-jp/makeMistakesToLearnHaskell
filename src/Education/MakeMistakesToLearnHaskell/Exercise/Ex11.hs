@@ -20,12 +20,29 @@ diag _code _msg = "" -- TODO: Not implemented
 
 
 generator :: Gen String
-generator =
-  unlines <$> sequence
-    [ show <$> (arbitrary :: Gen Double)
-    , show <$> (arbitrary :: Gen Double)
-    , show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Int))
-    ]
+generator = do
+  input1 <- QuickCheck.frequency 
+    [ ( 1
+      , QuickCheck.listOf $ show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Double))
+    ),( 1
+      , QuickCheck.listOf1 $ show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Double))
+    )]
+  case input1 of
+      [] -> (<>) "\n" <$> generator
+      [height] -> (<>) (height <> "\n") <$> genWeight
+      _  -> return $ unwords input1 <> "\n"
+
+genWeight :: Gen String
+genWeight = do
+  input1 <- QuickCheck.frequency 
+      [ ( 1
+        , QuickCheck.listOf $ show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Double))
+      ),( 1
+        , QuickCheck.listOf1 $ show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Double))
+      )]
+  case input1 of
+      [] -> (<>) "\n" <$> genWeight
+      _ ->  return $ unwords input1 <> "\n"
 
 
 answer :: Text -> Text

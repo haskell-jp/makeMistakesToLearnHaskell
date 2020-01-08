@@ -11,10 +11,10 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 
 exercise8 :: Exercise
-exercise8 = Exercise "8" notYetImplementedVeirificationExercise
+exercise8 = Exercise "8"
+          $ runHaskellExerciseWithStdin diag generator answer
 
 
-{-
 diag :: Diagnosis
 diag _code _msg = "" -- TODO: Not implemented
 
@@ -22,15 +22,19 @@ diag _code _msg = "" -- TODO: Not implemented
 generator :: Gen String
 generator =
   unlines <$> sequence
-    [ show <$> (arbitrary :: Gen Double)
-    , show <$> (arbitrary :: Gen Double)
-    , show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Int))
-    ]
-
+  [ show <$> (arbitrary :: Gen Int)
+  , show . QuickCheck.getNonZero <$> (arbitrary :: Gen (QuickCheck.NonZero Int))
+  ]
 
 answer :: Text -> Text
-answer input = Text.pack $ show (body :: Double) <> "\n"
-  where
-    [principal, interestRate, years] = lines $ Text.unpack input
-    body = read principal * (1 + read interestRate / 100) ^ (read years :: Integer)
--}
+answer input = Text.pack
+  $  "div: "  <> show divResult  <> "\n"
+  <> "mod: "  <> show modResult  <> "\n"
+  <> "quot: " <> show quotResult <> "\n"
+  <> "rem: "  <> show remResult  <> "\n"
+ where
+  [numeratorStr, denominatorStr] = lines $ Text.unpack input
+  numerator = read numeratorStr :: Integer
+  denominator = read denominatorStr :: Integer
+  (divResult, modResult) = divMod numerator denominator
+  (quotResult, remResult) = quotRem numerator denominator

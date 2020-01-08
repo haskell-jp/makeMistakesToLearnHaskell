@@ -43,6 +43,11 @@ spec = do
       void $ runMmlh ["show", "--terminal", "4"] ""
       runMmlh ["verify", answerFile] "" >>= shouldVerifySuccess
 
+    it "given the correct answer of exercise 6, show SUCCESS" $ do
+      answerFile <- Paths.getDataFileName ("assets" </> "6.hs")
+      void $ runMmlh ["show", "--terminal", "6"] ""
+      runMmlh ["verify", answerFile] "" >>= shouldVerifySuccess
+
     it "given a wrong answer of exercise 4, show FAIL" $ do
       let msgs = ["Your program's output:", "Expected output:"]
       void $ runMmlh ["show", "--terminal", "4"] ""
