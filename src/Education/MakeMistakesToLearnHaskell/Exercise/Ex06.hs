@@ -2,6 +2,7 @@
 
 module Education.MakeMistakesToLearnHaskell.Exercise.Ex06
   ( exercise6
+  , generator
   ) where
 
 #include <imports/external.hs>
@@ -22,9 +23,9 @@ diag _code _msg = "" -- TODO: Not implemented
 generator :: Gen String
 generator =
   unlines <$> sequence
-  [ QuickCheck.listOf $ QuickCheck.oneof [QuickCheck.choose ('a','z'),  QuickCheck.choose ('A','Z')]
-  , show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Int))
-  ]
+    [ QuickCheck.listOf $ QuickCheck.choose ('A', 'z')
+    , show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Integer))
+    ]
 
 data Entry = Entry
   { category :: String

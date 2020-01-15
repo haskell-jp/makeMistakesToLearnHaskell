@@ -22,9 +22,9 @@ diag _code _msg = "" -- TODO: Not implemented
 generator :: Gen String
 generator =
   unlines <$> sequence
-  [ show <$> (arbitrary :: Gen Int)
-  , show . QuickCheck.getNonZero <$> (arbitrary :: Gen (QuickCheck.NonZero Int))
-  ]
+    [ show <$> (arbitrary :: Gen Integer)
+    , show . QuickCheck.getNonZero <$> (arbitrary :: Gen (QuickCheck.NonZero Integer))
+    ]
 
 answer :: Text -> Text
 answer input = Text.pack

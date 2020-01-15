@@ -24,7 +24,7 @@ generator =
   unlines <$> sequence
     [ show <$> (arbitrary :: Gen Double)
     , show <$> (arbitrary :: Gen Double)
-    , show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Int))
+    , show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Integer))
     ]
 
 
