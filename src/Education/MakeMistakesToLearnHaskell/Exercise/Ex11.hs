@@ -11,10 +11,10 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 
 exercise11 :: Exercise
-exercise11 = Exercise "11" notYetImplementedVeirificationExercise
+exercise11 = Exercise "11"
+          $ runHaskellExerciseWithStdin diag generator answer
 
 
-{-
 diag :: Diagnosis
 diag _code _msg = "" -- TODO: Not implemented
 
@@ -44,10 +44,32 @@ genWeight = do
       [] -> (<>) "\n" <$> genWeight
       _ ->  return $ unwords input1 <> "\n"
 
-
 answer :: Text -> Text
-answer input = Text.pack $ show (body :: Double) <> "\n"
-  where
-    [principal, interestRate, years] = lines $ Text.unpack input
-    body = read principal * (1 + read interestRate / 100) ^ (read years :: Integer)
--}
+answer input = "Height Weight: \n" <> go (Text.lines input) <> "\n"
+ where
+  go lns = case lns of
+    "" : leftLines ->
+      "Invalid input" <> go leftLines
+    [line1] -> -- TODO: Keep asking weight
+      Text.pack . show $ bmiFromStrings heightStr weightStr
+      where heightStr : weightStr : _ = Text.words line1
+    line1 : line2 : _ -> "Weight: \n" <> Text.pack (show $ bmiFromStrings line1 line2)
+    [] -> -- TODO: Don't call error
+      error "Assertion failure: empty input!"
+
+bmiFromStrings :: Text -> Text -> Double
+bmiFromStrings hwStr weightStr = do
+  let height = read $ Text.unpack hwStr
+      weight = read $ Text.unpack weightStr
+  weight / (height * height)
+
+
+askWeight = do
+  putStrLn "Weight: "
+  ans <- getLine
+  case words ans of
+      weightStr : _ ->
+        return weightStr
+      _ -> do
+        putStrLn ("Invalid input: " ++ ans)
+        askWeight

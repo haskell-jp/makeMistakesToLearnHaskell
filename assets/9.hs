@@ -13,4 +13,4 @@ main = do
           weight = read weightStr
       print (weight / (height * height))
     other ->
-      putStrLn ("Invalid input: " ++ hwStr)
+      putStrLn "Invalid input"

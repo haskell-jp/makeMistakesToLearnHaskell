@@ -7,7 +7,7 @@ module Education.MakeMistakesToLearnHaskell.Exercise.Ex07
 #include <imports/external.hs>
 
 import Education.MakeMistakesToLearnHaskell.Exercise.Core
-import qualified Education.MakeMistakesToLearnHaskell.Exercise.Ex06 as Ex06
+import Education.MakeMistakesToLearnHaskell.Exercise.Ex06 (generator)
 import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 
@@ -18,10 +18,6 @@ exercise7 = Exercise "7"
 
 diag :: Diagnosis
 diag _code _msg = "" -- TODO: Not implemented
-
-
-generator :: Gen String
-generator = Ex06.generator
 
 data Entry = Entry
   { category :: String

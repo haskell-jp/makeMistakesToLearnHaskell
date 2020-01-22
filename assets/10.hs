@@ -9,7 +9,7 @@ main = do
       weightStr <- getLine
       print (bmiFromStrings heightStr weightStr)
     other ->
-      putStrLn ("Invalid input: " ++ hwStr)
+      putStrLn "Invalid input"
 
 
 bmiFromStrings :: String -> String -> Double

@@ -2,6 +2,7 @@
 
 module Education.MakeMistakesToLearnHaskell.Exercise.Ex09
   ( exercise9
+  , generator
   ) where
 
 #include <imports/external.hs>
@@ -19,24 +20,26 @@ diag :: Diagnosis
 diag _code _msg = "" -- TODO: Not implemented
 
 
--- TODO: 2個の数値を生成して、区切り文字を変える
---       異常系: 数値が一つも生成されない
---               数値が一つだけ生成される => read関数が例外を投げる。今回は例外を想定しないので、想定しないケース
+-- * Generate two numbers, seprated by either a newline or spaces.
+-- * Or generate only a blank string as an error case.
+--   * Don't generate only one number case: the `read` function throws an error,
+--     which is not considered in this exercise.
 generator :: Gen String
-generator = do
-  input1 <- QuickCheck.listOf $ show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Double))
-  case input1 of
-      [height] -> do
-          input2 <- show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Double))
-          return $ unlines [height, input2]
-      _ -> return $ unwords input1 <> "\n"
+generator = QuickCheck.oneof [twoNumbers, noNumbers]
+ where
+  twoNumbers = do
+    height <- show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Double))
+    weight <- show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Double))
+    separator <- QuickCheck.oneof [pure "\n", QuickCheck.listOf1 (pure ' ')]
+    return $ height ++ separator ++ weight ++ "\n"
+  noNumbers = (++ "\n") <$> QuickCheck.listOf (pure ' ')
 
 
 answer :: Text -> Text
 answer input = Text.pack $ "Height Weight: \n" <> a <>"\n"
  where
   a = case lines $ Text.unpack input of
-    [""] -> "Invalid input: "
+    [""] -> "Invalid input"
     [line1] -> show ( weight / (height * height))
       where heightStr : weightStr : _ = words line1
             height, weight :: Double
