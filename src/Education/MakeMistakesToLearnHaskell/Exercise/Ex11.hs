@@ -31,31 +31,38 @@ generator = (++) <$> noNumbers <*> twoNumbers
 
 
 answer :: Text -> Text
-answer input = "Height Weight: \n" <> go (Text.lines input) <> "\n"
+answer input = go (Text.lines input) <> "\n"
  where
-  go lns = case lns of
-    "" : leftLines ->
-      "Invalid input" <> go leftLines
-    [line1] -> -- TODO: Keep asking weight
-      Text.pack . show $ bmiFromStrings heightStr weightStr
-      where heightStr : weightStr : _ = Text.words line1
-    line1 : line2 : _ -> "Weight: \n" <> Text.pack (show $ bmiFromStrings line1 line2)
-    [] ->
-      error "Assertion failure: empty input!"
+  go lns = "Height Weight: \n" <> result
+   where
+    result =
+      case lns of
+          line : leftLines ->
+            case Text.words line of
+                heightStr : weightStr : _ ->
+                  Text.pack . show $ bmiFromStrings heightStr weightStr
+                [heightStr] ->
+                  goWeight leftLines heightStr
+                [] ->
+                  "Invalid input\n" <> go leftLines
+          [] ->
+            error "Assertion failure: empty input!"
+
+  goWeight lns heightStr = "Weight: \n" <> result
+   where
+    result =
+      case lns of
+          line : leftLines ->
+            case Text.words line of
+                weightStr : _ ->
+                  Text.pack . show $ bmiFromStrings heightStr weightStr
+                [] ->
+                  "Invalid input\n" <> goWeight leftLines heightStr
+          [] ->
+            error "Assertion failure: empty input!"
 
 bmiFromStrings :: Text -> Text -> Double
 bmiFromStrings hwStr weightStr = do
   let height = read $ Text.unpack hwStr
       weight = read $ Text.unpack weightStr
   weight / (height * height)
-
-
-askWeight = do
-  putStrLn "Weight: "
-  ans <- getLine
-  case words ans of
-      weightStr : _ ->
-        return weightStr
-      _ -> do
-        putStrLn ("Invalid input: " ++ ans)
-        askWeight
