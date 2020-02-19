@@ -19,12 +19,12 @@ diag :: Diagnosis
 diag _code _msg = "" -- TODO: Not implemented
 
 
-generator :: Gen String
+generator :: Gen Text
 generator =
-  unlines <$> sequence
-    [ show <$> (arbitrary :: Gen Double)
-    , show <$> (arbitrary :: Gen Double)
-    , show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Integer))
+  Text.unlines <$> sequence
+    [ Text.pack . show <$> (arbitrary :: Gen Double)
+    , Text.pack . show <$> (arbitrary :: Gen Double)
+    , Text.pack . show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Integer))
     ]
 
 

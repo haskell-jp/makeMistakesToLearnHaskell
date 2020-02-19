@@ -19,15 +19,15 @@ diag :: Diagnosis
 diag _code _msg = "" -- TODO: Not implemented
 
 
-generator :: Gen String
-generator = (++) <$> noNumbers <*> twoNumbers
+generator :: Gen Text
+generator = (<>) <$> noNumbers <*> twoNumbers
  where
   twoNumbers = do
-    height <- show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Double))
-    weight <- show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Double))
+    height <- Text.pack . show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Double))
+    weight <- Text.pack . show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Double))
     separator <- QuickCheck.listOf1 (QuickCheck.elements " \n")
-    return $ height ++ separator ++ weight ++ "\n"
-  noNumbers = QuickCheck.listOf (QuickCheck.elements " \n")
+    return $ height <> Text.pack separator <> weight <> "\n"
+  noNumbers = Text.pack <$> QuickCheck.listOf (QuickCheck.elements " \n")
 
 
 answer :: Text -> Text

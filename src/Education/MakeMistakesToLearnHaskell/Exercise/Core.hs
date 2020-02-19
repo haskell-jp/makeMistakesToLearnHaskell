@@ -35,7 +35,7 @@ runHaskellExercise diag right e prgFile = do
 -- | 'runHaskellExercise' with input to stdin
 runHaskellExerciseWithStdin
   :: Diagnosis
-  -> Gen String
+  -> Gen Text
   -> (Text -> Text)
   -> Env
   -> FilePath
@@ -48,10 +48,9 @@ runHaskellExerciseWithStdin diag gen calcRight env prgFile = do
   code <- readUtf8File prgFile
   qr <- quickCheckWithResult qcArgs $
     QuickCheck.withMaxSuccess maxSuccessSize $
-      QuickCheck.forAll gen $ \inputS ->
+      QuickCheck.forAll gen $ \input ->
         QuickCheck.ioProperty $ do
-          let input = Text.pack inputS
-              params = defaultRunHaskellParameters
+          let params = defaultRunHaskellParameters
                 { commandParametersArgs = [prgFile]
                 , commandParametersStdin = TextEncoding.encodeUtf8 input
                 }

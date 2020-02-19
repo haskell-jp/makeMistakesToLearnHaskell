@@ -24,15 +24,15 @@ diag _code _msg = "" -- TODO: Not implemented
 -- * Or generate only a blank string as an error case.
 --   * Don't generate only one number case: the `read` function throws an error,
 --     which is not considered in this exercise.
-generator :: Gen String
+generator :: Gen Text
 generator = QuickCheck.oneof [twoNumbers, noNumbers]
  where
   twoNumbers = do
-    height <- show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Double))
-    weight <- show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Double))
-    separator <- QuickCheck.oneof [pure "\n", QuickCheck.listOf1 (pure ' ')]
-    return $ height ++ separator ++ weight ++ "\n"
-  noNumbers = (++ "\n") <$> QuickCheck.listOf (pure ' ')
+    height <- Text.pack . show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Double))
+    weight <- Text.pack . show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Double))
+    separator <- Text.pack <$> QuickCheck.oneof [pure "\n", QuickCheck.listOf1 (pure ' ')]
+    return $ height <> separator <> weight <> "\n"
+  noNumbers = (<> "\n") . Text.pack <$> (QuickCheck.listOf (pure ' '))
 
 
 answer :: Text -> Text

@@ -20,11 +20,11 @@ diag :: Diagnosis
 diag _code _msg = "" -- TODO: Not implemented
 
 
-generator :: Gen String
+generator :: Gen Text
 generator =
-  unlines <$> sequence
-    [ QuickCheck.listOf $ QuickCheck.choose ('A', 'z')
-    , show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Integer))
+  Text.unlines <$> sequence
+    [ fmap Text.pack . QuickCheck.listOf $ QuickCheck.choose ('A', 'z')
+    , Text.pack . show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Integer))
     ]
 
 data Entry = Entry
