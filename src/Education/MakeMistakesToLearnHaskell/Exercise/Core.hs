@@ -74,9 +74,10 @@ resultForUser
   -> Result
 resultForUser diag code messageFooter calcRight input result =
   case result of
-      Right (outB, _errB {- TODO: print stderr -}) ->
+      Right (outB, errB) ->
         let out = canonicalizeNewlines outB
-            right = calcRight input
+            err = canonicalizeNewlines errB
+            (right, isSuccessful) = calcRight input out err
             msg =
               Text.unlines $
                 [ Text.replicate 80 "="
@@ -84,7 +85,7 @@ resultForUser diag code messageFooter calcRight input result =
                 , "      Expected output: " <> Text.pack (show right)
                 ] ++ messageFooter
         in
-          if right == out
+          if isSuccessful
             then Success $ "Nice output!\n\n" <> msg
             else Fail code . WrongOutput $ "Wrong output!\n\n" <> msg
       Left (Command.CommandNotFound cname) ->

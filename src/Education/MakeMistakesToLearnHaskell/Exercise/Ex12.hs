@@ -11,7 +11,8 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 
 exercise12 :: Exercise
-exercise12 = Exercise "12" notYetImplementedVeirificationExercise
+exercise12 = Exercise "12"
+           $ runHaskellExerciseWithStdin diag generator answer
 
 
 {-
