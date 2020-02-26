@@ -6,6 +6,7 @@ module Education.MakeMistakesToLearnHaskell.Exercise.Types
   , Result (..)
   , Record (..)
   , Diagnosis
+  , Judge
   ) where
 
 #include <imports/external.hs>

@@ -3,6 +3,8 @@
 module Education.MakeMistakesToLearnHaskell.Exercise.Core
   ( runHaskellExercise
   , runHaskellExerciseWithStdin
+  , runHaskellExerciseEq
+  , runHaskellExerciseWithStdinEq
   , noVeirificationExercise
   , notYetImplementedVeirificationExercise
   , isInWords
@@ -21,26 +23,26 @@ import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 import           Education.MakeMistakesToLearnHaskell.Exercise.Types
 import           Education.MakeMistakesToLearnHaskell.Text
 
-runHaskellExercise
+runHaskellExerciseEq
   :: Diagnosis
   -> Text
   -> Env
   -> FilePath
   -> IO Result
-runHaskellExercise diag right e prgFile = do
+runHaskellExerciseEq diag right e prgFile = do
   result <- runHaskell e defaultRunHaskellParameters { commandParametersArgs = [prgFile] }
   code <- readUtf8File prgFile
-  return $ resultForUser diag code [] (const right) "" result
+  return $ resultForUserEq diag code [] (const right) "" result
 
 -- | 'runHaskellExercise' with input to stdin
-runHaskellExerciseWithStdin
+runHaskellExerciseWithStdinEq
   :: Diagnosis
   -> Gen Text
   -> (Text -> Text)
   -> Env
   -> FilePath
   -> IO Result
-runHaskellExerciseWithStdin diag gen calcRight env prgFile = do
+runHaskellExerciseWithStdinEq diag gen calcRight env prgFile = do
   let qcArgs = QuickCheck.stdArgs { QuickCheck.chatty = True }
       maxSuccessSize = envQcMaxSuccessSize env
 
@@ -55,7 +57,7 @@ runHaskellExerciseWithStdin diag gen calcRight env prgFile = do
                 , commandParametersStdin = TextEncoding.encodeUtf8 input
                 }
           commandResult <- runHaskell env params
-          let result = resultForUser diag code ["            For input: " <> Text.pack (show input)] calcRight input commandResult
+          let result = resultForUserEq diag code ["            For input: " <> Text.pack (show input)] calcRight input commandResult
           writeIORef resultRef result
           return $
             case result of
@@ -64,7 +66,7 @@ runHaskellExerciseWithStdin diag gen calcRight env prgFile = do
   logDebug env $ ByteString.pack $ "QuickCheck result: " ++ show qr
   readIORef resultRef
 
-resultForUser
+resultForUserEq
   :: Diagnosis
   -> Text
   -> [Text]
@@ -72,12 +74,28 @@ resultForUser
   -> Text
   -> Either CommandError (ByteString, ByteString)
   -> Result
-resultForUser diag code messageFooter calcRight input result =
+resultForUserEq diag code messageFooter calcRight input =
+  resultForUser diag code messageFooter judge input
+ where
+  judge acutalOut _err =
+    let expectedOut = calcRight input
+     in (expectedOut, acutalOut == expectedOut)
+
+resultForUser
+  :: Diagnosis
+  -> Text
+  -> [Text]
+  -> Judge
+  -> Text
+  -> Either CommandError (ByteString, ByteString)
+  -> Result
+resultForUser diag code messageFooter judge input result =
   case result of
       Right (outB, errB) ->
         let out = canonicalizeNewlines outB
-            err = canonicalizeNewlines errB
-            (right, isSuccessful) = calcRight input out err
+            -- TODO: Merge stdout and stderr from the user's answer
+            -- err = canonicalizeNewlines errB
+            (right, isSuccessful) = judge input out -- err
             msg =
               Text.unlines $
                 [ Text.replicate 80 "="
@@ -85,7 +103,7 @@ resultForUser diag code messageFooter calcRight input result =
                 , "      Expected output: " <> Text.pack (show right)
                 ] ++ messageFooter
         in
-          if isSuccessful
+          if isSuccessful -- out == right
             then Success $ "Nice output!\n\n" <> msg
             else Fail code . WrongOutput $ "Wrong output!\n\n" <> msg
       Left (Command.CommandNotFound cname) ->
