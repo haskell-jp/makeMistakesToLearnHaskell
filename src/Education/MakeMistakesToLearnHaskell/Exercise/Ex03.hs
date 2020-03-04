@@ -10,7 +10,7 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Core
 import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 exercise3 :: Exercise
-exercise3 = Exercise "3" $ runHaskellExercise diag3 $ Text.unlines
+exercise3 = Exercise "3" $ runHaskellExerciseEq diag3 $ Text.unlines
   [ "#     # ####### #       #        #####"
   , "#     # #       #       #       #     #"
   , "#     # #       #       #       #     #"

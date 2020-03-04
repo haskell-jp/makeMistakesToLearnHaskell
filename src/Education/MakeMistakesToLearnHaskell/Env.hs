@@ -29,8 +29,8 @@ defaultRunHaskellParameters = CommandParameters [] ""
 data Env = Env
   { logDebug :: ByteString -> IO ()
   , appHomePath :: FilePath
-  , runHaskell :: CommandParameters -> IO (Either CommandError (ByteString, ByteString))
-  , runGhc :: CommandParameters -> IO (Either CommandError (ByteString, ByteString))
+  , runHaskell :: CommandParameters -> IO (Either CommandError ByteString)
+  , runGhc :: CommandParameters -> IO (Either CommandError ByteString)
   , confirm :: Text -> IO Bool
   , openWithBrowser :: Text -> IO Bool
   , say :: Text -> IO ()

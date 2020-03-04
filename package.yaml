@@ -59,6 +59,7 @@ library:
   - regex-applicative
   - safe
   - text
+  - temporary
   - transformers
   - typed-process
   - uri-encode

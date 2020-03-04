@@ -12,7 +12,7 @@ import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Command
 
 
-runFile :: Env -> CommandParameters -> IO (Either CommandError (ByteString, ByteString))
+runFile :: Env -> CommandParameters -> IO (Either CommandError ByteString)
 runFile env params = do
   let cname = "ghc"
   commandAndArgs <- resolveHaskellProcessor cname ("-fno-code" : optionsAlwaysColor)

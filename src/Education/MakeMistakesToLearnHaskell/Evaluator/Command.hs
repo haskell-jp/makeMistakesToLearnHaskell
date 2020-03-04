@@ -13,16 +13,23 @@ import           Education.MakeMistakesToLearnHaskell.Env
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 
 
-runFileWith :: CommandName -> [String] -> Env -> CommandParameters -> IO (Either CommandError (ByteString, ByteString))
+-- TODO: Make a variant of runFileWith returning both stderr and stdout
+--       Make runGhc return message by compiler and the compiled command
+--       Drop runHaskell?
+runFileWith :: CommandName -> [String] -> Env -> CommandParameters -> IO (Either CommandError ByteString)
 runFileWith cname [] _e _rhp = return . Left $ CommandNotFound cname
-runFileWith cname (actualCommand : initialArgs) e rhp = do
+runFileWith cname (actualCommand : initialArgs) e rhp = Temp.withSystemTempFile $ \_path h -> do
   let prc =
-        Process.setStdin (Process.byteStringInput $ commandParametersStdin rhp)
+        Process.setStdout (Process.useHandleOpen h)
+          $ Process.setStderr (Process.useHandleOpen h)
+          $ Process.setStdin (Process.byteStringInput $ commandParametersStdin rhp)
           $ Process.proc actualCommand
           $ initialArgs ++ commandParametersArgs rhp
-  (ecode, out, err) <- fixingCodePage e $ readProcess prc
+  ecode <- fixingCodePage e $ runProcess prc
+  IO.hSeek h IO.AbsoluteSeek 0
+  out <- ByteString.hGetContents h
   return $ case ecode of
-      ExitSuccess -> Right (out, err)
+      ExitSuccess -> Right out
       ExitFailure i -> Left $ CommandFailure cname i err
 
 

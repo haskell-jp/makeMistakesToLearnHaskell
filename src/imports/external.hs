@@ -47,7 +47,8 @@ import qualified System.Exit as Exit
 import           System.Exit (ExitCode(ExitSuccess, ExitFailure))
 import           System.FilePath ((</>))
 import qualified System.IO as IO
-import           System.Process.Typed (readProcess)
+import qualified System.IO.Temp as Temp
+import           System.Process.Typed (runProcess)
 import qualified System.Process.Typed as Process
 import qualified Test.QuickCheck as QuickCheck
 import           Test.QuickCheck (Arbitrary, Gen, quickCheckWithResult, arbitrary)

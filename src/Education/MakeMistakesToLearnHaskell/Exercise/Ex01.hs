@@ -11,7 +11,7 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 exercise1 :: Exercise
 exercise1 =
-  Exercise "1" $ runHaskellExercise diag1 "Hello, world!\n"
+  Exercise "1" $ runHaskellExerciseEq diag1 "Hello, world!\n"
 
 diag1 :: Diagnosis
 diag1 code msg

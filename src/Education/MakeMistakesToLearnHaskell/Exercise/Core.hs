@@ -1,9 +1,7 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
 module Education.MakeMistakesToLearnHaskell.Exercise.Core
-  ( runHaskellExercise
-  , runHaskellExerciseWithStdin
-  , runHaskellExerciseEq
+  ( runHaskellExerciseEq
   , runHaskellExerciseWithStdinEq
   , noVeirificationExercise
   , notYetImplementedVeirificationExercise
@@ -72,7 +70,7 @@ resultForUserEq
   -> [Text]
   -> (Text -> Text)
   -> Text
-  -> Either CommandError (ByteString, ByteString)
+  -> Either CommandError ByteString
   -> Result
 resultForUserEq diag code messageFooter calcRight input =
   resultForUser diag code messageFooter judge input
@@ -87,11 +85,11 @@ resultForUser
   -> [Text]
   -> Judge
   -> Text
-  -> Either CommandError (ByteString, ByteString)
+  -> Either CommandError ByteString
   -> Result
 resultForUser diag code messageFooter judge input result =
   case result of
-      Right (outB, errB) ->
+      Right outB ->
         let out = canonicalizeNewlines outB
             -- TODO: Merge stdout and stderr from the user's answer
             -- err = canonicalizeNewlines errB

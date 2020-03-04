@@ -12,7 +12,7 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 exercise12 :: Exercise
 exercise12 = Exercise "12"
-           $ runHaskellExerciseWithStdin diag generator answer
+           $ runHaskellExerciseWithStdinEq undefined undefined undefined -- diag generator answer
 
 
 {-
