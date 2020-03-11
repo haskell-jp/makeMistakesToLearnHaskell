@@ -19,7 +19,7 @@ type Name = String
 
 data FailBy =
     WrongOutput !Details
-  | CommandFailed
+  | CompileError
       !FilePath   -- ^ Command name
       !Details -- ^ Output by command
       !Details -- ^ Diagnosis message

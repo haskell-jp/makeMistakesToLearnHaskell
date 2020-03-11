@@ -46,23 +46,32 @@ runHaskellExerciseWithStdinEq diag gen calcRight env prgFile = do
 
   resultRef <- newIORef $ error "Assertion failure: no result written after QuickCheck"
   code <- readUtf8File prgFile
-  qr <- quickCheckWithResult qcArgs $
-    QuickCheck.withMaxSuccess maxSuccessSize $
-      QuickCheck.forAll gen $ \input ->
-        QuickCheck.ioProperty $ do
-          let params = defaultRunHaskellParameters
-                { commandParametersArgs = [prgFile]
-                , commandParametersStdin = TextEncoding.encodeUtf8 input
-                }
-          commandResult <- runHaskell env params
-          let result = resultForUserEq diag code ["            For input: " <> Text.pack (show input)] calcRight input commandResult
-          writeIORef resultRef result
-          return $
-            case result of
-                Success _ -> True
-                _other -> False
-  logDebug env $ ByteString.pack $ "QuickCheck result: " ++ show qr
-  readIORef resultRef
+  Temp.withSystemTempDirectory "mmlh-compiled-answer" $ \dir -> do
+    let prg = takeBaseName prgFile
+        ghcParams = ["-o", dir </> prg, prgFile]
+    exePathOrErr <- compileWithGhc {- env -} ghcParams
+    case exePathOrErr of
+        Right exePath -> do
+          qr <- quickCheckWithResult qcArgs $
+            QuickCheck.withMaxSuccess maxSuccessSize $
+              QuickCheck.forAll gen $ \input ->
+                QuickCheck.ioProperty $ do
+                  let params = CommandParameters
+                        { commandParametersArgs = []
+                        , commandParametersStdin = TextEncoding.encodeUtf8 input
+                        }
+                  commandResult <- runFileWith {- env -} prg [exePath] params
+                  let result = resultForUserEq diag code ["            For input: " <> Text.pack (show input)] calcRight input commandResult
+                  writeIORef resultRef result
+                  return $
+                    case result of
+                        Success _ -> True
+                        _other -> False
+          logDebug env $ ByteString.pack $ "QuickCheck result: " ++ show qr
+          readIORef resultRef
+        Left msg ->
+          let textMsg = decodeUtf8 msg
+           in return . Fail code . CompileError cname textMsg $ diag code textMsg
 
 resultForUserEq
   :: Diagnosis
@@ -108,7 +117,7 @@ resultForUser diag code messageFooter judge input result =
         Error $ Text.pack cname <> " command is not available.\nInstall stack or Haskell Platform."
       Left (Command.CommandFailure cname _ msg) ->
         let textMsg = decodeUtf8 msg
-         in Fail code . CommandFailed cname textMsg $ diag code textMsg
+         in Fail code . CompileError cname textMsg $ diag code textMsg
 
 isInWords :: Text -> [Text] -> Bool
 isInWords wd = any (Text.isInfixOf wd)

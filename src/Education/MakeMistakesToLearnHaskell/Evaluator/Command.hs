@@ -16,21 +16,25 @@ import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 -- TODO: Make a variant of runFileWith returning both stderr and stdout
 --       Make runGhc return message by compiler and the compiled command
 --       Drop runHaskell?
-runFileWith :: CommandName -> [String] -> Env -> CommandParameters -> IO (Either CommandError ByteString)
-runFileWith cname [] _e _rhp = return . Left $ CommandNotFound cname
-runFileWith cname (actualCommand : initialArgs) e rhp = Temp.withSystemTempFile $ \_path h -> do
-  let prc =
-        Process.setStdout (Process.useHandleOpen h)
-          $ Process.setStderr (Process.useHandleOpen h)
-          $ Process.setStdin (Process.byteStringInput $ commandParametersStdin rhp)
-          $ Process.proc actualCommand
-          $ initialArgs ++ commandParametersArgs rhp
-  ecode <- fixingCodePage e $ runProcess prc
-  IO.hSeek h IO.AbsoluteSeek 0
-  out <- ByteString.hGetContents h
-  return $ case ecode of
-      ExitSuccess -> Right out
-      ExitFailure i -> Left $ CommandFailure cname i err
+-- TODO: member of Env
+-- TODO: Don't handle CommandError as Fail: Judge should receive Exitcode
+runFileWith :: CommandName -> [String] -> CommandParameters -> IO (Either CommandError ByteString)
+runFileWith cname [] _rhp = return . Left $ CommandNotFound cname
+runFileWith cname (actualCommand : initialArgs) cmdP = do
+  let pathTpl = "mmlh-command-" ++ cname
+  Temp.withSystemTempFile pathTpl $ \_path h -> do
+    let prc =
+          Process.setStdout (Process.useHandleOpen h)
+            $ Process.setStderr (Process.useHandleOpen h)
+            $ Process.setStdin (Process.byteStringInput $ commandParametersStdin cmdP)
+            $ Process.proc actualCommand
+            $ initialArgs ++ commandParametersArgs cmdP
+    ecode <- fixingCodePage $ runProcess prc
+    IO.hSeek h IO.AbsoluteSeek 0
+    out <- ByteString.hGetContents h
+    return $ case ecode of
+        ExitSuccess -> Right out
+        ExitFailure i -> Left $ CommandFailure cname i out
 
 
 resolveHaskellProcessor :: CommandName -> [String] -> IO [String]
@@ -42,15 +46,11 @@ resolveHaskellProcessor cname options = do
 
 
 -- | Ref: https://github.com/commercialhaskell/stack/blob/a9042ad6fa1d7c813a1c79713a518ee521da9add/src/Stack/Build.hs#L306-L332
-fixingCodePage :: Env -> IO a -> IO a
+fixingCodePage :: IO a -> IO a
 #ifdef mingw32_HOST_OS
-fixingCodePage e action = do
+fixingCodePage action = do
   cpInSave <- Win32.getConsoleCP
   cpOutSave <- Win32.getConsoleOutputCP
-  -- TODO: delete to independent from Env
-  logDebug e $ "Fixing ConsoleCP from " <> ByteString.pack (show cpInSave)
-  logDebug e $ "Fixing ConsoleOutputCP from " <> ByteString.pack (show cpOutSave)
-
   let utf8 = 65001
 
       fixingInput act =
