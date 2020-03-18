@@ -43,12 +43,19 @@ formatSingleArgFunApp = List.unfoldr uf
 
 formatFailure :: FailBy -> Details
 formatFailure (WrongOutput details) = details
-formatFailure (CommandFailed cname cout diag) =
-  Text.intercalate "\n"
-    [ "==================== " <> Text.pack cname <> " output ===================="
+formatFailure (CompileError cout diag) =
+  Text.intercalate "\n" $
+    [ header1
     , ""
     , cout
-    , ""
-    , "==================== mmlh HINT output ===================="
-    , diag
-    ]
+    ] ++
+      if Text.null diag
+        then []
+        else
+          [ ""
+          , header2
+          , diag
+          ]
+ where
+  header1 = "======================= output by GHC ======================="
+  header2 = "==================== output by mmlh HINT ===================="

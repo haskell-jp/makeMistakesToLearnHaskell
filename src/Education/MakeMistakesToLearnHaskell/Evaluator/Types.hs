@@ -18,8 +18,9 @@ type ErrorCode = Int
 type ErrorMessage = ByteString
 
 
+-- TODO: Rename the type name
 data CommandError =
-  CommandNotFound CommandName | CommandFailure CommandName ErrorCode ErrorMessage deriving (Show, Typeable)
+  CommandNotFound CommandName | GhcError ErrorCode ErrorMessage deriving (Show, Typeable)
 
 instance Exception CommandError
 

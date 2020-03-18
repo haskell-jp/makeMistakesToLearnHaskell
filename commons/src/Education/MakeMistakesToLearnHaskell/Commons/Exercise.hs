@@ -20,8 +20,7 @@ type Name = String
 data FailBy =
     WrongOutput !Details
   | CompileError
-      !FilePath   -- ^ Command name
-      !Details -- ^ Output by command
+      !Details -- ^ Output by GHC
       !Details -- ^ Diagnosis message
   deriving (Eq, Show)
 

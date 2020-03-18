@@ -46,6 +46,7 @@ import qualified System.Environment as Env
 import qualified System.Exit as Exit
 import           System.Exit (ExitCode(ExitSuccess, ExitFailure))
 import           System.FilePath ((</>))
+import qualified System.FilePath as FilePath
 import qualified System.IO as IO
 import qualified System.IO.Temp as Temp
 import           System.Process.Typed (runProcess)

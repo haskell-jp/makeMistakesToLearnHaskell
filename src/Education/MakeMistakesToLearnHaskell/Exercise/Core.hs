@@ -16,7 +16,6 @@ module Education.MakeMistakesToLearnHaskell.Exercise.Core
 
 import           Education.MakeMistakesToLearnHaskell.Env
 import qualified Education.MakeMistakesToLearnHaskell.Evaluator.Command as Command
-import           Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 import           Education.MakeMistakesToLearnHaskell.Exercise.Types
 import           Education.MakeMistakesToLearnHaskell.Text
@@ -28,7 +27,7 @@ runHaskellExerciseEq
   -> FilePath
   -> IO Result
 runHaskellExerciseEq diag right e prgFile = do
-  result <- runHaskell e defaultRunHaskellParameters { commandParametersArgs = [prgFile] }
+  result <- runHaskell e prgFile
   code <- readUtf8File prgFile
   return $ resultForUserEq diag code [] (const right) "" result
 
@@ -47,9 +46,10 @@ runHaskellExerciseWithStdinEq diag gen calcRight env prgFile = do
   resultRef <- newIORef $ error "Assertion failure: no result written after QuickCheck"
   code <- readUtf8File prgFile
   Temp.withSystemTempDirectory "mmlh-compiled-answer" $ \dir -> do
-    let prg = takeBaseName prgFile
+    let prg = FilePath.takeBaseName prgFile
+        -- TODO: Hide `-o` option as implementation detail
         ghcParams = ["-o", dir </> prg, prgFile]
-    exePathOrErr <- compileWithGhc {- env -} ghcParams
+    exePathOrErr <- compileWithGhc env ghcParams
     case exePathOrErr of
         Right exePath -> do
           qr <- quickCheckWithResult qcArgs $
@@ -60,7 +60,7 @@ runHaskellExerciseWithStdinEq diag gen calcRight env prgFile = do
                         { commandParametersArgs = []
                         , commandParametersStdin = TextEncoding.encodeUtf8 input
                         }
-                  commandResult <- runFileWith {- env -} prg [exePath] params
+                  commandResult <- executeCommand env prg [exePath] params
                   let result = resultForUserEq diag code ["            For input: " <> Text.pack (show input)] calcRight input commandResult
                   writeIORef resultRef result
                   return $
@@ -71,7 +71,7 @@ runHaskellExerciseWithStdinEq diag gen calcRight env prgFile = do
           readIORef resultRef
         Left msg ->
           let textMsg = decodeUtf8 msg
-           in return . Fail code . CompileError cname textMsg $ diag code textMsg
+           in return . Fail code . CompileError textMsg $ diag code textMsg
 
 resultForUserEq
   :: Diagnosis
@@ -160,11 +160,11 @@ noVeirificationExercise _ _ = return NotVerified
 notYetImplementedVeirificationExercise :: Env -> FilePath -> IO Result
 notYetImplementedVeirificationExercise e prgFile = do
   code <- readUtf8File prgFile
-  result <- runGhc e defaultRunHaskellParameters { commandParametersArgs = [prgFile] }
+  result <- checkWithGhc e prgFile
   case result of
       Right _ ->
         return NotYetImplemented
       Left (CommandFailure cname _ecode msg) ->
-        return . Fail code $ CommandFailed cname (decodeUtf8 msg) ""
+        return . Fail code $ CompileError cname (decodeUtf8 msg) ""
       Left (CommandNotFound cname) ->
         return . Error $ Text.pack cname <> " command is not available.\nInstall stack or Haskell Platform."

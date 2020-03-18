@@ -138,8 +138,8 @@ writeFailBy (Exercise.WrongOutput d) = do
   let file = "wrong-output.details.txt"
   TI.writeFile file d
   return [file]
-writeFailBy (Exercise.CommandFailed cmd dCmd dDiag) = do
-  let outputFile = cmd ++ ".output.txt"
+writeFailBy (Exercise.CompileError dCmd dDiag) = do
+  let outputFile = "ghc-output.txt"
       diagFile = "diagnosis.txt"
   TI.writeFile outputFile $ stripAnsiEscapeCodes dCmd
   TI.writeFile diagFile $ stripAnsiEscapeCodes dDiag

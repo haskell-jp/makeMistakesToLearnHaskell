@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
 module Education.MakeMistakesToLearnHaskell.Evaluator.Command
-  ( runFileWith
+  ( execute
   , resolveHaskellProcessor
   , CommandError (..)
   ) where
@@ -13,14 +13,14 @@ import           Education.MakeMistakesToLearnHaskell.Env
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 
 
--- TODO: Make a variant of runFileWith returning both stderr and stdout
+-- TODO: Make a variant of execute returning both stderr and stdout
 --       Make runGhc return message by compiler and the compiled command
 --       Drop runHaskell?
 -- TODO: member of Env
 -- TODO: Don't handle CommandError as Fail: Judge should receive Exitcode
-runFileWith :: CommandName -> [String] -> CommandParameters -> IO (Either CommandError ByteString)
-runFileWith cname [] _rhp = return . Left $ CommandNotFound cname
-runFileWith cname (actualCommand : initialArgs) cmdP = do
+execute :: CommandName -> [String] -> CommandParameters -> IO (Either CommandError ByteString)
+execute cname [] _rhp = return . Left $ CommandNotFound cname
+execute cname (actualCommand : initialArgs) cmdP = do
   let pathTpl = "mmlh-command-" ++ cname
   Temp.withSystemTempFile pathTpl $ \_path h -> do
     let prc =
