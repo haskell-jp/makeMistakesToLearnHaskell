@@ -3,7 +3,6 @@
 module Education.MakeMistakesToLearnHaskell.Evaluator.Command
   ( execute
   , resolveHaskellProcessor
-  , CommandError (..)
   ) where
 
 #include <imports/external.hs>
@@ -13,28 +12,19 @@ import           Education.MakeMistakesToLearnHaskell.Env
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 
 
--- TODO: Make a variant of execute returning both stderr and stdout
---       Make runGhc return message by compiler and the compiled command
---       Drop runHaskell?
--- TODO: member of Env
--- TODO: Don't handle CommandError as Fail: Judge should receive Exitcode
-execute :: CommandName -> [String] -> CommandParameters -> IO (Either CommandError ByteString)
-execute cname [] _rhp = return . Left $ CommandNotFound cname
-execute cname (actualCommand : initialArgs) cmdP = do
+execute :: CommandName -> CommandParameters -> IO CommandResult
+execute cname cmdP = do
   let pathTpl = "mmlh-command-" ++ cname
   Temp.withSystemTempFile pathTpl $ \_path h -> do
     let prc =
           Process.setStdout (Process.useHandleOpen h)
             $ Process.setStderr (Process.useHandleOpen h)
             $ Process.setStdin (Process.byteStringInput $ commandParametersStdin cmdP)
-            $ Process.proc actualCommand
-            $ initialArgs ++ commandParametersArgs cmdP
+            $ Process.proc cname
+            $ commandParametersArgs cmdP
     ecode <- fixingCodePage $ runProcess prc
     IO.hSeek h IO.AbsoluteSeek 0
-    out <- ByteString.hGetContents h
-    return $ case ecode of
-        ExitSuccess -> Right out
-        ExitFailure i -> Left $ CommandFailure cname i out
+    CommandResult ecode <$> ByteString.hGetContents h
 
 
 resolveHaskellProcessor :: CommandName -> [String] -> IO [String]

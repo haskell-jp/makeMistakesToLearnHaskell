@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
 module Education.MakeMistakesToLearnHaskell.Evaluator.Ghc
-  ( runFile
+  ( runHaskell
   ) where
 
 #include <imports/external.hs>
@@ -11,6 +11,18 @@ import           Education.MakeMistakesToLearnHaskell.Env
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Command
 
+runHaskell :: Env -> FilePath -> IO (Either GhcError CommandResult)
+runHaskell env prgFile = do
+  Temp.withSystemTempDirectory "mmlh-compiled-answer" $ \dir -> do
+    let prg = FilePath.takeBaseName prgFile
+        -- TODO: Hide `-o` option as implementation detail
+        ghcParams = ["-o", dir </> prg, prgFile]
+    commandAndArgs <- resolveHaskellProcessor cname (ghcParams ++ optionsAlwaysColor)
+    case commandAndArgs of
+        [] -> return $ Left GhcNotFound
+        (actualCommand : args) -> do
+          let params = CommandParameters args ""
+          commandResult <- executeCommand env actualCommand params
 
 runFile :: Env -> CommandParameters -> IO (Either CommandError ByteString)
 runFile env params = do

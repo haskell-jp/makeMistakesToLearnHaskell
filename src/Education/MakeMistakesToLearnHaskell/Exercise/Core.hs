@@ -15,7 +15,8 @@ module Education.MakeMistakesToLearnHaskell.Exercise.Core
 #include <imports/io.hs>
 
 import           Education.MakeMistakesToLearnHaskell.Env
-import qualified Education.MakeMistakesToLearnHaskell.Evaluator.Command as Command
+import           Education.MakeMistakesToLearnHaskell.Evaluator.Ghc
+import           Education.MakeMistakesToLearnHaskell.Evaluator.Command
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 import           Education.MakeMistakesToLearnHaskell.Exercise.Types
 import           Education.MakeMistakesToLearnHaskell.Text
@@ -61,7 +62,8 @@ runHaskellExerciseWithStdinEq diag gen calcRight env prgFile = do
                         , commandParametersStdin = TextEncoding.encodeUtf8 input
                         }
                   commandResult <- executeCommand env prg [exePath] params
-                  let result = resultForUserEq diag code ["            For input: " <> Text.pack (show input)] calcRight input commandResult
+                  let messageFooter = ["            For input: " <> Text.pack (show input)]
+                      result = resultForUserEq diag code messageFooter calcRight input (Right commandResult)
                   writeIORef resultRef result
                   return $
                     case result of
@@ -79,7 +81,7 @@ resultForUserEq
   -> [Text]
   -> (Text -> Text)
   -> Text
-  -> Either CommandError ByteString
+  -> Either GhcError CommandResult
   -> Result
 resultForUserEq diag code messageFooter calcRight input =
   resultForUser diag code messageFooter judge input
@@ -94,7 +96,7 @@ resultForUser
   -> [Text]
   -> Judge
   -> Text
-  -> Either CommandError ByteString
+  -> Either GhcError ByteString
   -> Result
 resultForUser diag code messageFooter judge input result =
   case result of
@@ -113,11 +115,11 @@ resultForUser diag code messageFooter judge input result =
           if isSuccessful -- out == right
             then Success $ "Nice output!\n\n" <> msg
             else Fail code . WrongOutput $ "Wrong output!\n\n" <> msg
-      Left (Command.CommandNotFound cname) ->
-        Error $ Text.pack cname <> " command is not available.\nInstall stack or Haskell Platform."
-      Left (Command.CommandFailure cname _ msg) ->
+      Left GhcNotFound ->
+        Error $ Text.pack "ghc command is not available.\nInstall stack or Haskell Platform."
+      Left (GhcError _ msg) ->
         let textMsg = decodeUtf8 msg
-         in Fail code . CompileError cname textMsg $ diag code textMsg
+         in Fail code . CompileError textMsg $ diag code textMsg
 
 isInWords :: Text -> [Text] -> Bool
 isInWords wd = any (Text.isInfixOf wd)
@@ -164,7 +166,7 @@ notYetImplementedVeirificationExercise e prgFile = do
   case result of
       Right _ ->
         return NotYetImplemented
-      Left (CommandFailure cname _ecode msg) ->
-        return . Fail code $ CompileError cname (decodeUtf8 msg) ""
-      Left (CommandNotFound cname) ->
-        return . Error $ Text.pack cname <> " command is not available.\nInstall stack or Haskell Platform."
+      Left (GhcError _ecode msg) ->
+        return . Fail code $ CompileError (decodeUtf8 msg) ""
+      Left GhcNotFound ->
+        return . Error $ Text.pack "ghc command is not available.\nInstall stack or Haskell Platform."
