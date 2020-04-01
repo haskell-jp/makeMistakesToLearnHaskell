@@ -47,10 +47,7 @@ runHaskellExerciseWithStdinEq diag gen calcRight env prgFile = do
   resultRef <- newIORef $ error "Assertion failure: no result written after QuickCheck"
   code <- readUtf8File prgFile
   Temp.withSystemTempDirectory "mmlh-compiled-answer" $ \dir -> do
-    let prg = FilePath.takeBaseName prgFile
-        -- TODO: Hide `-o` option as implementation detail
-        ghcParams = ["-o", dir </> prg, prgFile]
-    exePathOrErr <- compileWithGhc env ghcParams
+    exePathOrErr <- compileWithGhc env dir prgFile
     case exePathOrErr of
         Right exePath -> do
           qr <- quickCheckWithResult qcArgs $

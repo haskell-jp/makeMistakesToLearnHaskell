@@ -2,7 +2,6 @@
 
 module Education.MakeMistakesToLearnHaskell.Evaluator.Command
   ( execute
-  , resolveHaskellProcessor
   ) where
 
 #include <imports/external.hs>
@@ -25,14 +24,6 @@ execute cname cmdP = do
     ecode <- fixingCodePage $ runProcess prc
     IO.hSeek h IO.AbsoluteSeek 0
     CommandResult ecode <$> ByteString.hGetContents h
-
-
-resolveHaskellProcessor :: CommandName -> [String] -> IO [String]
-resolveHaskellProcessor cname options = do
-  stack <- Dir.findExecutable "stack"
-  case stack of
-      Just p -> return $ [p, "exec", cname, "--"] ++ options
-      _ -> maybe [] (: options) <$> Dir.findExecutable cname
 
 
 -- | Ref: https://github.com/commercialhaskell/stack/blob/a9042ad6fa1d7c813a1c79713a518ee521da9add/src/Stack/Build.hs#L306-L332

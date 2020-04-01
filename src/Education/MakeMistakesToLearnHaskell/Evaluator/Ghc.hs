@@ -2,6 +2,8 @@
 
 module Education.MakeMistakesToLearnHaskell.Evaluator.Ghc
   ( runHaskell
+  , compileWithGhc
+  , checkWithGhc
   ) where
 
 #include <imports/external.hs>
@@ -12,23 +14,55 @@ import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Command
 
 runHaskell :: Env -> FilePath -> IO (Either GhcError CommandResult)
-runHaskell env prgFile = do
+runHaskell env srcPath =
   Temp.withSystemTempDirectory "mmlh-compiled-answer" $ \dir -> do
-    let prg = FilePath.takeBaseName prgFile
-        -- TODO: Hide `-o` option as implementation detail
-        ghcParams = ["-o", dir </> prg, prgFile]
-    commandAndArgs <- resolveHaskellProcessor cname (ghcParams ++ optionsAlwaysColor)
-    case commandAndArgs of
-        [] -> return $ Left GhcNotFound
-        (actualCommand : args) -> do
-          let params = CommandParameters args ""
-          commandResult <- executeCommand env actualCommand params
+    ecompiledPath <- compileWithGhc env dir srcPath
+    for ecompiledPath $ \compiledPath -> do
+        let params = CommandParameters [] ""
+        executeCommand env compiledPath params
 
-runFile :: Env -> CommandParameters -> IO (Either CommandError ByteString)
-runFile env params = do
+
+compileWithGhc :: Env -> FilePath -> FilePath -> IO (Either GhcError FilePath)
+compileWithGhc env outDir srcPath = do
+  let prg = FilePath.takeBaseName srcPath
+      compiledPath = outDir </> prg
+      ghcArgs = ["-o", compiledPath, srcPath]
+  ghcCommandAndArgs <- resolveGhc $ ghcArgs ++ optionsAlwaysColor
+  case ghcCommandAndArgs of
+      [] -> return $ Left GhcNotFound
+      (actualCommand : args) -> do
+        let ghcParams = CommandParameters args ""
+        ghcResult <- executeCommand env actualCommand ghcParams
+        case ghcResult of
+            CommandResult ExitSuccess _out ->
+              return $ Right compiledPath
+            CommandResult (ExitFailure ecode) out ->
+              return . Left $ GhcError ecode out
+
+
+checkWithGhc :: Env -> FilePath -> IO (Either GhcError ())
+checkWithGhc env srcPath = do
+  let ghcArgs = ["-fno-code", srcPath]
+  ghcCommandAndArgs <- resolveGhc $ ghcArgs ++ optionsAlwaysColor
+  case ghcCommandAndArgs of
+      [] -> return $ Left GhcNotFound
+      (actualCommand : args) -> do
+        let ghcParams = CommandParameters args ""
+        ghcResult <- executeCommand env actualCommand ghcParams
+        case ghcResult of
+            CommandResult ExitSuccess _out ->
+              return $ Right ()
+            CommandResult (ExitFailure ecode) out ->
+              return . Left $ GhcError ecode out
+
+
+resolveGhc :: [String] -> IO [String]
+resolveGhc options = do
   let cname = "ghc"
-  commandAndArgs <- resolveHaskellProcessor cname ("-fno-code" : optionsAlwaysColor)
-  runFileWith cname commandAndArgs env params
+  stack <- Dir.findExecutable "stack"
+  case stack of
+      Just p -> return $ [p, "exec", cname, "--"] ++ options
+      _ -> maybe [] (: options) <$> Dir.findExecutable cname
 
 
 optionsAlwaysColor :: [String]

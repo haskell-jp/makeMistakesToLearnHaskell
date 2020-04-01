@@ -33,6 +33,7 @@ import           Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as Text
 import qualified Data.Text.Lazy.Encoding as TextEncoding
 import qualified Data.Text as TextS
+import           Data.Traversable (for)
 import           Data.Typeable (Typeable)
 import qualified Debug.Trace as Debug
 import           GHC.Generics (Generic)
