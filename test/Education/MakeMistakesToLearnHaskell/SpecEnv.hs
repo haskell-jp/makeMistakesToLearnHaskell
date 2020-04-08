@@ -21,14 +21,17 @@ mkDefaultSpecEnv = runIO $ do
 
 setRunHaskellFailureWithOutput :: Env -> ByteString -> Env
 setRunHaskellFailureWithOutput e err =
-  e { runHaskell = \_path -> return $ Left $ CommandFailure "runhaskell" 1 err }
+  e { executeCommand = \_cname _params -> return $ CommandResult (ExitFailure 1) err }
 
 
 setRunHaskellSuccessWithStdout :: Env -> ByteString -> Env
 setRunHaskellSuccessWithStdout e out =
-  e { runHaskell = \_path -> return $ Right (out, "") }
+  e { executeCommand = \_cname _params -> return $ CommandResult ExitSuccess out }
 
 
 setRunHaskellSuccessWithStdinFunction :: Env -> (ByteString -> ByteString) -> Env
 setRunHaskellSuccessWithStdinFunction e func =
-  e { runHaskell = \rhp -> return $ Right (func $ commandParametersStdin rhp, "") }
+  e {
+    executeCommand = \_cname params ->
+      return . CommandResult ExitSuccess . func $ commandParametersStdin params
+  }

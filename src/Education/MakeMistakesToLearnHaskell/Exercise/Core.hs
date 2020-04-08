@@ -58,7 +58,7 @@ runHaskellExerciseWithStdinEq diag gen calcRight env prgFile = do
                         { commandParametersArgs = []
                         , commandParametersStdin = TextEncoding.encodeUtf8 input
                         }
-                  commandResult <- executeCommand env prg [exePath] params
+                  commandResult <- executeCommand env exePath params
                   let messageFooter = ["            For input: " <> Text.pack (show input)]
                       result = resultForUserEq diag code messageFooter calcRight input (Right commandResult)
                   writeIORef resultRef result
@@ -68,9 +68,11 @@ runHaskellExerciseWithStdinEq diag gen calcRight env prgFile = do
                         _other -> False
           logDebug env $ ByteString.pack $ "QuickCheck result: " ++ show qr
           readIORef resultRef
-        Left msg ->
+        Left (GhcError _exitCode msg) -> -- TODO: duplicate error handling code
           let textMsg = decodeUtf8 msg
            in return . Fail code . CompileError textMsg $ diag code textMsg
+        Left GhcNotFound ->
+          return . Error $ Text.pack "ghc command is not available.\nInstall stack or Haskell Platform."
 
 resultForUserEq
   :: Diagnosis
@@ -83,7 +85,10 @@ resultForUserEq
 resultForUserEq diag code messageFooter calcRight input =
   resultForUser diag code messageFooter judge input
  where
-  judge acutalOut _err =
+  -- Currently the exit code is ignored.
+  -- If you want to judge by the exit code, consider adding an error message
+  -- when the acutalOut is correct, but the exit code is wrong.
+  judge _input _ecode acutalOut =
     let expectedOut = calcRight input
      in (expectedOut, acutalOut == expectedOut)
 
@@ -93,15 +98,13 @@ resultForUser
   -> [Text]
   -> Judge
   -> Text
-  -> Either GhcError ByteString
+  -> Either GhcError CommandResult
   -> Result
 resultForUser diag code messageFooter judge input result =
   case result of
-      Right outB ->
+      Right (CommandResult ecode outB) ->
         let out = canonicalizeNewlines outB
-            -- TODO: Merge stdout and stderr from the user's answer
-            -- err = canonicalizeNewlines errB
-            (right, isSuccessful) = judge input out -- err
+            (right, isSuccessful) = judge input ecode out
             msg =
               Text.unlines $
                 [ Text.replicate 80 "="
@@ -109,10 +112,10 @@ resultForUser diag code messageFooter judge input result =
                 , "      Expected output: " <> Text.pack (show right)
                 ] ++ messageFooter
         in
-          if isSuccessful -- out == right
+          if isSuccessful
             then Success $ "Nice output!\n\n" <> msg
             else Fail code . WrongOutput $ "Wrong output!\n\n" <> msg
-      Left GhcNotFound ->
+      Left GhcNotFound -> -- TODO: duplicate error handling code
         Error $ Text.pack "ghc command is not available.\nInstall stack or Haskell Platform."
       Left (GhcError _ msg) ->
         let textMsg = decodeUtf8 msg

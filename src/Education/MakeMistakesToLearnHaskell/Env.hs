@@ -25,7 +25,7 @@ data CommandParameters = CommandParameters
 data Env = Env
   { logDebug :: ByteString -> IO ()
   , appHomePath :: FilePath
-  , executeCommand :: String -> CommandParameters -> IO CommandResult
+  , executeCommand :: CommandName -> CommandParameters -> IO CommandResult
   , confirm :: Text -> IO Bool
   , openWithBrowser :: Text -> IO Bool
   , say :: Text -> IO ()

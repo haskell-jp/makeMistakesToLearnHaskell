@@ -14,8 +14,7 @@ import           Education.MakeMistakesToLearnHaskell.Report.Client    (Endpoint
 import           Education.MakeMistakesToLearnHaskell.Env
 import qualified Education.MakeMistakesToLearnHaskell.Exercise as Exercise
 import qualified Education.MakeMistakesToLearnHaskell.Exercise.FormatMessage as Exercise
-import qualified Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell as RunHaskell
-import qualified Education.MakeMistakesToLearnHaskell.Evaluator.Ghc as Ghc
+import qualified Education.MakeMistakesToLearnHaskell.Evaluator.Command as Command
 import           Education.MakeMistakesToLearnHaskell.Error
 import qualified Education.MakeMistakesToLearnHaskell.Report as Report
 import           Education.MakeMistakesToLearnHaskell.Text
@@ -58,7 +57,7 @@ withMainEnv defaultHost copts doAction = do
     let e = defaultEnv
               { logDebug = ByteString.hPutStr h . (<> "\n")
               , appHomePath = d
-              , runHaskell = RunHaskell.runFile e
+              , executeCommand = Command.execute
               , confirm = \prompt -> do
                   Text.putStrLn $ prompt <> " (y/n)"
                   handle ((const $ return False) :: IOException -> IO Bool) $ do
@@ -66,7 +65,6 @@ withMainEnv defaultHost copts doAction = do
                     return $ ans == 'y' || ans == 'Y'
               , openWithBrowser = openB
               , say = Text.putStrLn
-              , runGhc = Ghc.runFile e
               , postReport = IO.postReport host
               }
     doAction e

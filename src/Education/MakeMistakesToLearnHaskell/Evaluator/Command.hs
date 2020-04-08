@@ -13,7 +13,7 @@ import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 
 execute :: CommandName -> CommandParameters -> IO CommandResult
 execute cname cmdP = do
-  let pathTpl = "mmlh-command-" ++ cname
+  let pathTpl = "mmlh-command-" ++ FilePath.takeFileName cname
   Temp.withSystemTempFile pathTpl $ \_path h -> do
     let prc =
           Process.setStdout (Process.useHandleOpen h)
