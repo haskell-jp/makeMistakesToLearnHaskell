@@ -16,6 +16,7 @@ import           Control.Monad (void, unless, when)
 import           Control.Monad.IO.Class (liftIO)
 import qualified Control.Monad.Trans.Maybe as MaybeT
 import           Data.Bool (bool)
+import qualified Data.ByteString.Char8 as ByteString'
 import           Data.ByteString.Lazy.Char8 (ByteString)
 import qualified Data.ByteString.Lazy.Char8 as ByteString
 import qualified Data.Char as Char

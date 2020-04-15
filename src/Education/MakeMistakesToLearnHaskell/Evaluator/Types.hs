@@ -21,8 +21,8 @@ type ErrorMessage = ByteString
 
 data CommandResult =
   CommandResult
-    !ExitCode   -- ^ exit code
-    !ByteString -- ^ Merged stdout and stderr
+    !ExitCode               -- ^ exit code
+    !ByteString'.ByteString -- ^ Merged stdout and stderr
     deriving Show
 
 
