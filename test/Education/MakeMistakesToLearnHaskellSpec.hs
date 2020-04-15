@@ -126,11 +126,17 @@ shouldNotExitWithMessages = shouldExitWithMessagesLike (\s -> not . includes s)
 
 
 shouldVerifySuccess :: ProcessResult -> IO ()
-shouldVerifySuccess (ProcessResult out err code ex) = do
+shouldVerifySuccess (ProcessResult out err code ex) = (`onException` handle) $ do
   fmap show ex `shouldBe` Nothing
   err `shouldSatisfy` ByteString'.null
   out `shouldSatisfy` includes "SUCCESS"
   code `shouldBe` ExitSuccess
+ where
+  handle = do
+    putStrLn "\n=== STDOUT:"
+    ByteString'.putStr out
+    putStrLn "\n=== STDERR:"
+    ByteString'.putStr err
 
 
 shouldPrintNotVerified :: ProcessResult -> IO ()

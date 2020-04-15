@@ -7,7 +7,7 @@ import           Test.Main                        (ProcessResult (ProcessResult,
 import qualified Paths_makeMistakesToLearnHaskell as Paths
 
 import           Control.Concurrent               (forkIO)
-import           Control.Exception                (try)
+import           Control.Exception                (try, onException)
 import           Control.Monad                    (void)
 import qualified Data.ByteString.Char8            as ByteString'
 import           Data.ByteString.Lazy.Char8       (ByteString)
