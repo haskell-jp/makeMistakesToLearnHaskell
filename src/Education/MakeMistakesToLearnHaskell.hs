@@ -60,9 +60,19 @@ withMainEnv defaultHost copts doAction = do
               , executeCommand = Command.execute
               , confirm = \prompt -> do
                   Text.putStrLn $ prompt <> " (y/n)"
-                  handle ((const $ return False) :: IOException -> IO Bool) $ do
+                  let handler :: IOException -> IO Bool
+                      handler ex = do
+                        IO.hPrint h ex
+                        return False
+                  -- handle ((const $ return False) :: IOException -> IO Bool) $ do
+                  IO.hPutStrLn h "BEFORE handle"
+                  r <- handle handler $ do
+                    IO.hPutStrLn h "BEFORE getChar"
                     ans <- getChar
+                    IO.hPutStrLn h $ "AFTER getChar: " ++ show ans
                     return $ ans == 'y' || ans == 'Y'
+                  IO.hPutStrLn h $ "AFTER handle: " ++ show r
+                  return r
               , openWithBrowser = openB
               , say = Text.putStrLn
               , postReport = IO.postReport host
