@@ -138,7 +138,7 @@ verifySource e file = do
         Exit.exitFailure
 
       Exercise.Error details -> do
-        Error.errLn $ Text.toStrict $ details <> "\n\n"
+        Error.errLn $ details <> "\n\n"
         die "An unexpected error occurred when evaluating your solution."
 
       Exercise.NotVerified -> do
@@ -172,9 +172,9 @@ showExercise e n = do
 
 showMarkdown :: Env -> Text -> String -> IO ()
 showMarkdown e md n = do
-  cssPath <- TextS.pack <$> Paths.getDataFileName "assets/exercise.css"
-  let htmlBody = CMark.commonmarkToHtml [CMark.optSafe] $ Text.toStrict md
-      htmlHead = TextS.unlines
+  cssPath <- Text.pack <$> Paths.getDataFileName "assets/exercise.css"
+  let htmlBody = CMark.commonmarkToHtml [CMark.optSafe] md
+      htmlHead = Text.unlines
         [ "<!DOCTYPE html>"
         , "<html>"
         , "<head>"
@@ -184,7 +184,7 @@ showMarkdown e md n = do
         , "<body>"
         , "<div id=\"container\">"
         ]
-      htmlFoot = TextS.unlines
+      htmlFoot = Text.unlines
         [ "</div>"
         , "</body>"
         , "</html>"
@@ -193,7 +193,7 @@ showMarkdown e md n = do
       mkHtmlPath dir = dir <> "/" <> "mmlh-ex" <> n <> ".html"
   path <- mkHtmlPath <$> Dir.getTemporaryDirectory
 
-  writeUtf8FileS path (htmlHead <> htmlBody <> htmlFoot)
+  writeUtf8File path (htmlHead <> htmlBody <> htmlFoot)
 
   browserLaunched <- openWithBrowser e (Text.pack path)
 

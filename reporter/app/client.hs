@@ -2,8 +2,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 import           Control.Exception                                     (throwIO)
-import qualified Data.Text.Lazy                                        as T
-import qualified Data.Text.Lazy.IO                                     as TI
+import qualified Data.Text                                             as T
+import qualified Data.Text.IO                                          as TI
 import           GHC.Generics                                          (Generic)
 import           Options.Generic                                       (ParseRecord,
                                                                         getRecord)

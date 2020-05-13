@@ -36,7 +36,7 @@ formatSingleArgFunApp = List.unfoldr uf
               -- NOTE: The final argument should not be tested because it should be a raw expression.
               --       E.g. The `input` argument of `reverse (lines input)`.
               if isJust $ singleArgFunAppArg safa2
-                then Just (Text.fromStrict hint, safa2)
+                then Just (hint, safa2)
                 else Nothing
       in f =<< singleArgFunAppArg safa1
 

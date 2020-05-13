@@ -2,7 +2,7 @@
 
 module Education.MakeMistakesToLearnHaskell.Text.IO
   ( readUtf8File
-  , writeUtf8FileS
+  , writeUtf8File
   ) where
 
 
@@ -18,8 +18,8 @@ readUtf8File path = do
   Text.hGetContents hd
 
 
-writeUtf8FileS :: FilePath -> TextS.Text -> IO ()
-writeUtf8FileS path dat =
+writeUtf8File :: FilePath -> Text -> IO ()
+writeUtf8File path dat =
   IO.withFile path IO.WriteMode $ \hd -> do
     IO.hSetEncoding hd IO.utf8
-    TextS.hPutStr hd dat
+    Text.hPutStr hd dat

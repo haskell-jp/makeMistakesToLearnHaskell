@@ -18,7 +18,7 @@ execute cname cmdP = do
     let prc =
           Process.setStdout (Process.useHandleOpen h)
             $ Process.setStderr (Process.useHandleOpen h)
-            $ Process.setStdin (Process.byteStringInput $ commandParametersStdin cmdP)
+            $ Process.setStdin (Process.byteStringInput . ByteStringLazy.fromStrict $ commandParametersStdin cmdP)
             $ Process.proc cname
             $ commandParametersArgs cmdP
     ecode <- fixingCodePage $ runProcess prc

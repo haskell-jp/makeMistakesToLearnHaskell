@@ -16,9 +16,9 @@ import           Control.Monad (void, unless, when)
 import           Control.Monad.IO.Class (liftIO)
 import qualified Control.Monad.Trans.Maybe as MaybeT
 import           Data.Bool (bool)
-import qualified Data.ByteString.Char8 as ByteString'
-import           Data.ByteString.Lazy.Char8 (ByteString)
-import qualified Data.ByteString.Lazy.Char8 as ByteString
+import           Data.ByteString.Char8 (ByteString)
+import qualified Data.ByteString.Char8 as ByteString
+import qualified Data.ByteString.Lazy.Char8 as ByteStringLazy
 import qualified Data.Char as Char
 import           Data.Functor (($>))
 import qualified Data.List as List
@@ -30,10 +30,9 @@ import           Data.IORef
                    )
 import           Data.Monoid ((<>))
 import qualified Data.Text.Encoding.Error as TextEncoding
-import           Data.Text.Lazy (Text)
-import qualified Data.Text.Lazy as Text
-import qualified Data.Text.Lazy.Encoding as TextEncoding
-import qualified Data.Text as TextS
+import           Data.Text (Text)
+import qualified Data.Text as Text
+import qualified Data.Text.Encoding as TextEncoding
 import           Data.Traversable (for)
 import           Data.Typeable (Typeable)
 import qualified Debug.Trace as Debug

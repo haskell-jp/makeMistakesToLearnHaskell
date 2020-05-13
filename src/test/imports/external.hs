@@ -10,11 +10,11 @@ import           Control.Concurrent               (forkIO)
 import           Control.Exception                (try, onException)
 import           Control.Monad                    (void)
 import qualified Data.ByteString.Char8            as ByteString'
-import           Data.ByteString.Lazy.Char8       (ByteString)
-import qualified Data.ByteString.Lazy.Char8       as ByteString
+import           Data.ByteString.Char8           (ByteString)
+import qualified Data.ByteString.Char8            as ByteString
 import           Data.Foldable                    (for_)
 import           Data.Function                    ((&))
-import qualified Data.Text.Lazy                   as Text
+import qualified Data.Text                        as Text
 import qualified System.Directory                 as Dir
 import qualified System.Environment               as Env
 import           System.Exit                      (ExitCode (ExitFailure, ExitSuccess))

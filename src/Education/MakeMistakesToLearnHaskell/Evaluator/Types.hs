@@ -22,7 +22,7 @@ type ErrorMessage = ByteString
 data CommandResult =
   CommandResult
     !ExitCode               -- ^ exit code
-    !ByteString'.ByteString -- ^ Merged stdout and stderr
+    !ByteString -- ^ Merged stdout and stderr
     deriving Show
 
 
@@ -37,7 +37,7 @@ data HasParens =
 
 
 data SingleArgFunApp = SingleArgFunApp
-  { singleArgFunAppFunName :: !TextS.Text
+  { singleArgFunAppFunName :: !Text
   , singleArgFunAppArg :: !(Maybe SingleArgFunApp)
   , singleArgFunAppHasParen :: !HasParens
   } deriving (Eq, Show)

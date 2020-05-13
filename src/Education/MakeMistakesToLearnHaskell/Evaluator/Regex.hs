@@ -17,7 +17,7 @@ module Education.MakeMistakesToLearnHaskell.Evaluator.Regex
 
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 
-type GhcToken = (GHC.Token, TextS.Text)
+type GhcToken = (GHC.Token, Text)
 
 
 matchSub :: Regex.RE s a -> [s] -> Maybe a
@@ -45,13 +45,13 @@ singleArgFunApp depth =
     <*> (if depth == 0 then pure Nothing else optional $ singleArgFunApp $ depth - 1)
 
   where
-    symbol :: TextS.Text -> Regex.RE GhcToken ()
+    symbol :: Text -> Regex.RE GhcToken ()
     symbol t = void $ Regex.sym (GHC.SymbolTok, t)
 
-    hasSympol :: TextS.Text -> Regex.RE GhcToken Bool
+    hasSympol :: Text -> Regex.RE GhcToken Bool
     hasSympol t = (symbol t $> True) <|> pure False
 
-    identifier :: Regex.RE GhcToken TextS.Text
+    identifier :: Regex.RE GhcToken Text
     identifier = snd <$> Regex.psym ((== GHC.VariableTok) . fst)
 
     skipSpace :: Regex.RE GhcToken ()
