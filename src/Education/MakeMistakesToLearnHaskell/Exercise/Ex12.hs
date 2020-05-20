@@ -2,6 +2,7 @@
 
 module Education.MakeMistakesToLearnHaskell.Exercise.Ex12
   ( exercise12
+  , generator
   ) where
 
 #include <imports/external.hs>
@@ -12,26 +13,24 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 exercise12 :: Exercise
 exercise12 = Exercise "12"
-           $ runHaskellExerciseWithStdinEq undefined undefined undefined -- diag generator answer
+           $ runHaskellExerciseWithStdinEq diag generator answer
 
 
-{-
 diag :: Diagnosis
 diag _code _msg = "" -- TODO: Not implemented
 
 
-generator :: Gen String
-generator =
-  unlines <$> sequence
-    [ show <$> (arbitrary :: Gen Double)
-    , show <$> (arbitrary :: Gen Double)
-    , show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Int))
-    ]
+generator :: Gen Text
+generator = do
+  inputLines <- QuickCheck.listOf inputLine
+  return . Text.unlines $ inputLines ++ [""]
+ where
+  inputLine = do
+    cat <- fmap Text.pack . QuickCheck.listOf1 $ QuickCheck.choose ('A', 'z')
+    price <- Text.pack . show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Integer))
+    separator <- QuickCheck.listOf1 $ pure ' '
+    return $ cat <> Text.pack separator <> price
 
 
 answer :: Text -> Text
-answer input = Text.pack $ show (body :: Double) <> "\n"
-  where
-    [principal, interestRate, years] = lines $ Text.unpack input
-    body = read principal * (1 + read interestRate / 100) ^ (read years :: Integer)
--}
+answer = undefined
