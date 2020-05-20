@@ -64,7 +64,7 @@ spec = do
 
     -- Response from the report server. The stub server actually desen't return a URL. But the production server is expected to.
     let expectedMessage n =
-          "Open Report {exerciseName = \"" <> n <> "\", exerciseAnswer = \"\", exerciseFailBy = CommandFailed \""
+          "Open Report {exerciseName = \"" <> n <> "\", exerciseAnswer = \"\", exerciseFailBy = CompileError \""
 
     context "given \"y\" from stdin" $ do
       it "given a not-compilable answer of exercise 5, show FAIL with the URL to submit an issue to haskell-jp/" $ do
@@ -106,7 +106,8 @@ includes = ByteString'.isInfixOf
 
 
 shouldExitWithMessagesLike
-  :: (ByteString'.ByteString -> ByteString'.ByteString -> Bool)
+  :: HasCallStack
+  => (ByteString'.ByteString -> ByteString'.ByteString -> Bool)
   -> [ByteString'.ByteString]
   -> ProcessResult
   -> IO ()
@@ -117,11 +118,11 @@ shouldExitWithMessagesLike p hintMsgs (ProcessResult out err code ex) = do
   code `shouldBe` ExitFailure 1
 
 
-shouldExitWithMessages :: [ByteString'.ByteString] -> ProcessResult -> IO ()
+shouldExitWithMessages :: HasCallStack => [ByteString'.ByteString] -> ProcessResult -> IO ()
 shouldExitWithMessages = shouldExitWithMessagesLike includes
 
 
-shouldNotExitWithMessages :: [ByteString'.ByteString] -> ProcessResult -> IO ()
+shouldNotExitWithMessages :: HasCallStack => [ByteString'.ByteString] -> ProcessResult -> IO ()
 shouldNotExitWithMessages = shouldExitWithMessagesLike (\s -> not . includes s)
 
 

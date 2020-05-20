@@ -20,9 +20,15 @@ diag1 code msg
         "HINT: In Haskell, you must surround string literals with double-quote '\"'. Such as \"Hello, world\"."
   | ("parse error" `Text.isInfixOf` msg || "Parse error" `Text.isInfixOf` msg)
       && "top-level declaration expected." `Text.isInfixOf` msg =
-        "HINT: This error indicates you haven't defined main function."
+        hintNoMain
   | "Variable not in scope: main :: IO" `Text.isInfixOf` msg =
-    "HINT: This error indicates you haven't defined main function."
+    -- ^ Error message by runghc / runhaskell
+    hintNoMain
+  | "The IO action  emain f is not defined in module  eMain f" `Text.isInfixOf` msg =
+    -- ^ Error message by ghc
+    hintNoMain
   | "Variable not in scope:" `Text.isInfixOf` msg =
     "HINT: you might have misspelled 'putStrLn'."
   | otherwise = ""
+ where
+  hintNoMain = "HINT: This error indicates you haven't defined main function."

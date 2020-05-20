@@ -15,6 +15,7 @@ execute :: CommandName -> CommandParameters -> IO CommandResult
 execute cname cmdP = do
   let pathTpl = "mmlh-command-" ++ FilePath.takeFileName cname
   Temp.withSystemTempFile pathTpl $ \_path h -> do
+    IO.hSetBinaryMode h True
     let prc =
           Process.setStdout (Process.useHandleOpen h)
             $ Process.setStderr (Process.useHandleOpen h)
