@@ -21,6 +21,7 @@ import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 import           Education.MakeMistakesToLearnHaskell.Exercise.Types
 import           Education.MakeMistakesToLearnHaskell.Text
 
+
 runHaskellExerciseEq
   :: Diagnosis
   -> Text
@@ -31,6 +32,7 @@ runHaskellExerciseEq diag right e prgFile = do
   result <- runHaskell e prgFile
   code <- readUtf8File prgFile
   return $ resultForUserEq diag code [] (const right) "" result
+
 
 -- | 'runHaskellExercise' with input to stdin
 runHaskellExerciseWithStdinEq
@@ -74,6 +76,7 @@ runHaskellExerciseWithStdinEq diag gen calcRight env prgFile = do
         Left GhcNotFound ->
           return . Error $ Text.pack "ghc command is not available.\nInstall stack or Haskell Platform."
 
+
 resultForUserEq
   :: Diagnosis
   -> Text
@@ -91,6 +94,7 @@ resultForUserEq diag code messageFooter calcRight input =
   judge _input _ecode acutalOut =
     let expectedOut = calcRight input
      in (expectedOut, acutalOut == expectedOut)
+
 
 resultForUser
   :: Diagnosis
@@ -121,15 +125,19 @@ resultForUser diag code messageFooter judge input result =
         let textMsg = decodeUtf8 msg
          in Fail code . CompileError textMsg $ diag code textMsg
 
+
 isInWords :: Text -> [Text] -> Bool
 isInWords wd = any (Text.isInfixOf wd)
+
 
 detailsForgetToWriteDo :: Text -> Details
 detailsForgetToWriteDo funcNames =
   "HINT: You seem to forget to write `do`. `do` must be put before listing " <> funcNames <> "."
 
+
 detailsDoConsistentWidth :: Details
 detailsDoConsistentWidth = "HINT: instructions in a `do` must be in a consistent width."
+
 
 isInconsistentlyIndentedAfter :: SourceCode -> Text -> Bool
 isInconsistentlyIndentedAfter code wd =
@@ -151,13 +159,16 @@ isInconsistentlyIndentedAfter code wd =
           then []
           else drop 1 containing -- except the first line, which contains 'w'
 
+
 allSame :: Eq a => [a] -> Bool
 allSame [] = True
 allSame [_] = True
 allSame (x1 : x2 : xs) = x1 == x2 && allSame xs
 
+
 noVeirificationExercise :: Env -> String -> IO Result
 noVeirificationExercise _ _ = return NotVerified
+
 
 notYetImplementedVeirificationExercise :: Env -> FilePath -> IO Result
 notYetImplementedVeirificationExercise e prgFile = do
