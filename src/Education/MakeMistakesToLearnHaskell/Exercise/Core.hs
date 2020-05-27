@@ -3,6 +3,7 @@
 module Education.MakeMistakesToLearnHaskell.Exercise.Core
   ( runHaskellExerciseEq
   , runHaskellExerciseWithStdinEq
+  , runHaskellExerciseWithStdin
   , noVeirificationExercise
   , notYetImplementedVeirificationExercise
   , isInWords
@@ -31,7 +32,8 @@ runHaskellExerciseEq
 runHaskellExerciseEq diag right e prgFile = do
   result <- runHaskell e prgFile
   code <- readUtf8File prgFile
-  return $ resultForUserEq diag code [] (const right) "" result
+  let calcRight = const right
+  return $ resultForUser diag code [] (judgeByEq calcRight) "" result
 
 
 -- | 'runHaskellExercise' with input to stdin
@@ -42,7 +44,27 @@ runHaskellExerciseWithStdinEq
   -> Env
   -> FilePath
   -> IO Result
-runHaskellExerciseWithStdinEq diag gen calcRight env prgFile = do
+runHaskellExerciseWithStdinEq diag gen =
+  runHaskellExerciseWithStdin diag gen . judgeByEq
+
+
+-- Currently the exit code is ignored.
+-- If you want to judge by the exit code, consider adding an error message
+-- when the acutalOut is correct, but the exit code is wrong.
+judgeByEq :: (Text -> Text) -> Judge
+judgeByEq calcRight input _ecode acutalOut =
+  let expectedOut = calcRight input
+   in (expectedOut, acutalOut == expectedOut)
+
+
+runHaskellExerciseWithStdin
+  :: Diagnosis
+  -> Gen Text
+  -> Judge
+  -> Env
+  -> FilePath
+  -> IO Result
+runHaskellExerciseWithStdin diag gen judge env prgFile = do
   let qcArgs = QuickCheck.stdArgs { QuickCheck.chatty = True }
       maxSuccessSize = envQcMaxSuccessSize env
 
@@ -62,7 +84,7 @@ runHaskellExerciseWithStdinEq diag gen calcRight env prgFile = do
                         }
                   commandResult <- executeCommand env exePath params
                   let messageFooter = ["            For input: " <> Text.pack (show input)]
-                      result = resultForUserEq diag code messageFooter calcRight input (Right commandResult)
+                      result = resultForUser diag code messageFooter judge input (Right commandResult)
                   writeIORef resultRef result
                   return $
                     case result of
@@ -75,25 +97,6 @@ runHaskellExerciseWithStdinEq diag gen calcRight env prgFile = do
            in return . Fail code . CompileError textMsg $ diag code textMsg
         Left GhcNotFound ->
           return . Error $ Text.pack "ghc command is not available.\nInstall stack or Haskell Platform."
-
-
-resultForUserEq
-  :: Diagnosis
-  -> Text
-  -> [Text]
-  -> (Text -> Text)
-  -> Text
-  -> Either GhcError CommandResult
-  -> Result
-resultForUserEq diag code messageFooter calcRight input =
-  resultForUser diag code messageFooter judge input
- where
-  -- Currently the exit code is ignored.
-  -- If you want to judge by the exit code, consider adding an error message
-  -- when the acutalOut is correct, but the exit code is wrong.
-  judge _input _ecode acutalOut =
-    let expectedOut = calcRight input
-     in (expectedOut, acutalOut == expectedOut)
 
 
 resultForUser
