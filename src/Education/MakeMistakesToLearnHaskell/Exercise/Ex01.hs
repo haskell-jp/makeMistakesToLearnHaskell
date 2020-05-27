@@ -25,7 +25,10 @@ diag1 code msg
     -- ^ Error message by runghc / runhaskell
     hintNoMain
   | "The IO action  emain f is not defined in module  eMain f" `Text.isInfixOf` msg =
-    -- ^ Error message by ghc
+    -- ^ Error message by ghc on Windows. Why are the quote characters converted into " e" and " f"?
+    hintNoMain
+  | "The IO action \226\128\152main\226\128\153 is not defined in module \226\128\152Main\226\128\153" `Text.isInfixOf` msg =
+    -- ^ Error message by ghc on other OSs.
     hintNoMain
   | "Variable not in scope:" `Text.isInfixOf` msg =
     "HINT: you might have misspelled 'putStrLn'."
