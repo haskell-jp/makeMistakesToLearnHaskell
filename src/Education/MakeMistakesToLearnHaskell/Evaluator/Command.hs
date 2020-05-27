@@ -57,5 +57,5 @@ fixingCodePage action = do
 
   fixingInput $ fixingOutput action
 #else
-fixingCodePage _ action = action
+fixingCodePage action = action
 #endif
