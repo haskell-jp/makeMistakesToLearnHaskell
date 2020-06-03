@@ -15,6 +15,7 @@ import           Control.Exception
 import           Control.Monad (void, unless, when)
 import           Control.Monad.IO.Class (liftIO)
 import qualified Control.Monad.Trans.Maybe as MaybeT
+import           Data.Bifunctor (bimap)
 import           Data.Bool (bool)
 import           Data.ByteString.Char8 (ByteString)
 import qualified Data.ByteString.Char8 as ByteString
@@ -23,11 +24,7 @@ import qualified Data.Char as Char
 import           Data.Functor (($>))
 import qualified Data.List as List
 import           Data.Maybe (fromMaybe, maybeToList, isJust)
-import           Data.IORef
-                   ( newIORef
-                   , readIORef
-                   , writeIORef
-                   )
+import           Data.IORef (newIORef, readIORef, writeIORef)
 import           Data.Monoid ((<>))
 import qualified Data.Text.Encoding.Error as TextEncoding
 import           Data.Text (Text)

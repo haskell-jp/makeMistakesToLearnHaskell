@@ -42,11 +42,30 @@ generator = do
 
 
 judge :: Judge
-judge input ExitSuccess acutalOut =
-  undefined
-judge input (ExitFailure _) acutalOut =
-  undefined
+judge input exitCode actualOut =
+  case (exitCode, answer input) of
+      (ExitSuccess, Right expectedOut) -> (expectedOut, actualOut == expectedOut)
+      (ExitFailure _, Left expectedOut) -> (expectedOut, expectedOut `Text.isInfixOf` actualOut)
+      (_, Right expectedOut) -> (expectedOut, False)
+      (_, Left expectedOut) -> (expectedOut, False)
 
  where
   answer :: Text -> Either Text Text
-  answer = undefined
+  answer =
+    bimap (<> "\n") ((<> "\n") . Text.pack . show)
+      . sumEntries 0
+      . Text.lines
+   where
+    sumEntries :: Integer -> [Text] -> Either Text Integer
+    sumEntries currentSum lns =
+      case lns of
+          line : leftLines ->
+            case Text.words line of
+                [_cat, priceStr] ->
+                  sumEntries (currentSum + read (Text.unpack priceStr)) leftLines
+                [] ->
+                  Right currentSum
+                _ ->
+                  Left ("Invalid input: " <> line)
+          _ ->
+            error "Assertion failure: empty input!"
