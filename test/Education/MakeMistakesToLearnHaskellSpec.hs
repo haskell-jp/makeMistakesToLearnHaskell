@@ -48,6 +48,11 @@ spec = do
       void $ runMmlh ["show", "--terminal", "6"] ""
       runMmlh ["verify", answerFile] "" >>= shouldVerifySuccess
 
+    it "given the correct answer of exercise 12, show SUCCESS" $ do
+      void $ runMmlh ["show", "--terminal", "12"] ""
+      answerFile <- Paths.getDataFileName ("assets" </> "12.hs")
+      runMmlh ["verify", answerFile] "" >>= shouldVerifySuccess
+
     it "given a wrong answer of exercise 4, show FAIL" $ do
       let msgs = ["Your program's output:", "Expected output:"]
       void $ runMmlh ["show", "--terminal", "4"] ""
@@ -59,6 +64,18 @@ spec = do
             ["HINT: You seem to forget to write `do`. `do` must be put before listing `putStr`s and `getContents`."]
       void $ runMmlh ["show", "--terminal", "4"] ""
       runMmlh ["verify", "test/assets/4/no-do.hs"] ""
+        >>= shouldExitWithMessages msgs
+
+    it "given the wrong answer (producing a wrong result given a correct input) of exercise 12, show SUCCESS" $ do
+      let msgs = ["Your program's output:", "Expected output:"]
+      void $ runMmlh ["show", "--terminal", "12"] ""
+      runMmlh ["verify", "test/assets/12/wrong-output1.hs"] ""
+        >>= shouldExitWithMessages msgs
+
+    it "given the wrong answer (producing a wrong result given a wrong input) of exercise 12, show SUCCESS" $ do
+      let msgs = ["Your program's output:", "Expected output:"]
+      void $ runMmlh ["show", "--terminal", "12"] ""
+      runMmlh ["verify", "test/assets/12/wrong-output2.hs"] ""
         >>= shouldExitWithMessages msgs
 
 
