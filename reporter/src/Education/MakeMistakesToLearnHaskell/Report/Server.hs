@@ -21,12 +21,12 @@ import           Control.Monad                                         (unless)
 import           Control.Monad.IO.Class                                (MonadIO,
                                                                         liftIO)
 import qualified Data.Aeson.TH                                         as AT
-import qualified Data.ByteString.Lazy                                  as B
-import qualified Data.Text.Lazy                                        as T
-import qualified Data.Text.Lazy.Encoding                               as TE
-import qualified Data.Text.Lazy.IO                                     as TI
+import qualified Data.ByteString.Lazy                                  as BL
+import qualified Data.Text                                             as T
+import qualified Data.Text.Encoding                                    as TE
+import qualified Data.Text.IO                                          as TI
 import qualified Data.ULID                                             as U
-import           Data.String.AnsiEscapeCodes.Strip.Text.Lazy           (stripAnsiEscapeCodes)
+import           Data.String.AnsiEscapeCodes.Strip.Text                (stripAnsiEscapeCodes)
 import           GHC.Generics                                          (Generic)
 import           Network.Wai
 import           Network.Wai.Handler.Warp
@@ -138,8 +138,8 @@ writeFailBy (Exercise.WrongOutput d) = do
   let file = "wrong-output.details.txt"
   TI.writeFile file d
   return [file]
-writeFailBy (Exercise.CommandFailed cmd dCmd dDiag) = do
-  let outputFile = cmd ++ ".output.txt"
+writeFailBy (Exercise.CompileError dCmd dDiag) = do
+  let outputFile = "ghc-output.txt"
       diagFile = "diagnosis.txt"
   TI.writeFile outputFile $ stripAnsiEscapeCodes dCmd
   TI.writeFile diagFile $ stripAnsiEscapeCodes dDiag
@@ -149,8 +149,8 @@ writeFailBy (Exercise.CommandFailed cmd dCmd dDiag) = do
 getHeadSha :: MonadIO m => m T.Text
 getHeadSha = do
   (out, err) <- P.readProcess_ $ P.proc "git" ["rev-parse", "HEAD"]
-  liftIO $ B.putStr err
-  return . T.strip $ TE.decodeUtf8 out
+  liftIO $ BL.putStr err
+  return . T.strip . TE.decodeUtf8 $ BL.toStrict out
 
 
 locking :: IO a -> IO a

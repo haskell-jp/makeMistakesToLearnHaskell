@@ -6,6 +6,7 @@ module Education.MakeMistakesToLearnHaskell.Exercise.Types
   , Result (..)
   , Record (..)
   , Diagnosis
+  , Judge
   ) where
 
 #include <imports/external.hs>
@@ -44,3 +45,10 @@ newtype Record = Record
   } deriving (Show, Read)
 
 type Diagnosis = SourceCode -> Details -> Details
+
+-- |
+-- * The first argument: The content of STDIN.
+-- * The second argument: The exit code by the user's answer program.
+-- * The third argument: The content of STDOUT and STDERR written by the user's answer program.
+-- * The return value: Expected output and whether the user's answer program is correct.
+type Judge = Text -> ExitCode -> Text -> (Text, Bool)

@@ -13,7 +13,7 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 exercise7 :: Exercise
 exercise7 = Exercise "7"
-          $ runHaskellExerciseWithStdin diag generator answer
+          $ runHaskellExerciseWithStdinEq diag generator answer
 
 
 diag :: Diagnosis

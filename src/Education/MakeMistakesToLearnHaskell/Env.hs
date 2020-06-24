@@ -3,8 +3,7 @@
 module Education.MakeMistakesToLearnHaskell.Env
   ( Env (..)
   , defaultEnv
-  , CommandParameters(commandParametersArgs, commandParametersStdin)
-  , defaultRunHaskellParameters
+  , CommandParameters (..)
   , appName
   , homePathEnvVarName
   , reportServerEnvVarName
@@ -23,14 +22,10 @@ data CommandParameters = CommandParameters
   , commandParametersStdin :: !ByteString
   }
 
-defaultRunHaskellParameters :: CommandParameters
-defaultRunHaskellParameters = CommandParameters [] ""
-
 data Env = Env
   { logDebug :: ByteString -> IO ()
   , appHomePath :: FilePath
-  , runHaskell :: CommandParameters -> IO (Either CommandError (ByteString, ByteString))
-  , runGhc :: CommandParameters -> IO (Either CommandError (ByteString, ByteString))
+  , executeCommand :: CommandName -> CommandParameters -> IO CommandResult
   , confirm :: Text -> IO Bool
   , openWithBrowser :: Text -> IO Bool
   , say :: Text -> IO ()
@@ -42,8 +37,7 @@ defaultEnv :: Env
 defaultEnv = Env
   { logDebug = error "Set logDebug to defaultEnv"
   , appHomePath = error "Set appHomePath to defaultEnv"
-  , runHaskell = error "Set runHaskell to defaultEnv"
-  , runGhc = error "Set runGhc to defaultEnv"
+  , executeCommand = error "Set executeCommand to defaultEnv"
   , confirm =
       \prompt -> Text.putStrLn ("default Env.confirm: " <> prompt) >> return True
   , openWithBrowser =

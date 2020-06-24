@@ -15,24 +15,22 @@ import           Control.Exception
 import           Control.Monad (void, unless, when)
 import           Control.Monad.IO.Class (liftIO)
 import qualified Control.Monad.Trans.Maybe as MaybeT
+import           Data.Bifunctor (bimap)
 import           Data.Bool (bool)
-import           Data.ByteString.Lazy.Char8 (ByteString)
-import qualified Data.ByteString.Lazy.Char8 as ByteString
+import           Data.ByteString.Char8 (ByteString)
+import qualified Data.ByteString.Char8 as ByteString
+import qualified Data.ByteString.Lazy.Char8 as ByteStringLazy
 import qualified Data.Char as Char
 import           Data.Functor (($>))
 import qualified Data.List as List
 import           Data.Maybe (fromMaybe, maybeToList, isJust)
-import           Data.IORef
-                   ( newIORef
-                   , readIORef
-                   , writeIORef
-                   )
+import           Data.IORef (newIORef, readIORef, writeIORef)
 import           Data.Monoid ((<>))
 import qualified Data.Text.Encoding.Error as TextEncoding
-import           Data.Text.Lazy (Text)
-import qualified Data.Text.Lazy as Text
-import qualified Data.Text.Lazy.Encoding as TextEncoding
-import qualified Data.Text as TextS
+import           Data.Text (Text)
+import qualified Data.Text as Text
+import qualified Data.Text.Encoding as TextEncoding
+import           Data.Traversable (for)
 import           Data.Typeable (Typeable)
 import qualified Debug.Trace as Debug
 import           GHC.Generics (Generic)
@@ -46,8 +44,10 @@ import qualified System.Environment as Env
 import qualified System.Exit as Exit
 import           System.Exit (ExitCode(ExitSuccess, ExitFailure))
 import           System.FilePath ((</>))
+import qualified System.FilePath as FilePath
 import qualified System.IO as IO
-import           System.Process.Typed (readProcess)
+import qualified System.IO.Temp as Temp
+import           System.Process.Typed (runProcess)
 import qualified System.Process.Typed as Process
 import qualified Test.QuickCheck as QuickCheck
 import           Test.QuickCheck (Arbitrary, Gen, quickCheckWithResult, arbitrary)

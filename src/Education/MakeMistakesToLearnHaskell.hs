@@ -14,8 +14,7 @@ import           Education.MakeMistakesToLearnHaskell.Report.Client    (Endpoint
 import           Education.MakeMistakesToLearnHaskell.Env
 import qualified Education.MakeMistakesToLearnHaskell.Exercise as Exercise
 import qualified Education.MakeMistakesToLearnHaskell.Exercise.FormatMessage as Exercise
-import qualified Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell as RunHaskell
-import qualified Education.MakeMistakesToLearnHaskell.Evaluator.Ghc as Ghc
+import qualified Education.MakeMistakesToLearnHaskell.Evaluator.Command as Command
 import           Education.MakeMistakesToLearnHaskell.Error
 import qualified Education.MakeMistakesToLearnHaskell.Report as Report
 import           Education.MakeMistakesToLearnHaskell.Text
@@ -58,15 +57,24 @@ withMainEnv defaultHost copts doAction = do
     let e = defaultEnv
               { logDebug = ByteString.hPutStr h . (<> "\n")
               , appHomePath = d
-              , runHaskell = RunHaskell.runFile e
+              , executeCommand = Command.execute
               , confirm = \prompt -> do
                   Text.putStrLn $ prompt <> " (y/n)"
-                  handle ((const $ return False) :: IOException -> IO Bool) $ do
+                  let handler :: IOException -> IO Bool
+                      handler ex = do
+                        IO.hPrint h ex
+                        return False
+                  -- handle ((const $ return False) :: IOException -> IO Bool) $ do
+                  IO.hPutStrLn h "BEFORE handle"
+                  r <- handle handler $ do
+                    IO.hPutStrLn h "BEFORE getChar"
                     ans <- getChar
+                    IO.hPutStrLn h $ "AFTER getChar: " ++ show ans
                     return $ ans == 'y' || ans == 'Y'
+                  IO.hPutStrLn h $ "AFTER handle: " ++ show r
+                  return r
               , openWithBrowser = openB
               , say = Text.putStrLn
-              , runGhc = Ghc.runFile e
               , postReport = IO.postReport host
               }
     doAction e
@@ -140,7 +148,7 @@ verifySource e file = do
         Exit.exitFailure
 
       Exercise.Error details -> do
-        Error.errLn $ Text.toStrict $ details <> "\n\n"
+        Error.errLn $ details <> "\n\n"
         die "An unexpected error occurred when evaluating your solution."
 
       Exercise.NotVerified -> do
@@ -174,9 +182,9 @@ showExercise e n = do
 
 showMarkdown :: Env -> Text -> String -> IO ()
 showMarkdown e md n = do
-  cssPath <- TextS.pack <$> Paths.getDataFileName "assets/exercise.css"
-  let htmlBody = CMark.commonmarkToHtml [CMark.optSafe] $ Text.toStrict md
-      htmlHead = TextS.unlines
+  cssPath <- Text.pack <$> Paths.getDataFileName "assets/exercise.css"
+  let htmlBody = CMark.commonmarkToHtml [CMark.optSafe] md
+      htmlHead = Text.unlines
         [ "<!DOCTYPE html>"
         , "<html>"
         , "<head>"
@@ -186,7 +194,7 @@ showMarkdown e md n = do
         , "<body>"
         , "<div id=\"container\">"
         ]
-      htmlFoot = TextS.unlines
+      htmlFoot = Text.unlines
         [ "</div>"
         , "</body>"
         , "</html>"
@@ -195,7 +203,7 @@ showMarkdown e md n = do
       mkHtmlPath dir = dir <> "/" <> "mmlh-ex" <> n <> ".html"
   path <- mkHtmlPath <$> Dir.getTemporaryDirectory
 
-  writeUtf8FileS path (htmlHead <> htmlBody <> htmlFoot)
+  writeUtf8File path (htmlHead <> htmlBody <> htmlFoot)
 
   browserLaunched <- openWithBrowser e (Text.pack path)
 

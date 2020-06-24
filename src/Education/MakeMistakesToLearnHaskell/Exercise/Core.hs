@@ -1,7 +1,8 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
 module Education.MakeMistakesToLearnHaskell.Exercise.Core
-  ( runHaskellExercise
+  ( runHaskellExerciseEq
+  , runHaskellExerciseWithStdinEq
   , runHaskellExerciseWithStdin
   , noVeirificationExercise
   , notYetImplementedVeirificationExercise
@@ -15,68 +16,102 @@ module Education.MakeMistakesToLearnHaskell.Exercise.Core
 #include <imports/io.hs>
 
 import           Education.MakeMistakesToLearnHaskell.Env
-import qualified Education.MakeMistakesToLearnHaskell.Evaluator.Command as Command
-import           Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell
+import           Education.MakeMistakesToLearnHaskell.Evaluator.Ghc
+import           Education.MakeMistakesToLearnHaskell.Evaluator.Command
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 import           Education.MakeMistakesToLearnHaskell.Exercise.Types
 import           Education.MakeMistakesToLearnHaskell.Text
 
-runHaskellExercise
+
+runHaskellExerciseEq
   :: Diagnosis
   -> Text
   -> Env
   -> FilePath
   -> IO Result
-runHaskellExercise diag right e prgFile = do
-  result <- runHaskell e defaultRunHaskellParameters { commandParametersArgs = [prgFile] }
+runHaskellExerciseEq diag right e prgFile = do
+  result <- runHaskell e prgFile
   code <- readUtf8File prgFile
-  return $ resultForUser diag code [] (const right) "" result
+  let calcRight = const right
+  return $ resultForUser diag code [] (judgeByEq calcRight) "" result
+
 
 -- | 'runHaskellExercise' with input to stdin
-runHaskellExerciseWithStdin
+runHaskellExerciseWithStdinEq
   :: Diagnosis
   -> Gen Text
   -> (Text -> Text)
   -> Env
   -> FilePath
   -> IO Result
-runHaskellExerciseWithStdin diag gen calcRight env prgFile = do
+runHaskellExerciseWithStdinEq diag gen =
+  runHaskellExerciseWithStdin diag gen . judgeByEq
+
+
+-- Currently the exit code is ignored.
+-- If you want to judge by the exit code, consider adding an error message
+-- when the acutalOut is correct, but the exit code is wrong.
+judgeByEq :: (Text -> Text) -> Judge
+judgeByEq calcRight input _ecode acutalOut =
+  let expectedOut = calcRight input
+   in (expectedOut, acutalOut == expectedOut)
+
+
+runHaskellExerciseWithStdin
+  :: Diagnosis
+  -> Gen Text
+  -> Judge
+  -> Env
+  -> FilePath
+  -> IO Result
+runHaskellExerciseWithStdin diag gen judge env prgFile = do
   let qcArgs = QuickCheck.stdArgs { QuickCheck.chatty = True }
       maxSuccessSize = envQcMaxSuccessSize env
 
   resultRef <- newIORef $ error "Assertion failure: no result written after QuickCheck"
   code <- readUtf8File prgFile
-  qr <- quickCheckWithResult qcArgs $
-    QuickCheck.withMaxSuccess maxSuccessSize $
-      QuickCheck.forAll gen $ \input ->
-        QuickCheck.ioProperty $ do
-          let params = defaultRunHaskellParameters
-                { commandParametersArgs = [prgFile]
-                , commandParametersStdin = TextEncoding.encodeUtf8 input
-                }
-          commandResult <- runHaskell env params
-          let result = resultForUser diag code ["            For input: " <> Text.pack (show input)] calcRight input commandResult
-          writeIORef resultRef result
-          return $
-            case result of
-                Success _ -> True
-                _other -> False
-  logDebug env $ ByteString.pack $ "QuickCheck result: " ++ show qr
-  readIORef resultRef
+  Temp.withSystemTempDirectory "mmlh-compiled-answer" $ \dir -> do
+    exePathOrErr <- compileWithGhc env dir prgFile
+    case exePathOrErr of
+        Right exePath -> do
+          qr <- quickCheckWithResult qcArgs $
+            QuickCheck.withMaxSuccess maxSuccessSize $
+              QuickCheck.forAll gen $ \input ->
+                QuickCheck.ioProperty $ do
+                  let params = CommandParameters
+                        { commandParametersArgs = []
+                        , commandParametersStdin = TextEncoding.encodeUtf8 input
+                        }
+                  commandResult <- executeCommand env exePath params
+                  let messageFooter = ["            For input: " <> Text.pack (show input)]
+                      result = resultForUser diag code messageFooter judge input (Right commandResult)
+                  writeIORef resultRef result
+                  return $
+                    case result of
+                        Success _ -> True
+                        _other -> False
+          logDebug env $ ByteString.pack $ "QuickCheck result: " ++ show qr
+          readIORef resultRef
+        Left (GhcError _exitCode msg) -> -- TODO: duplicate error handling code
+          let textMsg = decodeUtf8 msg
+           in return . Fail code . CompileError textMsg $ diag code textMsg
+        Left GhcNotFound ->
+          return . Error $ Text.pack "ghc command is not available.\nInstall stack or Haskell Platform."
+
 
 resultForUser
   :: Diagnosis
   -> Text
   -> [Text]
-  -> (Text -> Text)
+  -> Judge
   -> Text
-  -> Either CommandError (ByteString, ByteString)
+  -> Either GhcError CommandResult
   -> Result
-resultForUser diag code messageFooter calcRight input result =
+resultForUser diag code messageFooter judge input result =
   case result of
-      Right (outB, _errB {- TODO: print stderr -}) ->
+      Right (CommandResult ecode outB) ->
         let out = canonicalizeNewlines outB
-            right = calcRight input
+            (right, isSuccessful) = judge input ecode out
             msg =
               Text.unlines $
                 [ Text.replicate 80 "="
@@ -84,24 +119,28 @@ resultForUser diag code messageFooter calcRight input result =
                 , "      Expected output: " <> Text.pack (show right)
                 ] ++ messageFooter
         in
-          if right == out
+          if isSuccessful
             then Success $ "Nice output!\n\n" <> msg
             else Fail code . WrongOutput $ "Wrong output!\n\n" <> msg
-      Left (Command.CommandNotFound cname) ->
-        Error $ Text.pack cname <> " command is not available.\nInstall stack or Haskell Platform."
-      Left (Command.CommandFailure cname _ msg) ->
+      Left GhcNotFound -> -- TODO: duplicate error handling code
+        Error $ Text.pack "ghc command is not available.\nInstall stack or Haskell Platform."
+      Left (GhcError _ msg) ->
         let textMsg = decodeUtf8 msg
-         in Fail code . CommandFailed cname textMsg $ diag code textMsg
+         in Fail code . CompileError textMsg $ diag code textMsg
+
 
 isInWords :: Text -> [Text] -> Bool
 isInWords wd = any (Text.isInfixOf wd)
+
 
 detailsForgetToWriteDo :: Text -> Details
 detailsForgetToWriteDo funcNames =
   "HINT: You seem to forget to write `do`. `do` must be put before listing " <> funcNames <> "."
 
+
 detailsDoConsistentWidth :: Details
 detailsDoConsistentWidth = "HINT: instructions in a `do` must be in a consistent width."
+
 
 isInconsistentlyIndentedAfter :: SourceCode -> Text -> Bool
 isInconsistentlyIndentedAfter code wd =
@@ -123,22 +162,25 @@ isInconsistentlyIndentedAfter code wd =
           then []
           else drop 1 containing -- except the first line, which contains 'w'
 
+
 allSame :: Eq a => [a] -> Bool
 allSame [] = True
 allSame [_] = True
 allSame (x1 : x2 : xs) = x1 == x2 && allSame xs
 
+
 noVeirificationExercise :: Env -> String -> IO Result
 noVeirificationExercise _ _ = return NotVerified
+
 
 notYetImplementedVeirificationExercise :: Env -> FilePath -> IO Result
 notYetImplementedVeirificationExercise e prgFile = do
   code <- readUtf8File prgFile
-  result <- runGhc e defaultRunHaskellParameters { commandParametersArgs = [prgFile] }
+  result <- checkWithGhc e prgFile
   case result of
       Right _ ->
         return NotYetImplemented
-      Left (CommandFailure cname _ecode msg) ->
-        return . Fail code $ CommandFailed cname (decodeUtf8 msg) ""
-      Left (CommandNotFound cname) ->
-        return . Error $ Text.pack cname <> " command is not available.\nInstall stack or Haskell Platform."
+      Left (GhcError _ecode msg) ->
+        return . Fail code $ CompileError (decodeUtf8 msg) ""
+      Left GhcNotFound ->
+        return . Error $ Text.pack "ghc command is not available.\nInstall stack or Haskell Platform."

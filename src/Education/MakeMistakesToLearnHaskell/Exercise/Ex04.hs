@@ -13,7 +13,7 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 exercise4 :: Exercise
 exercise4 = Exercise "4"
-          $ runHaskellExerciseWithStdin diag4 gen4
+          $ runHaskellExerciseWithStdinEq diag4 gen4
           $ (Text.pack . unlines . reverse . lines . Text.unpack)
 
 gen4 :: Gen Text
@@ -37,7 +37,7 @@ diag4 code msg
     && "In the first argument of ‘lines’" `Text.isInfixOf` msg =
       "HINT: Unfortunately, you have to assign the result of `getContents` with `<-` operator."
   | otherwise =
-    let mtoks = GHC.tokenizeHaskell (Text.toStrict code)
+    let mtoks = GHC.tokenizeHaskell code
         tokPutStr = (GHC.VariableTok, "putStr")
         putStrThenSpace =
           Regex.sym tokPutStr <* optional (Regex.psym ((== GHC.SpaceTok) . fst))

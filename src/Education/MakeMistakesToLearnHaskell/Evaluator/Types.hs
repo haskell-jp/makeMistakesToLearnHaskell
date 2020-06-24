@@ -4,7 +4,8 @@ module Education.MakeMistakesToLearnHaskell.Evaluator.Types
   ( ErrorCode
   , ErrorMessage
   , CommandName
-  , CommandError(..)
+  , CommandResult(..)
+  , GhcError(..)
   , SingleArgFunApp(..)
   , HasParens(..)
   ) where
@@ -18,10 +19,17 @@ type ErrorCode = Int
 type ErrorMessage = ByteString
 
 
-data CommandError =
-  CommandNotFound CommandName | CommandFailure CommandName ErrorCode ErrorMessage deriving (Show, Typeable)
+data CommandResult =
+  CommandResult
+    !ExitCode               -- ^ exit code
+    !ByteString -- ^ Merged stdout and stderr
+    deriving Show
 
-instance Exception CommandError
+
+data GhcError =
+  GhcNotFound | GhcError ErrorCode ErrorMessage deriving Show
+
+instance Exception GhcError
 
 data HasParens =
   NoParens | OnlyOpenParen | BothParens
@@ -29,7 +37,7 @@ data HasParens =
 
 
 data SingleArgFunApp = SingleArgFunApp
-  { singleArgFunAppFunName :: !TextS.Text
+  { singleArgFunAppFunName :: !Text
   , singleArgFunAppArg :: !(Maybe SingleArgFunApp)
   , singleArgFunAppHasParen :: !HasParens
   } deriving (Eq, Show)

@@ -20,7 +20,6 @@ module Education.MakeMistakesToLearnHaskell.Exercise
 import           Education.MakeMistakesToLearnHaskell.Exercise.Core
 import           Education.MakeMistakesToLearnHaskell.Env
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Regex
-import qualified Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell as RunHaskell
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 import           Education.MakeMistakesToLearnHaskell.Exercise.FormatMessage
 import           Education.MakeMistakesToLearnHaskell.Exercise.Record

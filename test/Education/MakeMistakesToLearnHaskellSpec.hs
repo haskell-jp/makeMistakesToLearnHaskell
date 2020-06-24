@@ -48,6 +48,11 @@ spec = do
       void $ runMmlh ["show", "--terminal", "6"] ""
       runMmlh ["verify", answerFile] "" >>= shouldVerifySuccess
 
+    it "given the correct answer of exercise 12, show SUCCESS" $ do
+      void $ runMmlh ["show", "--terminal", "12"] ""
+      answerFile <- Paths.getDataFileName ("assets" </> "12.hs")
+      runMmlh ["verify", answerFile] "" >>= shouldVerifySuccess
+
     it "given a wrong answer of exercise 4, show FAIL" $ do
       let msgs = ["Your program's output:", "Expected output:"]
       void $ runMmlh ["show", "--terminal", "4"] ""
@@ -61,10 +66,22 @@ spec = do
       runMmlh ["verify", "test/assets/4/no-do.hs"] ""
         >>= shouldExitWithMessages msgs
 
+    it "given the wrong answer (producing a wrong result given a correct input) of exercise 12, show SUCCESS" $ do
+      let msgs = ["Your program's output:", "Expected output:"]
+      void $ runMmlh ["show", "--terminal", "12"] ""
+      runMmlh ["verify", "test/assets/12/wrong-output1.hs"] ""
+        >>= shouldExitWithMessages msgs
+
+    it "given the wrong answer (producing a wrong result given a wrong input) of exercise 12, show SUCCESS" $ do
+      let msgs = ["Your program's output:", "Expected output:"]
+      void $ runMmlh ["show", "--terminal", "12"] ""
+      runMmlh ["verify", "test/assets/12/wrong-output2.hs"] ""
+        >>= shouldExitWithMessages msgs
+
 
     -- Response from the report server. The stub server actually desen't return a URL. But the production server is expected to.
     let expectedMessage n =
-          "Open Report {exerciseName = \"" <> n <> "\", exerciseAnswer = \"\", exerciseFailBy = CommandFailed \""
+          "Open Report {exerciseName = \"" <> n <> "\", exerciseAnswer = \"\", exerciseFailBy = CompileError \""
 
     context "given \"y\" from stdin" $ do
       it "given a not-compilable answer of exercise 5, show FAIL with the URL to submit an issue to haskell-jp/" $ do
@@ -106,7 +123,8 @@ includes = ByteString'.isInfixOf
 
 
 shouldExitWithMessagesLike
-  :: (ByteString'.ByteString -> ByteString'.ByteString -> Bool)
+  :: HasCallStack
+  => (ByteString'.ByteString -> ByteString'.ByteString -> Bool)
   -> [ByteString'.ByteString]
   -> ProcessResult
   -> IO ()
@@ -117,20 +135,26 @@ shouldExitWithMessagesLike p hintMsgs (ProcessResult out err code ex) = do
   code `shouldBe` ExitFailure 1
 
 
-shouldExitWithMessages :: [ByteString'.ByteString] -> ProcessResult -> IO ()
+shouldExitWithMessages :: HasCallStack => [ByteString'.ByteString] -> ProcessResult -> IO ()
 shouldExitWithMessages = shouldExitWithMessagesLike includes
 
 
-shouldNotExitWithMessages :: [ByteString'.ByteString] -> ProcessResult -> IO ()
+shouldNotExitWithMessages :: HasCallStack => [ByteString'.ByteString] -> ProcessResult -> IO ()
 shouldNotExitWithMessages = shouldExitWithMessagesLike (\s -> not . includes s)
 
 
 shouldVerifySuccess :: ProcessResult -> IO ()
-shouldVerifySuccess (ProcessResult out err code ex) = do
+shouldVerifySuccess (ProcessResult out err code ex) = (`onException` handle) $ do
   fmap show ex `shouldBe` Nothing
   err `shouldSatisfy` ByteString'.null
   out `shouldSatisfy` includes "SUCCESS"
   code `shouldBe` ExitSuccess
+ where
+  handle = do
+    putStrLn "\n=== STDOUT:"
+    ByteString'.putStr out
+    putStrLn "\n=== STDERR:"
+    ByteString'.putStr err
 
 
 shouldPrintNotVerified :: ProcessResult -> IO ()
