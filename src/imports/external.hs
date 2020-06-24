@@ -47,7 +47,7 @@ import           System.FilePath ((</>))
 import qualified System.FilePath as FilePath
 import qualified System.IO as IO
 import qualified System.IO.Temp as Temp
-import           System.Process.Typed (runProcess)
+import           System.Process.Typed (readProcessInterleaved)
 import qualified System.Process.Typed as Process
 import qualified Test.QuickCheck as QuickCheck
 import           Test.QuickCheck (Arbitrary, Gen, quickCheckWithResult, arbitrary)

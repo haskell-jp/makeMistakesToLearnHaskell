@@ -6,25 +6,18 @@ module Education.MakeMistakesToLearnHaskell.Evaluator.Command
 
 #include <imports/external.hs>
 
-
 import           Education.MakeMistakesToLearnHaskell.Env
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 
 
 execute :: CommandName -> CommandParameters -> IO CommandResult
 execute cname cmdP = do
-  let pathTpl = "mmlh-command-" ++ FilePath.takeFileName cname
-  Temp.withSystemTempFile pathTpl $ \_path h -> do
-    IO.hSetBinaryMode h True
-    let prc =
-          Process.setStdout (Process.useHandleOpen h)
-            $ Process.setStderr (Process.useHandleOpen h)
-            $ Process.setStdin (Process.byteStringInput . ByteStringLazy.fromStrict $ commandParametersStdin cmdP)
-            $ Process.proc cname
-            $ commandParametersArgs cmdP
-    ecode <- fixingCodePage $ runProcess prc
-    IO.hSeek h IO.AbsoluteSeek 0
-    CommandResult ecode <$> ByteString.hGetContents h
+  let prc =
+        Process.setStdin (Process.byteStringInput . ByteStringLazy.fromStrict $ commandParametersStdin cmdP)
+          $ Process.proc cname
+          $ commandParametersArgs cmdP
+  (ecode, out) <- fixingCodePage $ readProcessInterleaved prc
+  return . CommandResult ecode $ ByteStringLazy.toStrict out
 
 
 -- | Ref: https://github.com/commercialhaskell/stack/blob/a9042ad6fa1d7c813a1c79713a518ee521da9add/src/Stack/Build.hs#L306-L332
