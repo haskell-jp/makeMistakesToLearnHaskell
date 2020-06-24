@@ -15,7 +15,7 @@
 # resolver:
 #  name: custom-snapshot
 #  location: "./custom-snapshot.yaml"
-resolver: lts-13.24
+resolver: lts-16.1
 
 # User packages to be built.
 # Various formats can be used as shown in the example below.
@@ -42,9 +42,7 @@ packages:
 # Dependency packages to be pulled from upstream that are not in the resolver
 # (e.g., acme-missiles-0.3)
 extra-deps:
-  - 'ulid-0.2.0.0@sha256:ac415298b0272479909ca576f4444862ae942ed85c7849fa0675e3bf496be6f3'
-  - 'crockford-0.2@sha256:6ec593711a20bd4b81a0fc13f3d850d2d890690941d777230fbf980c483e434a'
-  - 'strip-ansi-escape-0.1.0.0'
+- strip-ansi-escape-0.1.0.0@sha256:08f2ed93b16086a837ec46eab7ce8d27cf39d47783caaeb818878ea33c2ff75f,1628
 
 # Override default flag values for local packages and extra-deps
 flags: {}

@@ -9,7 +9,7 @@ module Education.MakeMistakesToLearnHaskell.Report.Client
 import           Network.HTTP.Client                                (newManager)
 import           Network.HTTP.Client.TLS                            (tlsManagerSettings)
 import           Servant.API                                        ((:<|>) ((:<|>)))
-import           Servant.Client                                     (ClientM, ServantError,
+import           Servant.Client                                     (ClientM, ClientError,
                                                                      client,
                                                                      mkClientEnv,
                                                                      parseBaseUrl,
@@ -21,7 +21,7 @@ import           Education.MakeMistakesToLearnHaskell.Report.Server (Report (..)
 
 type EndpointUrl = String
 
-type ReportClientError = ServantError
+type ReportClientError = ClientError
 
 postReportM :: Report -> ClientM Result
 _ :<|> postReportM = client api

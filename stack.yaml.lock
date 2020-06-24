@@ -5,29 +5,15 @@
 
 packages:
 - completed:
-    hackage: ulid-0.2.0.0@sha256:ac415298b0272479909ca576f4444862ae942ed85c7849fa0675e3bf496be6f3,2485
-    pantry-tree:
-      size: 671
-      sha256: cb750f111e8126188ae3d16d870471acb86a522e73d55080e8c6dbb5221d7e75
-  original:
-    hackage: ulid-0.2.0.0@sha256:ac415298b0272479909ca576f4444862ae942ed85c7849fa0675e3bf496be6f3
-- completed:
-    hackage: crockford-0.2@sha256:6ec593711a20bd4b81a0fc13f3d850d2d890690941d777230fbf980c483e434a,553
-    pantry-tree:
-      size: 269
-      sha256: b99646e3fa78b1409ff9929f2756a28bfa7e65734289c4a97aadac55a041afe1
-  original:
-    hackage: crockford-0.2@sha256:6ec593711a20bd4b81a0fc13f3d850d2d890690941d777230fbf980c483e434a
-- completed:
     hackage: strip-ansi-escape-0.1.0.0@sha256:08f2ed93b16086a837ec46eab7ce8d27cf39d47783caaeb818878ea33c2ff75f,1628
     pantry-tree:
       size: 671
       sha256: cf7712453587e8ea69b96f33e2e8015c22d3b448259d4cace663cc15657309d7
   original:
-    hackage: strip-ansi-escape-0.1.0.0
+    hackage: strip-ansi-escape-0.1.0.0@sha256:08f2ed93b16086a837ec46eab7ce8d27cf39d47783caaeb818878ea33c2ff75f,1628
 snapshots:
 - completed:
-    size: 498402
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/13/24.yaml
-    sha256: 33e96adfe24f112b62f6edd22565cdbaa13155703bbfbfdc3d0a9bc6138ae7bf
-  original: lts-13.24
+    size: 531237
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/16/1.yaml
+    sha256: 954b6b14b0c8130732cf4773f7ebb4efc9a44600d1a5265d142868bf93462bc6
+  original: lts-16.1
