@@ -11,13 +11,19 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Core
 import Education.MakeMistakesToLearnHaskell.Exercise.FormatMessage
 import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
+
 exercise4 :: Exercise
 exercise4 = Exercise "4"
-          $ runHaskellExerciseWithStdinEq diag4 gen4
-          $ (Text.pack . unlines . reverse . lines . Text.unpack)
+          $ runHaskellExerciseWithStdinEq diag4 answer stdinGen4
 
-gen4 :: Gen Text
-gen4 = Text.unlines <$> QuickCheck.listOf (fmap Text.pack . QuickCheck.listOf $ QuickCheck.choose ('\33', '\126'))
+
+stdinGen4 :: Gen Text
+stdinGen4 = Text.unlines <$> QuickCheck.listOf (fmap Text.pack . QuickCheck.listOf $ QuickCheck.choose ('\33', '\126'))
+
+
+answer :: Text -> Text
+answer = Text.pack . unlines . reverse . lines . Text.unpack
+
 
 diag4 :: Diagnosis
 diag4 code msg

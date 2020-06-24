@@ -2,7 +2,7 @@
 
 module Education.MakeMistakesToLearnHaskell.Exercise.Ex09
   ( exercise9
-  , generator
+  , stdinGenerator
   ) where
 
 #include <imports/external.hs>
@@ -13,7 +13,7 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 exercise9 :: Exercise
 exercise9 = Exercise "9"
-          $ runHaskellExerciseWithStdinEq diag generator answer
+          $ runHaskellExerciseWithStdinEq diag answer stdinGenerator
 
 
 diag :: Diagnosis
@@ -24,8 +24,8 @@ diag _code _msg = "" -- TODO: Not implemented
 -- * Or generate only a blank string as an error case.
 --   * Don't generate only one number case: the `read` function throws an error,
 --     which is not considered in this exercise.
-generator :: Gen Text
-generator = QuickCheck.oneof [twoNumbers, noNumbers]
+stdinGenerator :: Gen Text
+stdinGenerator = QuickCheck.oneof [twoNumbers, noNumbers]
  where
   twoNumbers = do
     height <- Text.pack . show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Double))

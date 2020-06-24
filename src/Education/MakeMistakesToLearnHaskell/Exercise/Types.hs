@@ -47,8 +47,9 @@ newtype Record = Record
 type Diagnosis = SourceCode -> Details -> Details
 
 -- |
--- * The first argument: The content of STDIN.
--- * The second argument: The exit code by the user's answer program.
--- * The third argument: The content of STDOUT and STDERR written by the user's answer program.
+-- * The first argument: The commandline arguments.
+-- * The second argument: The content of STDIN.
+-- * The third argument: The exit code by the user's answer program.
+-- * The fourth argument: The content of STDOUT and STDERR written by the user's answer program.
 -- * The return value: Expected output and whether the user's answer program is correct.
-type Judge = Text -> ExitCode -> Text -> (Text, Bool)
+type Judge = [String] -> Text -> ExitCode -> Text -> (Text, Bool)

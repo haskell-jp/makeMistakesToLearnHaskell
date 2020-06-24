@@ -12,15 +12,15 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 exercise8 :: Exercise
 exercise8 = Exercise "8"
-          $ runHaskellExerciseWithStdinEq diag generator answer
+          $ runHaskellExerciseWithStdinEq diag answer stdinGenerator
 
 
 diag :: Diagnosis
 diag _code _msg = "" -- TODO: Not implemented
 
 
-generator :: Gen Text
-generator =
+stdinGenerator :: Gen Text
+stdinGenerator =
   Text.unlines <$> sequence
     [ Text.pack . show <$> (arbitrary :: Gen Integer)
     , Text.pack . show . QuickCheck.getNonZero <$> (arbitrary :: Gen (QuickCheck.NonZero Integer))

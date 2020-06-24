@@ -2,8 +2,9 @@
 
 module Education.MakeMistakesToLearnHaskell.Exercise.Ex12
   ( exercise12
-  , generator
+  , stdinGenerator
   , judge
+  , answer
   ) where
 
 #include <imports/external.hs>
@@ -14,17 +15,18 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 exercise12 :: Exercise
 exercise12 = Exercise "12"
-           $ runHaskellExerciseWithStdin diag generator judge
+           $ runHaskellExerciseWithStdin diag judge stdinGenerator
 
 
 diag :: Diagnosis
 diag _code _msg = "" -- TODO: Not implemented
 
 
-generator :: Gen Text
-generator = do
+stdinGenerator :: Gen Text
+stdinGenerator = do
   inputLines <- QuickCheck.listOf inputLine
-  lastLine <- QuickCheck.oneof [pure "", category, withExtraField]
+  -- lastLine <- QuickCheck.oneof [pure "", category, withExtraField]
+  lastLine <- QuickCheck.oneof [category, withExtraField]
   return . Text.unlines $ inputLines ++ [lastLine]
  where
   inputLine = do
@@ -42,30 +44,30 @@ generator = do
 
 
 judge :: Judge
-judge input exitCode actualOut =
+judge _args input exitCode actualOut =
   case (exitCode, answer input) of
       (ExitSuccess, Right expectedOut) -> (expectedOut, actualOut == expectedOut)
       (ExitFailure _, Left expectedOut) -> (expectedOut, expectedOut `Text.isInfixOf` actualOut)
       (_, Right expectedOut) -> (expectedOut, False)
       (_, Left expectedOut) -> (expectedOut, False)
 
+
+answer :: Text -> Either Text Text
+answer =
+  bimap (<> "\n") ((<> "\n") . Text.pack . show)
+    . sumEntries 0
+    . Text.lines
  where
-  answer :: Text -> Either Text Text
-  answer =
-    bimap (<> "\n") ((<> "\n") . Text.pack . show)
-      . sumEntries 0
-      . Text.lines
-   where
-    sumEntries :: Integer -> [Text] -> Either Text Integer
-    sumEntries currentSum lns =
-      case lns of
-          line : leftLines ->
-            case Text.words line of
-                [_cat, priceStr] ->
-                  sumEntries (currentSum + read (Text.unpack priceStr)) leftLines
-                [] ->
-                  Right currentSum
-                _ ->
-                  Left ("Invalid input: " <> line)
-          _ ->
-            error "Assertion failure: empty input!"
+  sumEntries :: Integer -> [Text] -> Either Text Integer
+  sumEntries currentSum lns =
+    case lns of
+        line : leftLines ->
+          case Text.words line of
+              [_cat, priceStr] ->
+                sumEntries (currentSum + read (Text.unpack priceStr)) leftLines
+              [] ->
+                Right currentSum
+              _ ->
+                Left ("Invalid input: " <> line)
+        _ ->
+          error "Assertion failure: empty input!"

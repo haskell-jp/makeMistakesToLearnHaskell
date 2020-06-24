@@ -12,15 +12,15 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 exercise11 :: Exercise
 exercise11 = Exercise "11"
-          $ runHaskellExerciseWithStdinEq diag generator answer
+          $ runHaskellExerciseWithStdinEq diag answer stdinGenerator
 
 
 diag :: Diagnosis
 diag _code _msg = "" -- TODO: Not implemented
 
 
-generator :: Gen Text
-generator = (<>) <$> noNumbers <*> twoNumbers
+stdinGenerator :: Gen Text
+stdinGenerator = (<>) <$> noNumbers <*> twoNumbers
  where
   twoNumbers = do
     height <- Text.pack . show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Double))

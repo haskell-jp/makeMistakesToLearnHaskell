@@ -7,13 +7,13 @@ module Education.MakeMistakesToLearnHaskell.Exercise.Ex10
 #include <imports/external.hs>
 
 import Education.MakeMistakesToLearnHaskell.Exercise.Core
-import Education.MakeMistakesToLearnHaskell.Exercise.Ex09 (generator)
+import Education.MakeMistakesToLearnHaskell.Exercise.Ex09 (stdinGenerator)
 import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 
 exercise10 :: Exercise
 exercise10 = Exercise "10"
-          $ runHaskellExerciseWithStdinEq diag generator answer
+          $ runHaskellExerciseWithStdinEq diag answer stdinGenerator
 
 
 diag :: Diagnosis

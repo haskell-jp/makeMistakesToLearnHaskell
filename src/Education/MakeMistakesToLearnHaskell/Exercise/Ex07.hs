@@ -7,17 +7,18 @@ module Education.MakeMistakesToLearnHaskell.Exercise.Ex07
 #include <imports/external.hs>
 
 import Education.MakeMistakesToLearnHaskell.Exercise.Core
-import Education.MakeMistakesToLearnHaskell.Exercise.Ex06 (generator)
+import Education.MakeMistakesToLearnHaskell.Exercise.Ex06 (stdinGenerator)
 import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 
 exercise7 :: Exercise
 exercise7 = Exercise "7"
-          $ runHaskellExerciseWithStdinEq diag generator answer
+          $ runHaskellExerciseWithStdinEq diag answer stdinGenerator
 
 
 diag :: Diagnosis
 diag _code _msg = "" -- TODO: Not implemented
+
 
 data Entry = Entry
   { category :: String

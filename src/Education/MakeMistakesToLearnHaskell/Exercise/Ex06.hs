@@ -2,7 +2,7 @@
 
 module Education.MakeMistakesToLearnHaskell.Exercise.Ex06
   ( exercise6
-  , generator
+  , stdinGenerator
   ) where
 
 #include <imports/external.hs>
@@ -13,15 +13,15 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 exercise6 :: Exercise
 exercise6 = Exercise "6"
-          $ runHaskellExerciseWithStdinEq diag generator answer
+          $ runHaskellExerciseWithStdinEq diag answer stdinGenerator
 
 
 diag :: Diagnosis
 diag _code _msg = "" -- TODO: Not implemented
 
 
-generator :: Gen Text
-generator =
+stdinGenerator :: Gen Text
+stdinGenerator =
   Text.unlines <$> sequence
     [ fmap Text.pack . QuickCheck.listOf $ QuickCheck.choose ('A', 'z')
     , Text.pack . show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Integer))

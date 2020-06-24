@@ -4,6 +4,7 @@ module Education.MakeMistakesToLearnHaskell.Exercise.Core
   ( runHaskellExerciseEq
   , runHaskellExerciseWithStdinEq
   , runHaskellExerciseWithStdin
+  , runHaskellExerciseWithArgsAndStdin
   , noVeirificationExercise
   , notYetImplementedVeirificationExercise
   , isInWords
@@ -33,40 +34,53 @@ runHaskellExerciseEq diag right e prgFile = do
   result <- runHaskell e prgFile
   code <- readUtf8File prgFile
   let calcRight = const right
-  return $ resultForUser diag code [] (judgeByEq calcRight) "" result
+  return $ resultForUser diag code [] (judgeByEq calcRight) [] "" result
 
 
 -- | 'runHaskellExercise' with input to stdin
 runHaskellExerciseWithStdinEq
   :: Diagnosis
-  -> Gen Text
   -> (Text -> Text)
+  -> Gen Text
   -> Env
   -> FilePath
   -> IO Result
-runHaskellExerciseWithStdinEq diag gen =
-  runHaskellExerciseWithStdin diag gen . judgeByEq
+runHaskellExerciseWithStdinEq diag =
+  runHaskellExerciseWithStdin diag . judgeByEq
 
 
--- Currently the exit code is ignored.
+-- Currently the command line arguments and exit code are ignored.
 -- If you want to judge by the exit code, consider adding an error message
 -- when the acutalOut is correct, but the exit code is wrong.
 judgeByEq :: (Text -> Text) -> Judge
-judgeByEq calcRight input _ecode acutalOut =
+judgeByEq calcRight _args input _ecode acutalOut =
   let expectedOut = calcRight input
    in (expectedOut, acutalOut == expectedOut)
 
 
 runHaskellExerciseWithStdin
   :: Diagnosis
-  -> Gen Text
   -> Judge
+  -> Gen Text
   -> Env
   -> FilePath
   -> IO Result
-runHaskellExerciseWithStdin diag gen judge env prgFile = do
+runHaskellExerciseWithStdin diag judge =
+  runHaskellExerciseWithArgsAndStdin diag judge $ pure []
+
+
+runHaskellExerciseWithArgsAndStdin
+  :: Diagnosis
+  -> Judge
+  -> Gen [String]
+  -> Gen Text
+  -> Env
+  -> FilePath
+  -> IO Result
+runHaskellExerciseWithArgsAndStdin diag judge genArgs genInput env prgFile = do
   let qcArgs = QuickCheck.stdArgs { QuickCheck.chatty = True }
       maxSuccessSize = envQcMaxSuccessSize env
+      gen = (,) <$> genArgs <*> genInput
 
   resultRef <- newIORef $ error "Assertion failure: no result written after QuickCheck"
   code <- readUtf8File prgFile
@@ -76,15 +90,19 @@ runHaskellExerciseWithStdin diag gen judge env prgFile = do
         Right exePath -> do
           qr <- quickCheckWithResult qcArgs $
             QuickCheck.withMaxSuccess maxSuccessSize $
-              QuickCheck.forAll gen $ \input ->
+              QuickCheck.forAll gen $ \(args, input) ->
                 QuickCheck.ioProperty $ do
                   let params = CommandParameters
                         { commandParametersArgs = []
                         , commandParametersStdin = TextEncoding.encodeUtf8 input
                         }
                   commandResult <- executeCommand env exePath params
-                  let messageFooter = ["            For input: " <> Text.pack (show input)]
-                      result = resultForUser diag code messageFooter judge input (Right commandResult)
+                  logDebug env $ ByteString.pack (show commandResult)
+                  let messageFooter =
+                        [ "            For input: " <> Text.pack (show input)
+                        , "            For args: " <> Text.pack (show args)
+                        ]
+                      result = resultForUser diag code messageFooter judge args input (Right commandResult)
                   writeIORef resultRef result
                   return $
                     case result of
@@ -104,14 +122,15 @@ resultForUser
   -> Text
   -> [Text]
   -> Judge
+  -> [String]
   -> Text
   -> Either GhcError CommandResult
   -> Result
-resultForUser diag code messageFooter judge input result =
+resultForUser diag code messageFooter judge args input result =
   case result of
       Right (CommandResult ecode outB) ->
         let out = canonicalizeNewlines outB
-            (right, isSuccessful) = judge input ecode out
+            (right, isSuccessful) = judge args input ecode out
             msg =
               Text.unlines $
                 [ Text.replicate 80 "="
