@@ -93,7 +93,7 @@ runHaskellExerciseWithArgsAndStdin diag judge genArgs genInput env prgFile = do
               QuickCheck.forAll gen $ \(args, input) ->
                 QuickCheck.ioProperty $ do
                   let params = CommandParameters
-                        { commandParametersArgs = []
+                        { commandParametersArgs = args
                         , commandParametersStdin = TextEncoding.encodeUtf8 input
                         }
                   commandResult <- executeCommand env exePath params
