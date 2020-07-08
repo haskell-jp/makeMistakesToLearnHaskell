@@ -32,7 +32,9 @@ compileWithGhc env outDir srcPath = do
       [] -> return $ Left GhcNotFound
       (actualCommand : args) -> do
         let ghcParams = CommandParameters args ""
+        putStrLn $ "Compiling with GHC..."
         ghcResult <- executeCommand env actualCommand ghcParams
+        putStrLn $ "Finished compiling."
         case ghcResult of
             CommandResult ExitSuccess _out ->
               return $ Right compiledPath
