@@ -2,35 +2,28 @@
 
 module Education.MakeMistakesToLearnHaskell.Exercise.Ex14
   ( exercise14
+  , stdinGenerator
   ) where
 
 #include <imports/external.hs>
 
 import Education.MakeMistakesToLearnHaskell.Exercise.Core
 import Education.MakeMistakesToLearnHaskell.Exercise.Types
+import qualified Education.MakeMistakesToLearnHaskell.Exercise.Ex12 as Ex12
 
 
 exercise14 :: Exercise
-exercise14 = Exercise "14" notYetImplementedVeirificationExercise
+exercise14 = Exercise "14"
+           $ runHaskellExerciseWithStdin diag judge stdinGenerator
 
 
-{-
 diag :: Diagnosis
 diag _code _msg = "" -- TODO: Not implemented
 
 
-generator :: Gen String
-generator =
-  unlines <$> sequence
-    [ show <$> (arbitrary :: Gen Double)
-    , show <$> (arbitrary :: Gen Double)
-    , show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Int))
-    ]
+stdinGenerator :: Gen Text
+stdinGenerator = Ex12.stdinGeneratorOfSeparator '\t'
 
 
-answer :: Text -> Text
-answer input = Text.pack $ show (body :: Double) <> "\n"
-  where
-    [principal, interestRate, years] = lines $ Text.unpack input
-    body = read principal * (1 + read interestRate / 100) ^ (read years :: Integer)
--}
+judge :: Judge
+judge = Ex12.judgeWith (Text.splitOn "\t")

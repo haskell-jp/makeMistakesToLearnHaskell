@@ -38,26 +38,10 @@ spec = do
       void $ runMmlh ["show", "--terminal", "2.5"] ""
       runMmlh ["verify", "non-existing"] "" >>= shouldPrintNotVerified
 
-    it "given the correct answer of exercise 4, show SUCCESS" $ do
-      answerFile <- Paths.getDataFileName ("assets" </> "4.hs")
-      void $ runMmlh ["show", "--terminal", "4"] ""
-      runMmlh ["verify", answerFile] "" >>= shouldVerifySuccess
-
-    it "given the correct answer of exercise 6, show SUCCESS" $ do
-      answerFile <- Paths.getDataFileName ("assets" </> "6.hs")
-      void $ runMmlh ["show", "--terminal", "6"] ""
-      runMmlh ["verify", answerFile] "" >>= shouldVerifySuccess
-
-    it "given the correct answer of exercise 12, show SUCCESS" $ do
-      void $ runMmlh ["show", "--terminal", "12"] ""
-      answerFile <- Paths.getDataFileName ("assets" </> "12.hs")
-      runMmlh ["verify", answerFile] "" >>= shouldVerifySuccess
-
-    it "given a wrong answer of exercise 4, show FAIL" $ do
-      let msgs = ["Your program's output:", "Expected output:"]
-      void $ runMmlh ["show", "--terminal", "4"] ""
-      runMmlh ["verify", "test/assets/4/wrong-output.hs"] ""
-        >>= shouldExitWithMessages msgs
+    itShouldShowSuccessGivenExampleAnswerOf "4"
+    itShouldShowSuccessGivenExampleAnswerOf "6"
+    itShouldShowSuccessGivenExampleAnswerOf "12"
+    itShouldShowSuccessGivenExampleAnswerOf "13"
 
     it "given a not-compilable answer of exercise 4, show FAIL" $ do
       let msgs =
@@ -104,6 +88,14 @@ spec = do
         void $ runMmlh ["show", "--terminal", "6"] ""
         runMmlh ["verify", "--terminal", "test/assets/common/empty.hs"] ""
           >>= shouldNotExitWithMessages ["Open Report"]
+
+
+itShouldShowSuccessGivenExampleAnswerOf :: String -> Spec
+itShouldShowSuccessGivenExampleAnswerOf exerciseName =
+  it ("given the correct answer of exercise " ++ exerciseName ++ ", show SUCCESS") $ do
+    answerFile <- Paths.getDataFileName ("assets" </> exerciseName ++ ".hs")
+    void $ runMmlh ["show", "--terminal", exerciseName] ""
+    runMmlh ["verify", answerFile] "" >>= shouldVerifySuccess
 
 
 runMmlh :: [String] -> ByteString'.ByteString -> IO ProcessResult
