@@ -42,6 +42,7 @@ spec = do
     itShouldShowSuccessGivenExampleAnswerOf "6"
     itShouldShowSuccessGivenExampleAnswerOf "12"
     itShouldShowSuccessGivenExampleAnswerOf "13"
+    itShouldShowSuccessGivenExampleAnswerOf "14"
 
     it "given a not-compilable answer of exercise 4, show FAIL" $ do
       let msgs =
