@@ -6,6 +6,7 @@ module Education.MakeMistakesToLearnHaskell.Exercise.Ex12
   , stdinGeneratorOfSeparator
   , judge
   , judgeWith
+  , answerWith
   ) where
 
 #include <imports/external.hs>
@@ -40,7 +41,7 @@ stdinGeneratorOfSeparator sepChar = do
   withExtraField = do
     ln <- inputLine
     cat <- category
-    return $ ln <> " " <> cat
+    return $ ln <> Text.pack [sepChar] <> cat
 
 
 stdinGenerator :: Gen Text
@@ -66,8 +67,9 @@ answerWith split =
     . sumEntries 0
     . Text.lines
  where
+  -- NOTE: To avoid space-leak (at least in the judge function), use BangPatterns
   sumEntries :: Integer -> [Text] -> Either Text Integer
-  sumEntries currentSum lns =
+  sumEntries !currentSum lns =
     case lns of
         line : leftLines ->
           case split line of
