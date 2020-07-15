@@ -24,6 +24,7 @@ extra-source-files:
 library:
   source-dirs: src
   default-extensions:
+  - BangPatterns
   - CPP
   - DeriveGeneric
   - DeriveDataTypeable
