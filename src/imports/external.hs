@@ -21,6 +21,7 @@ import           Data.ByteString.Char8 (ByteString)
 import qualified Data.ByteString.Char8 as ByteString
 import qualified Data.ByteString.Lazy.Char8 as ByteStringLazy
 import qualified Data.Char as Char
+import           Data.Foldable (for_)
 import           Data.Functor (($>))
 import qualified Data.List as List
 import           Data.Maybe (fromMaybe, maybeToList, isJust)

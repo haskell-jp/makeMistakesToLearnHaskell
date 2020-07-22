@@ -7,6 +7,7 @@ module Education.MakeMistakesToLearnHaskell.Exercise.Types
   , Record (..)
   , Diagnosis
   , Judge
+  , CommandLineArg (..)
   ) where
 
 #include <imports/external.hs>
@@ -52,4 +53,12 @@ type Diagnosis = SourceCode -> Details -> Details
 -- * The third argument: The exit code by the user's answer program.
 -- * The fourth argument: The content of STDOUT and STDERR written by the user's answer program.
 -- * The return value: Expected output and whether the user's answer program is correct.
-type Judge = [String] -> Text -> ExitCode -> Text -> (Text, Bool)
+type Judge = [CommandLineArg] -> Text -> ExitCode -> Text -> (Text, Bool)
+
+
+-- |
+-- Command line argument object which can represent not only "just a string",
+-- but also a file.
+data CommandLineArg =
+  Mere !String | FilePath !FilePath !Text
+  deriving (Eq, Show)

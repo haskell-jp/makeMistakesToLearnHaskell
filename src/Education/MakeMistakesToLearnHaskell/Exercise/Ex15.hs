@@ -19,29 +19,26 @@ diag :: Diagnosis
 diag _code _msg = "" -- TODO: Not implemented
 
 
-argsGenerator :: Gen [String]
-argsGenerator = QuickCheck.listOf nonEmptyString
+argsGenerator :: Gen [CommandLineArg]
+argsGenerator = QuickCheck.listOf $
+  FilePath <$> filePath <*> fileContent
  where
   -- NOTE: On Windows, passing an empty string in command line arguments is hard.
-  nonEmptyString =
+  filePath =
     QuickCheck.listOf1
       . QuickCheck.elements
       $ ['A'..'Z'] ++ ['a'..'z'] ++ ['0'..'9']
+  fileContent =
+    fmap Text.pack
+      . QuickCheck.listOf1
+      . QuickCheck.elements
+      $ ['A'..'z'] ++ ['a'..'z'] ++ ['0'..'9'] + " \t\n"
 
 
-judge :: Judge
-judge args _input _exitCode actualOut =
-  case (exitCode, answer args) of
-      (ExitSuccess, Right expectedOut) -> (expectedOut, actualOut == expectedOut)
-      (ExitFailure _, Left expectedOut) -> (expectedOut, expectedOut `Text.isInfixOf` actualOut)
-      (_, Right expectedOut) -> (expectedOut, False)
-      (_, Left expectedOut) -> (expectedOut, False)
-
-
-answer :: [String] -> IO Text
+answer :: [CommandLineArg] -> Text
 answer args =
-  for_ args (\arg -> do
+  for_ args $ \arg -> do
     putStrLn arg
-    content <- readFile arg -- TODO: Create temporary file for input with generated names
+    content <- readFile arg
     let indentedLines = map (\l -> "  " <> l) (lines content)
-    putStr (unlines indentedLines))
+    putStr (unlines indentedLines)

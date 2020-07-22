@@ -4,6 +4,8 @@ module Education.MakeMistakesToLearnHaskell.Exercise.Core
   ( runHaskellExerciseEq
   , runHaskellExerciseWithStdinEq
   , runHaskellExerciseWithStdin
+  , runHaskellExerciseWithArgsEq
+  , runHaskellExerciseWithArgs
   , runHaskellExerciseWithArgsAndStdin
   , noVeirificationExercise
   , notYetImplementedVeirificationExercise
@@ -34,7 +36,7 @@ runHaskellExerciseEq diag right e prgFile = do
   result <- runHaskell e prgFile
   code <- readUtf8File prgFile
   let calcRight = const right
-  return $ resultForUser diag code [] (judgeByEq calcRight) [] "" result
+  return $ resultForUser diag code [] (stdinJudgeByEq calcRight) [] "" result
 
 
 -- | 'runHaskellExercise' with input to stdin
@@ -46,15 +48,21 @@ runHaskellExerciseWithStdinEq
   -> FilePath
   -> IO Result
 runHaskellExerciseWithStdinEq diag =
-  runHaskellExerciseWithStdin diag . judgeByEq
+  runHaskellExerciseWithStdin diag . stdinJudgeByEq
 
 
 -- Currently the command line arguments and exit code are ignored.
 -- If you want to judge by the exit code, consider adding an error message
 -- when the acutalOut is correct, but the exit code is wrong.
-judgeByEq :: (Text -> Text) -> Judge
-judgeByEq calcRight _args input _ecode acutalOut =
+stdinJudgeByEq :: (Text -> Text) -> Judge
+stdinJudgeByEq calcRight _args input _ecode acutalOut =
   let expectedOut = calcRight input
+   in (expectedOut, acutalOut == expectedOut)
+
+
+argsJudgeByEq :: ([CommandLineArg] -> Text) -> Judge
+argsJudgeByEq calcRight args _input _ecode acutalOut =
+  let expectedOut = calcRight args
    in (expectedOut, acutalOut == expectedOut)
 
 
@@ -69,10 +77,32 @@ runHaskellExerciseWithStdin diag judge =
   runHaskellExerciseWithArgsAndStdin diag judge $ pure []
 
 
+runHaskellExerciseWithArgsEq
+  :: Diagnosis
+  -> ([CommandLineArg] -> Text)
+  -> Gen [CommandLineArg]
+  -> Education.MakeMistakesToLearnHaskell.Env.Env
+  -> String
+  -> IO Result
+runHaskellExerciseWithArgsEq diag =
+  runHaskellExerciseWithArgs diag . argsJudgeByEq
+
+
+runHaskellExerciseWithArgs
+  :: Diagnosis
+  -> Judge
+  -> Gen [CommandLineArg]
+  -> Env
+  -> FilePath
+  -> IO Result
+runHaskellExerciseWithArgs diag judge genArgs =
+  runHaskellExerciseWithArgsAndStdin diag judge genArgs (pure "")
+
+
 runHaskellExerciseWithArgsAndStdin
   :: Diagnosis
   -> Judge
-  -> Gen [String]
+  -> Gen [CommandLineArg]
   -> Gen Text
   -> Env
   -> FilePath
@@ -93,11 +123,14 @@ runHaskellExerciseWithArgsAndStdin diag judge genArgs genInput env prgFile = do
               QuickCheck.forAll gen $ \(args, input) ->
                 QuickCheck.ioProperty $ do
                   let params = CommandParameters
-                        { commandParametersArgs = args
+                        { commandParametersArgs = map asMereString args
                         , commandParametersStdin = TextEncoding.encodeUtf8 input
                         }
+                  -- TODO: Create temporary file for input with generated names
                   commandResult <- executeCommand env exePath params
                   logDebug env $ ByteString.pack (show commandResult)
+
+                  -- TODO: Show the contents of the files of the arguments
                   let messageFooter =
                         [ "            For input: " <> Text.pack (show input)
                         , "            For args: " <> Text.pack (show args)
@@ -122,7 +155,7 @@ resultForUser
   -> Text
   -> [Text]
   -> Judge
-  -> [String]
+  -> [CommandLineArg]
   -> Text
   -> Either GhcError CommandResult
   -> Result
@@ -186,6 +219,12 @@ allSame :: Eq a => [a] -> Bool
 allSame [] = True
 allSame [_] = True
 allSame (x1 : x2 : xs) = x1 == x2 && allSame xs
+
+
+-- TODO: Move to a separate module which collects functions specific to `CommandLineArg` type.
+asMereString :: CommandLineArg -> String
+asMereString (Mere s) = s
+asMereString (FilePath path _content) = path
 
 
 noVeirificationExercise :: Env -> String -> IO Result
