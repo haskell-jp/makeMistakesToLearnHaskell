@@ -25,7 +25,7 @@ wget -qO- https://get.haskellstack.org/ | sh
 
 #### 🏁Windowsをお使いの方
 
-[64bit版のWindowsをお使いの方はこちら](https://get.haskellstack.org/stable/windows-x86_64-installer.exe)、[32bit版のWindowsをお使いの方はこちら](https://get.haskellstack.org/stable/windows-i386-installer.exe)からインストーラーをダウンロードして、インストールしてください（よくわからなければ、とりあえず64bit版を試してみてください）。  
+[64bit版のWindowsをお使いの方はこちら](https://get.haskellstack.org/stable/windows-x86_64-installer.exe)からインストーラーをダウンロードして、インストールしてください（よくわからなければ、とりあえず64bit版を試してみてください。32bit版のWindowsをお使いの方は残念ながらあきらめてLinuxを仮想マシンで動かしてインストールしてください）。  
 
 [Chocolatey](https://chocolatey.org/)をお使いの方は、
 
