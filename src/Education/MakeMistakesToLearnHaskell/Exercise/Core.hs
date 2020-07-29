@@ -24,6 +24,7 @@ import           Education.MakeMistakesToLearnHaskell.Evaluator.Command
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 import           Education.MakeMistakesToLearnHaskell.Exercise.Types
 import           Education.MakeMistakesToLearnHaskell.Text
+import           Education.MakeMistakesToLearnHaskell.Exercise.CommandLineArg
 
 
 runHaskellExerciseEq
@@ -126,7 +127,7 @@ runHaskellExerciseWithArgsAndStdin diag judge genArgs genInput env prgFile = do
                         { commandParametersArgs = map asMereString args
                         , commandParametersStdin = TextEncoding.encodeUtf8 input
                         }
-                  -- TODO: Create temporary file for input with generated names
+                  writePathsIn dir args
                   commandResult <- executeCommand env exePath params
                   logDebug env $ ByteString.pack (show commandResult)
 
@@ -219,12 +220,6 @@ allSame :: Eq a => [a] -> Bool
 allSame [] = True
 allSame [_] = True
 allSame (x1 : x2 : xs) = x1 == x2 && allSame xs
-
-
--- TODO: Move to a separate module which collects functions specific to `CommandLineArg` type.
-asMereString :: CommandLineArg -> String
-asMereString (Mere s) = s
-asMereString (FilePath path _content) = path
 
 
 noVeirificationExercise :: Env -> String -> IO Result
