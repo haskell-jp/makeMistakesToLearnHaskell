@@ -25,6 +25,7 @@ import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 import           Education.MakeMistakesToLearnHaskell.Exercise.Types
 import           Education.MakeMistakesToLearnHaskell.Text
 import           Education.MakeMistakesToLearnHaskell.Exercise.CommandLineArg
+import           Education.MakeMistakesToLearnHaskell.Exercise.Result
 
 
 runHaskellExerciseEq
@@ -131,11 +132,7 @@ runHaskellExerciseWithArgsAndStdin diag judge genArgs genInput env prgFile = do
                   commandResult <- executeCommand env exePath params
                   logDebug env $ ByteString.pack (show commandResult)
 
-                  -- TODO: Show the contents of the files of the arguments
-                  let messageFooter =
-                        [ "            For input: " <> Text.pack (show input)
-                        , "            For args: " <> Text.pack (show args)
-                        ]
+                  let messageFooter = buildMessageFooter input args
                       result = resultForUser diag code messageFooter judge args input (Right commandResult)
                   writeIORef resultRef result
                   return $
@@ -144,42 +141,12 @@ runHaskellExerciseWithArgsAndStdin diag judge genArgs genInput env prgFile = do
                         _other -> False
           logDebug env $ ByteString.pack $ "QuickCheck result: " ++ show qr
           readIORef resultRef
-        Left (GhcError _exitCode msg) -> -- TODO: duplicate error handling code
+
+        -- TODO: duplicate error handling code with Exercise.Result module
+        Left (GhcError _exitCode msg) -> do
           let textMsg = decodeUtf8 msg
-           in return . Fail code . CompileError textMsg $ diag code textMsg
-        Left GhcNotFound ->
-          return . Error $ Text.pack "ghc command is not available.\nInstall stack or Haskell Platform."
-
-
-resultForUser
-  :: Diagnosis
-  -> Text
-  -> [Text]
-  -> Judge
-  -> [CommandLineArg]
-  -> Text
-  -> Either GhcError CommandResult
-  -> Result
-resultForUser diag code messageFooter judge args input result =
-  case result of
-      Right (CommandResult ecode outB) ->
-        let out = canonicalizeNewlines outB
-            (right, isSuccessful) = judge args input ecode out
-            msg =
-              Text.unlines $
-                [ Text.replicate 80 "="
-                , "Your program's output: " <> Text.pack (show out) -- TODO: pretty print
-                , "      Expected output: " <> Text.pack (show right)
-                ] ++ messageFooter
-        in
-          if isSuccessful
-            then Success $ "Nice output!\n\n" <> msg
-            else Fail code . WrongOutput $ "Wrong output!\n\n" <> msg
-      Left GhcNotFound -> -- TODO: duplicate error handling code
-        Error $ Text.pack "ghc command is not available.\nInstall stack or Haskell Platform."
-      Left (GhcError _ msg) ->
-        let textMsg = decodeUtf8 msg
-         in Fail code . CompileError textMsg $ diag code textMsg
+          return . whenGhcError code textMsg $ diag code textMsg
+        Left GhcNotFound -> return whenGhcNotFound
 
 
 isInWords :: Text -> [Text] -> Bool
@@ -229,11 +196,4 @@ noVeirificationExercise _ _ = return NotVerified
 notYetImplementedVeirificationExercise :: Env -> FilePath -> IO Result
 notYetImplementedVeirificationExercise e prgFile = do
   code <- readUtf8File prgFile
-  result <- checkWithGhc e prgFile
-  case result of
-      Right _ ->
-        return NotYetImplemented
-      Left (GhcError _ecode msg) ->
-        return . Fail code $ CompileError (decodeUtf8 msg) ""
-      Left GhcNotFound ->
-        return . Error $ Text.pack "ghc command is not available.\nInstall stack or Haskell Platform."
+  resultForNotYetImplementedVeirificationExercise code =<< checkWithGhc e prgFile
