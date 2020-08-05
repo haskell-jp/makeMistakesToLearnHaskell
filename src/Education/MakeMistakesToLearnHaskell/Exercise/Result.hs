@@ -3,13 +3,13 @@
 module Education.MakeMistakesToLearnHaskell.Exercise.Result
   ( resultForUser
   , resultForNotYetImplementedVeirificationExercise
-  , buildMessageFooter
   , whenGhcNotFound
   , whenGhcError
   ) where
 
 #include <imports/external.hs>
 
+import           Education.MakeMistakesToLearnHaskell.Exercise.CommandLineArg
 import           Education.MakeMistakesToLearnHaskell.Exercise.Types
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 import           Education.MakeMistakesToLearnHaskell.Text
@@ -18,13 +18,12 @@ import           Education.MakeMistakesToLearnHaskell.Text
 resultForUser
   :: Diagnosis
   -> Text
-  -> [Text]
   -> Judge
   -> [CommandLineArg]
   -> Text
   -> Either GhcError CommandResult
   -> Result
-resultForUser diag code messageFooter judge args input result =
+resultForUser diag code judge args input result =
   case result of
       Right (CommandResult ecode outB) ->
         let out = canonicalizeNewlines outB
@@ -34,7 +33,7 @@ resultForUser diag code messageFooter judge args input result =
                 [ Text.replicate 80 "="
                 , "Your program's output: " <> Text.pack (show out) -- TODO: pretty print
                 , "      Expected output: " <> Text.pack (show right)
-                ] ++ messageFooter
+                ] ++ messageFooter input args
         in
           if isSuccessful
             then Success $ "Nice output!\n\n" <> msg
@@ -56,11 +55,20 @@ whenGhcError code ghcMsg diagnosisMsg =
   Fail code $ CompileError ghcMsg diagnosisMsg
 
 
-buildMessageFooter :: Text -> [CommandLineArg] -> [Text]
-buildMessageFooter input args =
+messageFooter :: Text -> [CommandLineArg] -> [Text]
+messageFooter "" [] = []
+messageFooter input args =
   [ "            For input: " <> Text.pack (show input)
-  , "            For args: " <> Text.pack (show args)
-  ] -- TODO: ^ Show argumens in a more readable way:
+  , "            For args:" <> formattedArgs
+  ]
+ where
+  formattedArgs =
+    if any isFilePath args
+      then "\n" <> multiline
+      else " " <> Text.pack (show $ map assertMereString args)
+  multiline =
+
+  -- TODO: ^ Show argumens in a more readable way:
     -- Separate lines when args contain at least one FilePath
 
 

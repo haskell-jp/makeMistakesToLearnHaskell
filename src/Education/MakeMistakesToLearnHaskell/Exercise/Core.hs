@@ -38,7 +38,7 @@ runHaskellExerciseEq diag right e prgFile = do
   result <- runHaskell e prgFile
   code <- readUtf8File prgFile
   let calcRight = const right
-  return $ resultForUser diag code [] (stdinJudgeByEq calcRight) [] "" result
+  return $ resultForUser diag code (stdinJudgeByEq calcRight) [] "" result
 
 
 -- | 'runHaskellExercise' with input to stdin
@@ -132,8 +132,7 @@ runHaskellExerciseWithArgsAndStdin diag judge genArgs genInput env prgFile = do
                   commandResult <- executeCommand env exePath params
                   logDebug env $ ByteString.pack (show commandResult)
 
-                  let messageFooter = buildMessageFooter input args
-                      result = resultForUser diag code messageFooter judge args input (Right commandResult)
+                  let result = resultForUser diag code judge args input (Right commandResult)
                   writeIORef resultRef result
                   return $
                     case result of
