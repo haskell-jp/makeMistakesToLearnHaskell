@@ -2,6 +2,7 @@
 
 module Education.MakeMistakesToLearnHaskell.Exercise.CommandLineArg
   ( asMereString
+  , assertMereString
   , writePathsIn
   ) where
 
@@ -24,3 +25,8 @@ writePathsIn dir args = do
 asMereString :: CommandLineArg -> String
 asMereString (Mere s) = s
 asMereString (FilePath path _content) = path
+
+
+assertMereString :: CommandLineArg -> String
+assertMereString (Mere s) = s
+assertMereString (FilePath path _content) = error $ "Assertion failure: unexpected FilePath argument: " ++ show path

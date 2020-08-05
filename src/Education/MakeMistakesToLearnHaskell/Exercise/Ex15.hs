@@ -32,13 +32,14 @@ argsGenerator = QuickCheck.listOf $
     fmap Text.pack
       . QuickCheck.listOf1
       . QuickCheck.elements
-      $ ['A'..'z'] ++ ['0'..'9'] + " \t\n"
+      $ ['A'..'z'] ++ ['0'..'9'] ++ " \t\n"
 
 
 answer :: [CommandLineArg] -> Text
-answer args =
-  for_ args $ \arg -> do
-    putStrLn arg
-    content <- readFile arg
-    let indentedLines = map (\l -> "  " <> l) (lines content)
-    putStr (unlines indentedLines)
+answer = Text.concat . map readAndIndent
+ where
+  readAndIndent (FilePath _path content) =
+    let indentedLines = map (\l -> "  " <> l) (Text.lines content)
+     in Text.unlines indentedLines
+  readAndIndent (Mere string) =
+    error $ "Assertion failure: command line argument without file content: " ++ show string
