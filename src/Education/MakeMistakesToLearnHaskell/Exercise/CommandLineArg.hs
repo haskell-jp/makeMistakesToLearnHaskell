@@ -14,9 +14,7 @@ import           Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 
 writePathsIn :: FilePath -> [CommandLineArg] -> IO ()
-writePathsIn dir args = do
-  Dir.createDirectoryIfMissing False $ dir </> "CommandLineArg"
-  mapM_ writePath args
+writePathsIn dir = mapM_ writePath
  where
   writePath (Mere _) = return ()
   writePath (FilePath path content) =

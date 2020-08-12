@@ -128,8 +128,9 @@ runHaskellExerciseWithArgsAndStdin diag judge genArgs genInput env prgFile = do
                         { commandParametersArgs = map asMereString args
                         , commandParametersStdin = TextEncoding.encodeUtf8 input
                         }
-                  writePathsIn dir args
-                  commandResult <- executeCommand env exePath params
+                  commandResult <- Dir.withCurrentDirectory dir $ do
+                    writePathsIn dir args
+                    executeCommand env exePath params
                   logDebug env $ ByteString.pack (show commandResult)
 
                   let result = resultForUser diag code judge args input (Right commandResult)
