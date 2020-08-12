@@ -57,11 +57,13 @@ judge args _input exitCode actualOut =
 
 answer :: [CommandLineArg] -> Either Text Text
 answer args =
-  case args of
+  case mereStrings of
       [metsStr, weightStr, minutesStr] -> do
-        let mets = read $ assertMereString metsStr :: Double
-            weight = read $ assertMereString weightStr
-            minutes = read $ assertMereString minutesStr
+        let mets = read metsStr :: Double
+            weight = read weightStr
+            minutes = read minutesStr
         Right . Text.pack $ show (mets * weight * (minutes / 60) * 1.05) ++ "\n"
       _ ->
-        Left . Text.pack $ "Invalid input: " ++ show args ++ "\n"
+        Left . Text.pack $ "Invalid input: " ++ show mereStrings ++ "\n"
+ where
+  mereStrings = map assertMereString args
