@@ -58,18 +58,26 @@ whenGhcError code ghcMsg diagnosisMsg =
 messageFooter :: Text -> [CommandLineArg] -> [Text]
 messageFooter "" [] = []
 messageFooter input args =
-  [ "            For input: " <> Text.pack (show input)
-  , "            For args:" <> formattedArgs
+  [ "            For input: " <> formattedInput
+  , "            For  args:" <> formattedArgs
   ]
  where
-  formattedArgs =
-    if any isFilePath args
-      then "\n" <> multiline
-      else " " <> Text.pack (show $ map assertMereString args)
-  multiline =
+  formattedInput =
+    if Text.null input then "<no input>" else Text.pack (show input)
 
-  -- TODO: ^ Show argumens in a more readable way:
-    -- Separate lines when args contain at least one FilePath
+  formattedArgs
+    | null args = " <no arguments>"
+    | any isFilePath args = "\n" <> multiline
+    | otherwise = " " <> Text.pack (show $ map assertMereString args)
+  multiline = Text.concat $ zipWith showArg [1..] args
+
+  showArg :: Int -> CommandLineArg -> Text
+  showArg i (Mere s) = Text.pack (show i) <> ": " <> Text.pack (show s) <> "\n"
+  showArg i (FilePath path content) =
+    Text.pack (show i) <> ": file:" <> Text.pack (show path) <> ":\n" <> showContent content
+
+  showContent content = Text.unlines . map showLine $ Text.lines content
+  showLine line = "            " <> Text.pack (show line)
 
 
 resultForNotYetImplementedVeirificationExercise :: SourceCode -> Either GhcError () -> IO (Result)
