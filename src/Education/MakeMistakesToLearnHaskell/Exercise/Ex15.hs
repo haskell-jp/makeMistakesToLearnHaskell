@@ -32,7 +32,7 @@ argsGenerator = QuickCheck.listOf $
     fmap Text.pack
       . QuickCheck.listOf1
       . QuickCheck.elements
-      $ ['A'..'z'] ++ ['0'..'9'] ++ " \t\n"
+      $ ['A'..'z'] ++ " \t\n" ++ ['0'..'9']
 
 
 answer :: [CommandLineArg] -> Text
