@@ -31,8 +31,8 @@ resultForUser diag code judge args input result =
             msg =
               Text.unlines $
                 [ Text.replicate 80 "="
-                , "Your program's output: " <> Text.pack (show out) -- TODO: pretty print
-                , "      Expected output: " <> Text.pack (show right)
+                , headerYourProgramsOutput <> Text.pack (show out) -- TODO: pretty print
+                , headerExpectedOutput <> Text.pack (show right)
                 ] ++ messageFooter input args
         in
           if isSuccessful
@@ -43,6 +43,15 @@ resultForUser diag code judge args input result =
       Left (GhcError _ msg) ->
         let textMsg = decodeUtf8 msg
          in whenGhcError code textMsg $ diag code textMsg
+
+
+headerYourProgramsOutput, headerExpectedOutput, headerForInput, headerForArgs, headerForShowArg, headerForShowLine :: Text
+headerYourProgramsOutput = "Your program's output: "
+headerExpectedOutput     = "      Expected output: "
+headerForInput           = "            For input: "
+headerForArgs            = "            For  args: "
+headerForShowArg         = "             "
+headerForShowLine        = "              "
 
 
 whenGhcNotFound :: Result
@@ -58,26 +67,24 @@ whenGhcError code ghcMsg diagnosisMsg =
 messageFooter :: Text -> [CommandLineArg] -> [Text]
 messageFooter "" [] = []
 messageFooter input args =
-  [ "            For input: " <> formattedInput
-  , "            For  args:" <> formattedArgs
-  ]
+  [headerForInput <> formattedInput, headerForArgs <> formattedArgs]
  where
   formattedInput =
     if Text.null input then "<no input>" else Text.pack (show input)
 
   formattedArgs
-    | null args = " <no arguments>"
+    | null args = "<no arguments>"
     | any isFilePath args = "\n" <> multiline
-    | otherwise = " " <> Text.pack (show $ map assertMereString args)
+    | otherwise = Text.pack (show $ map assertMereString args)
   multiline = Text.concat $ zipWith showArg [1..] args
 
   showArg :: Int -> CommandLineArg -> Text
   showArg i (Mere s) = Text.pack (show i) <> ": " <> Text.pack (show s) <> "\n"
   showArg i (FilePath path content) =
-    Text.pack (show i) <> ": file:" <> Text.pack (show path) <> ":\n" <> showContent content
+    headerForShowArg <> Text.pack (show i) <> ": file " <> Text.pack (show path) <> "\n" <> showContent content
 
   showContent content = Text.unlines . map showLine $ Text.lines content
-  showLine line = "            " <> Text.pack (show line)
+  showLine line = headerForShowLine <> Text.pack (show line)
 
 
 resultForNotYetImplementedVeirificationExercise :: SourceCode -> Either GhcError () -> IO (Result)
