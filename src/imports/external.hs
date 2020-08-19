@@ -35,6 +35,7 @@ import           Data.Traversable (for)
 import           Data.Typeable (Typeable)
 import qualified Debug.Trace as Debug
 import           GHC.Generics (Generic)
+import           GHC.Stack (HasCallStack)
 import qualified GHC.SyntaxHighlighter as GHC
 import           Numeric.Natural (Natural)
 import qualified Network.URI.Encode as Uri

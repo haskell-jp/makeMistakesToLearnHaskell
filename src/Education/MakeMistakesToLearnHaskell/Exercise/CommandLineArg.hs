@@ -26,7 +26,7 @@ asMereString (Mere s) = s
 asMereString (FilePath path _content) = path
 
 
-assertMereString :: CommandLineArg -> String
+assertMereString :: HasCallStack => CommandLineArg -> String
 assertMereString (Mere s) = s
 assertMereString (FilePath path _content) = error $ "Assertion failure: unexpected FilePath argument: " ++ show path
 
