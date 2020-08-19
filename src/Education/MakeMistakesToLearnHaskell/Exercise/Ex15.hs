@@ -38,8 +38,9 @@ argsGenerator = QuickCheck.listOf $
 answer :: [CommandLineArg] -> Text
 answer = Text.concat . map readAndIndent
  where
-  readAndIndent (FilePath _path content) =
-    let indentedLines = map (\l -> "  " <> l) (Text.lines content)
+  readAndIndent (FilePath path content) =
+    let indentedLines =
+          Text.pack path : map (\l -> "  " <> l) (Text.lines content)
      in Text.unlines indentedLines
   readAndIndent (Mere string) =
     error $ "Assertion failure: command line argument without file content: " ++ show string
