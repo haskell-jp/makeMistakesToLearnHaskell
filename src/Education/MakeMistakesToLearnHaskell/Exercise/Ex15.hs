@@ -6,31 +6,42 @@ module Education.MakeMistakesToLearnHaskell.Exercise.Ex15
 
 #include <imports/external.hs>
 
+import Education.MakeMistakesToLearnHaskell.Exercise.CommandLineArg
 import Education.MakeMistakesToLearnHaskell.Exercise.Core
 import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 
 exercise15 :: Exercise
-exercise15 = Exercise "15" notYetImplementedVeirificationExercise
+exercise15 = Exercise "15"
+           $ runHaskellExerciseWithArgsEq diag answer argsGenerator
 
 
-{-
 diag :: Diagnosis
 diag _code _msg = "" -- TODO: Not implemented
 
 
-generator :: Gen String
-generator =
-  unlines <$> sequence
-    [ show <$> (arbitrary :: Gen Double)
-    , show <$> (arbitrary :: Gen Double)
-    , show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Int))
-    ]
+argsGenerator :: Gen [CommandLineArg]
+argsGenerator = fmap (List.nubBy ((==) `on` assertFilePath)) . QuickCheck.listOf $
+  FilePath <$> filePath <*> fileContent
+ where
+  -- NOTE: On Windows, passing an empty string in command line arguments is hard.
+  filePath =
+    QuickCheck.listOf1
+      . QuickCheck.elements
+      $ ['A'..'Z'] ++ ['a'..'z'] ++ ['0'..'9']
+  fileContent =
+    fmap Text.pack
+      . QuickCheck.listOf1
+      . QuickCheck.elements
+      $ ['A'..'z'] ++ " \t\n" ++ ['0'..'9']
 
 
-answer :: Text -> Text
-answer input = Text.pack $ show (body :: Double) <> "\n"
-  where
-    [principal, interestRate, years] = lines $ Text.unpack input
-    body = read principal * (1 + read interestRate / 100) ^ (read years :: Integer)
--}
+answer :: [CommandLineArg] -> Text
+answer = Text.concat . map readAndIndent
+ where
+  readAndIndent (FilePath path content) =
+    let indentedLines =
+          Text.pack path : map (\l -> "  " <> l) (Text.lines content)
+     in Text.unlines indentedLines
+  readAndIndent (Mere string) =
+    error $ "Assertion failure: command line argument without file content: " ++ show string
