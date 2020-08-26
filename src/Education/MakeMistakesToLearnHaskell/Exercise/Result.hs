@@ -31,8 +31,8 @@ resultForUser diag code judge args input result =
             msg =
               Text.unlines $
                 [ Text.replicate 80 "="
-                , headerYourProgramsOutput <> Text.pack (show out) -- TODO: pretty print
-                , headerExpectedOutput <> Text.pack (show right)
+                , headerYourProgramsOutput <> formatOutput out
+                , headerExpectedOutput <> formatOutput right
                 ] ++ messageFooter input args
         in
           if isSuccessful
@@ -43,6 +43,13 @@ resultForUser diag code judge args input result =
       Left (GhcError _ msg) ->
         let textMsg = decodeUtf8 msg
          in whenGhcError code textMsg $ diag code textMsg
+
+ where
+  formatOutput :: Text -> Text
+  formatOutput s =
+    case Text.lines s of
+        lns@(_firstLine : _secondLine : _leftLines) -> "\n" <> showLines lns
+        _other -> Text.pack $ show s
 
 
 headerYourProgramsOutput, headerExpectedOutput, headerForInput, headerForArgs, headerForShowArg, headerForShowLine :: Text
@@ -83,7 +90,14 @@ messageFooter input args =
   showArg i (FilePath path content) =
     headerForShowArg <> Text.pack (show i) <> ": file " <> Text.pack (show path) <> "\n" <> showContent content
 
-  showContent content = Text.unlines . map showLine $ Text.lines content
+
+showContent :: Text -> Text
+showContent = showLines . Text.lines
+
+
+showLines :: [Text] -> Text
+showLines = Text.unlines . map showLine 
+ where
   showLine line = headerForShowLine <> Text.pack (show line)
 
 
