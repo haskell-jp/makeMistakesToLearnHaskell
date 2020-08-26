@@ -14,5 +14,7 @@ jobs:
   include:
     - stage: build dependencies
       script: stack --no-terminal --install-ghc test --bench --only-dependencies
+    - stage: build dependencies of ex14
+      script: stack --no-terminal build split
     - stage: run test
       script: stack --no-terminal test --bench --no-run-benchmarks --no-haddock-deps --pedantic
