@@ -22,8 +22,11 @@ import qualified Data.ByteString.Char8 as ByteString
 import qualified Data.ByteString.Lazy.Char8 as ByteStringLazy
 import qualified Data.Char as Char
 import           Data.Foldable (for_)
+import           Data.Function (on)
 import           Data.Functor (($>))
 import qualified Data.List as List
+import           Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
 import           Data.Maybe (fromMaybe, maybeToList, isJust)
 import           Data.IORef (newIORef, readIORef, writeIORef)
 import           Data.Monoid ((<>))

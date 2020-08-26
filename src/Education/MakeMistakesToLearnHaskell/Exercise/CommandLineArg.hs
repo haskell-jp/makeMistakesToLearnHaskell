@@ -3,6 +3,7 @@
 module Education.MakeMistakesToLearnHaskell.Exercise.CommandLineArg
   ( asMereString
   , assertMereString
+  , assertFilePath
   , writePathsIn
   , isFilePath
   ) where
@@ -29,6 +30,11 @@ asMereString (FilePath path _content) = path
 assertMereString :: HasCallStack => CommandLineArg -> String
 assertMereString (Mere s) = s
 assertMereString (FilePath path _content) = error $ "Assertion failure: unexpected FilePath argument: " ++ show path
+
+
+assertFilePath :: HasCallStack => CommandLineArg -> String
+assertFilePath (Mere s) = error $ "Assertion failure: unexpected Mere argument: " ++ show s
+assertFilePath (FilePath path _content) = path
 
 
 isFilePath :: CommandLineArg -> Bool

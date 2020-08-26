@@ -49,6 +49,7 @@ library:
   - QuickCheck
   - bytestring
   - cmark
+  - containers
   - directory
   - errors
   - filepath
