@@ -2,6 +2,7 @@
 
 module Education.MakeMistakesToLearnHaskell.Exercise.Ex16
   ( exercise16
+  , argsGenerator
   ) where
 
 #include <imports/external.hs>
@@ -29,11 +30,22 @@ argsGenerator = fmap (List.nubBy ((==) `on` assertFilePath)) . QuickCheck.listOf
     QuickCheck.listOf1
       . QuickCheck.elements
       $ ['A'..'Z'] ++ ['a'..'z'] ++ ['0'..'9']
+
   fileContent =
+    fmap Text.unwords . QuickCheck.shuffle . concat =<< QuickCheck.listOf wordGroup
+
+  wordGroup :: Gen [Text]
+  wordGroup = do
+    generatedWord <- word
+    count <- QuickCheck.choose (1, 5)
+    return $ replicate count generatedWord
+
+  word :: Gen Text
+  word =
     fmap Text.pack
       . QuickCheck.listOf1
       . QuickCheck.elements
-      $ ['A'..'z'] ++ " \t\n" ++ ['0'..'9']
+      $ ['A'..'z'] ++ ['0'..'9']
 
 
 answer :: [CommandLineArg] -> Text
