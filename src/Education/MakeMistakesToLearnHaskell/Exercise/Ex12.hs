@@ -26,7 +26,6 @@ diag _code _msg = "" -- TODO: Not implemented
 stdinGeneratorOfSeparator :: Char -> Gen Text
 stdinGeneratorOfSeparator sepChar = do
   inputLines <- QuickCheck.listOf inputLine
-  -- lastLine <- QuickCheck.oneof [pure "", category, withExtraField]
   lastLine <- QuickCheck.oneof [category, withExtraField]
   return . Text.unlines $ inputLines ++ [lastLine]
  where
