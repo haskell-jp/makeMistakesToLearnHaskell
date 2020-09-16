@@ -2,6 +2,8 @@
 
 module Education.MakeMistakesToLearnHaskell.Exercise.Ex04
   ( exercise4
+  , stdinGen
+  , answer
   ) where
 
 #include <imports/external.hs>
@@ -14,11 +16,11 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 exercise4 :: Exercise
 exercise4 = Exercise "4"
-          $ runHaskellExerciseWithStdinEq diag4 answer stdinGen4
+          $ runHaskellExerciseWithStdinEq diag4 answer stdinGen
 
 
-stdinGen4 :: Gen Text
-stdinGen4 = Text.unlines <$> QuickCheck.listOf (fmap Text.pack . QuickCheck.listOf $ QuickCheck.choose ('\33', '\126'))
+stdinGen :: Gen Text
+stdinGen = Text.unlines <$> QuickCheck.listOf (fmap Text.pack . QuickCheck.listOf $ QuickCheck.choose ('\33', '\126'))
 
 
 answer :: Text -> Text
