@@ -3,6 +3,7 @@
 module Education.MakeMistakesToLearnHaskell.Exercise.Ex16
   ( exercise16
   , argsGenerator
+  , answer
   ) where
 
 #include <imports/external.hs>
