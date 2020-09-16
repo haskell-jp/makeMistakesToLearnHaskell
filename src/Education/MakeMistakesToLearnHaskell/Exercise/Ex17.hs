@@ -10,6 +10,8 @@ module Education.MakeMistakesToLearnHaskell.Exercise.Ex17
 import Education.MakeMistakesToLearnHaskell.Exercise.Core
 import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
+import           Debug.Trace (traceShowId)
+
 
 exercise17 :: Exercise
 exercise17 = Exercise "17"
@@ -22,10 +24,13 @@ diag _code _msg = "" -- TODO: Not implemented
 
 stdinGenerator :: Gen Text
 stdinGenerator = do
-  let addCommand = QuickCheck.oneof [validAddCommand, invalidAddCommand]
-      getCommand = QuickCheck.oneof [validGetCommand, invalidGetCommand]
-  inputLines <- QuickCheck.listOf $ QuickCheck.oneof [addCommand, getCommand, randomLine]
-  return . Text.unlines $ inputLines ++ ["quit"]
+  let addCommand = QuickCheck.frequency [(8, validAddCommand), (1, invalidAddCommand)]
+      getCommand = QuickCheck.frequency [(8, validGetCommand), (1, invalidGetCommand)]
+  inputLinesAlmostAdd <- QuickCheck.listOf $ QuickCheck.frequency
+    [(9, addCommand), (2, getCommand), (1, randomLine)]
+  inputLinesAlmostGet <- QuickCheck.listOf $ QuickCheck.frequency
+    [(2, addCommand), (9, getCommand), (1, randomLine)]
+  return . Text.unlines $ inputLinesAlmostAdd ++ inputLinesAlmostGet ++ ["quit"]
 
  where
   validAddCommand = do
@@ -50,7 +55,7 @@ stdinGenerator = do
   invalidAdd3OrMore = do
     k <- randomWord
     v <- arbitrary :: Gen Integer
-    leftWords <- randomWords
+    leftWords <- randomWords1
     return $ ["add", k, Text.pack $ show v] ++ leftWords
 
   validGetCommand = do
@@ -67,7 +72,7 @@ stdinGenerator = do
     leftWords <- randomWords1
     return $ ["get", k] ++ leftWords
 
-  key = Text.singleton <$> QuickCheck.elements ['A' .. 'E']
+  key = Text.singleton <$> QuickCheck.elements ['A' .. 'C']
 
   randomLine = do
     xWord <- ("X" <>) <$> randomWord
@@ -90,23 +95,21 @@ answer = Text.unlines . go Map.empty . Text.lines
   go db (first : left) =
     let prompt = "Enter command:"
         mcommand = parseCommand first
-        (result, newDb) =
-          case mcommand of
-              Just (Add k v) ->
-                let message = "Adding " <> Text.pack (show v) <> " to " <> Text.pack (show k) <> "."
-                 in (prompt : [message], Map.insertWith (\v1 v2 -> v1 + v2) k v db)
-              Just (Get k) ->
-                let message =
-                      case Map.lookup k db of
-                          Just v -> k <> " => " <> Text.pack (show v)
-                          Nothing -> "Error: no item found"
-                 in (prompt : [message], db)
-              Just Quit ->
-                (prompt : ["Bye."], db)
-              Nothing ->
-                (prompt : ["Error: Invalid Command"], db)
-     in
-      result ++ go newDb left
+     in case mcommand of
+            Just (Add k v) ->
+              let message = "Adding " <> Text.pack (show v) <> " to " <> Text.pack (show k) <> "."
+                  newDb = Map.insertWith (\v1 v2 -> v1 + v2) k v db
+               in (prompt : [message]) ++ go newDb left
+            Just (Get k) ->
+              let message =
+                    case Map.lookup k db of
+                        Just v -> k <> " => " <> Text.pack (show v)
+                        Nothing -> "Error: no item found"
+               in (prompt : [message]) ++ go db left
+            Just Quit ->
+              prompt : ["Bye."]
+            Nothing ->
+              (prompt : ["Error: Invalid Command"]) ++ go db left
 
 data Command =
     Add Text Integer
