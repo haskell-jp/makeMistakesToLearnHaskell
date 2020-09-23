@@ -13,6 +13,7 @@ module Education.MakeMistakesToLearnHaskell.Exercise.Core
   , detailsForgetToWriteDo
   , detailsDoConsistentWidth
   , isInconsistentlyIndentedAfter
+  , judgeWithException
   ) where
 
 #include <imports/external.hs>
@@ -66,6 +67,15 @@ argsJudgeByEq :: ([CommandLineArg] -> Text) -> Judge
 argsJudgeByEq calcRight args _input _ecode acutalOut =
   let expectedOut = calcRight args
    in (expectedOut, acutalOut == expectedOut)
+
+
+judgeWithException :: ([CommandLineArg] -> Text -> Either Text Text) -> Judge
+judgeWithException answer args input exitCode actualOut =
+  case (exitCode, answer args input) of
+      (ExitSuccess, Right expectedOut) -> (expectedOut, actualOut == expectedOut)
+      (ExitFailure _, Left expectedOut) -> (expectedOut, expectedOut `Text.isInfixOf` actualOut)
+      (_, Right expectedOut) -> (expectedOut, False)
+      (_, Left expectedOut) -> (expectedOut, False)
 
 
 runHaskellExerciseWithStdin

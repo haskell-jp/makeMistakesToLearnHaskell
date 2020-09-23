@@ -14,7 +14,7 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 exercise13 :: Exercise
 exercise13 = Exercise "13"
-           $ runHaskellExerciseWithArgsAndStdin diag judge argsGenerator stdinGenerator
+           $ runHaskellExerciseWithArgsAndStdin diag (judgeWithException answer) argsGenerator stdinGenerator
 
 
 diag :: Diagnosis
@@ -46,17 +46,8 @@ stdinGenerator :: Gen Text
 stdinGenerator = pure ""
 
 
-judge :: Judge
-judge args _input exitCode actualOut =
-  case (exitCode, answer args) of
-      (ExitSuccess, Right expectedOut) -> (expectedOut, actualOut == expectedOut)
-      (ExitFailure _, Left expectedOut) -> (expectedOut, expectedOut `Text.isInfixOf` actualOut)
-      (_, Right expectedOut) -> (expectedOut, False)
-      (_, Left expectedOut) -> (expectedOut, False)
-
-
-answer :: [CommandLineArg] -> Either Text Text
-answer args =
+answer :: [CommandLineArg] -> Text -> Either Text Text
+answer args _input =
   case mereStrings of
       [metsStr, weightStr, minutesStr] -> do
         let mets = read metsStr :: Double
