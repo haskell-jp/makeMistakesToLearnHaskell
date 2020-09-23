@@ -1,6 +1,5 @@
 import qualified Data.Map.Strict    as M
 import           System.Environment (getArgs)
-import           System.IO (stderr, hPutStrLn)
 
 fruitDictionary :: M.Map String String
 fruitDictionary = M.fromList
@@ -100,7 +99,7 @@ main = do
               <*> M.lookup name prefectureDictionary
         case mResult of
             Just result -> putStr result
-            Nothing     -> hPutStrLn stderr "Not found. He/She might be shy."
+            Nothing     -> putStrLn "Not found. He/She might be shy."
       _ -> error $ "Invalid arguments: " ++ show args
 
 formatResult :: String -> String -> String -> String -> String
