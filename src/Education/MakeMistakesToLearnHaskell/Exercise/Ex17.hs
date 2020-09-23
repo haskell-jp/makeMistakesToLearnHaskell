@@ -10,8 +10,6 @@ module Education.MakeMistakesToLearnHaskell.Exercise.Ex17
 import Education.MakeMistakesToLearnHaskell.Exercise.Core
 import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
-import           Debug.Trace (traceShowId)
-
 
 exercise17 :: Exercise
 exercise17 = Exercise "17"
