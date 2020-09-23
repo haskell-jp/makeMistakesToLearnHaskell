@@ -2,6 +2,8 @@
 
 module Education.MakeMistakesToLearnHaskell.Exercise.Ex05
   ( exercise5
+  , answer
+  , stdinGenerator
   ) where
 
 #include <imports/external.hs>
