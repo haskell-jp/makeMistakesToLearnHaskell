@@ -3,6 +3,12 @@
 module Education.MakeMistakesToLearnHaskell.Exercise.Ex21
   ( exercise21
   , argsGenerator
+  , stdinGenerator
+  , formatResult
+  , fruitDictionary
+  , birthdayDictionary
+  , mailAddressDictionary
+  , prefectureDictionary
   ) where
 
 #include <imports/external.hs>
@@ -32,7 +38,10 @@ argsGenerator = QuickCheck.frequency [(4, args1Valid), (1, args1Invalid), (1, ar
       $ ['A'..'Z'] ++ ['a'..'z'] ++ ['0'..'9']
 
   args1Valid =
-    fmap ((: []) . Mere) . QuickCheck.elements $ error "TODO: union keys of the dictionaries"
+    fmap ((: []) . Mere)
+      . QuickCheck.elements
+      . Set.toList
+      $ Set.unions [fruitDictionaryKeys, birthdayDictionaryKeys, mailAddressDictionaryKeys, prefectureDictionaryKeys]
   args1Invalid = (: []) <$> nonEmptyString
 
   argsMore = do
@@ -57,7 +66,7 @@ answer args _input =
         case mResult of
             Just result -> Right result
             Nothing     -> Right "Not found. He/She might be shy.\n"
-      _ -> Left $ "Invalid arguments: " <> Text.pack (show args)
+      _ -> Left $ "Invalid arguments: " <> Text.pack (show mereStrings)
  where
   mereStrings = map assertMereString args
 
@@ -93,6 +102,9 @@ fruitDictionary = Map.fromList
   , ("rio"      , "banana")
   ]
 
+fruitDictionaryKeys :: Set String
+fruitDictionaryKeys = Map.keysSet fruitDictionary
+
 
 birthdayDictionary :: Map String Text
 birthdayDictionary = Map.fromList
@@ -116,6 +128,9 @@ birthdayDictionary = Map.fromList
   , ("rio"      , "1987/12/8")
   ]
 
+birthdayDictionaryKeys :: Set String
+birthdayDictionaryKeys = Map.keysSet birthdayDictionary
+
 
 mailAddressDictionary :: Map String Text
 mailAddressDictionary = Map.fromList
@@ -138,6 +153,9 @@ mailAddressDictionary = Map.fromList
   , ("rio"      , "tsukahara_rio@example.com")
   ]
 
+mailAddressDictionaryKeys :: Set String
+mailAddressDictionaryKeys = Map.keysSet mailAddressDictionary
+
 
 prefectureDictionary :: Map String Text
 prefectureDictionary = Map.fromList
@@ -159,3 +177,6 @@ prefectureDictionary = Map.fromList
   , ("yoshimasa", "Mie")
   , ("rio"      , "Hokkaido")
   ]
+
+prefectureDictionaryKeys :: Set String
+prefectureDictionaryKeys = Map.keysSet prefectureDictionary
