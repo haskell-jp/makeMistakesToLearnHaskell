@@ -6,32 +6,34 @@ module Education.MakeMistakesToLearnHaskell.Exercise.Ex22
 
 #include <imports/external.hs>
 
+import Education.MakeMistakesToLearnHaskell.Exercise.CommandLineArg
 import Education.MakeMistakesToLearnHaskell.Exercise.Core
 import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
+import qualified Education.MakeMistakesToLearnHaskell.Exercise.Ex21 as Ex21
+
 
 exercise22 :: Exercise
-exercise22 = Exercise "22" notYetImplementedVeirificationExercise
+exercise22 = Exercise "22"
+           $ runHaskellExerciseWithArgsAndStdin diag (judgeWithException answer) Ex21.argsGenerator Ex21.stdinGenerator
 
 
-{-
 diag :: Diagnosis
 diag _code _msg = "" -- TODO: Not implemented
 
 
-generator :: Gen String
-generator =
-  unlines <$> sequence
-    [ show <$> (arbitrary :: Gen Double)
-    , show <$> (arbitrary :: Gen Double)
-    , show . QuickCheck.getPositive <$> (arbitrary :: Gen (QuickCheck.Positive Int))
-    ]
-
-
-answer :: Text -> Text
-answer input = Text.pack $ show (body :: Double) <> "\n"
-  where
-    [principal, interestRate, years] = lines $ Text.unpack input
-    body = read principal * (1 + read interestRate / 100) ^ (read years :: Integer)
--}
-
+answer :: [CommandLineArg] -> Text -> Either Text Text
+answer args _input =
+  case mereStrings of
+      [nameString] -> do
+        let mResult = Ex21.formatResult
+              <$> error "Use the note function of the error package" (Map.lookup nameString Ex21.fruitDictionary)
+              <*> error "Use the note function of the error package" (Map.lookup nameString Ex21.birthdayDictionary)
+              <*> error "Use the note function of the error package" (Map.lookup nameString Ex21.mailAddressDictionary)
+              <*> error "Use the note function of the error package" (Map.lookup nameString Ex21.prefectureDictionary)
+        case mResult of
+            Just result -> Right result
+            Nothing     -> Right "Not found. He/She might be shy.\n"
+      _ -> Left $ "Invalid arguments: " <> Text.pack (show mereStrings)
+ where
+  mereStrings = map assertMereString args
