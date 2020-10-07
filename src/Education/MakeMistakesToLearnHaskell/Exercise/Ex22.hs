@@ -26,14 +26,22 @@ answer :: [CommandLineArg] -> Text -> Either Text Text
 answer args _input =
   case mereStrings of
       [nameString] -> do
-        let mResult = Ex21.formatResult
-              <$> error "Use the note function of the error package" (Map.lookup nameString Ex21.fruitDictionary)
-              <*> error "Use the note function of the error package" (Map.lookup nameString Ex21.birthdayDictionary)
-              <*> error "Use the note function of the error package" (Map.lookup nameString Ex21.mailAddressDictionary)
-              <*> error "Use the note function of the error package" (Map.lookup nameString Ex21.prefectureDictionary)
-        case mResult of
-            Just result -> Right result
-            Nothing     -> Right "Not found. He/She might be shy.\n"
+        let eResult = Ex21.formatResult
+              <$> Error.note
+                    "Fruit not found. He/She might like vegitables better."
+                    (Map.lookup nameString Ex21.fruitDictionary)
+              <*> Error.note
+                    "Birthday not found. He/She might want to hide his/her age."
+                    (Map.lookup nameString Ex21.birthdayDictionary)
+              <*> Error.note
+                    "Mail address not found. He/She might be afraid of spams."
+                    (Map.lookup nameString Ex21.mailAddressDictionary)
+              <*> Error.note
+                    "Prefecture not found. Where does he/she live?"
+                    (Map.lookup nameString Ex21.prefectureDictionary)
+        case eResult of
+            Right result -> Right result
+            Left emsg    -> Right $ emsg <> "\n"
       _ -> Left $ "Invalid arguments: " <> Text.pack (show mereStrings)
  where
   mereStrings = map assertMereString args
