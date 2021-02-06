@@ -13,10 +13,10 @@ main = do
 
 
 bmiFromStrings :: String -> String -> Double
-bmiFromStrings hwStr weightStr = do
+bmiFromStrings hwStr weightStr =
   let height = read hwStr
       weight = read weightStr
-  weight / (height * height)
+   in weight / (height * height)
 
 
 askWeight = do
