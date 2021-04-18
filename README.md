@@ -1,3 +1,7 @@
+# 現在は[`ex6`](https://github.com/haskell-jp/makeMistakesToLearnHaskell/tree/ex6)というブランチで、課題6以降の執筆を続けています
+
+興味がある方は是非ご覧ください。こちらが`master`にマージされるのは、課題22の文面まで一通り埋まってからです。あしからず。
+
 # Make Mistakes to Learn Haskell!
 
 作りながら学ぶHaskell入門
