@@ -17,21 +17,21 @@ diag2 code msg
   | "parse error" `Text.isInfixOf` msg || "Parse error" `Text.isInfixOf` msg =
     if "top-level declaration expected." `Text.isInfixOf` msg
       then
-        "HINT: This error indicates you haven't defined main function."
+        "HINT: This error indicates that you haven't defined the main function."
       else
         -- TODO: Use regex or ghc tokenizer
         case compare (Text.count "(" code) (Text.count ")" code) of
-            GT -> "HINT: you might have forgot to write close parenthesis"
-            LT -> "HINT: you might have forgot to write open parenthesis"
+            GT -> "HINT: you might have forgotten to write a close parenthesis"
+            LT -> "HINT: you might have forgotten to write an open parenthesis"
             EQ -> ""
   | "No instance for (Fractional (IO ()))" `Text.isInfixOf` msg || "No instance for (Num (IO ()))" `Text.isInfixOf` msg =
-    "HINT: you might have forgot to write parentheses"
+    "HINT: you might have forgotten to write parentheses"
   | "No instance for (Show (a0 -> a0))" `Text.isInfixOf` msg =
-    "HINT: you might have forgot to write some numbers between operators ('*', '/' etc.)."
+    "HINT: you might have forgotten to write some numbers between operators ('*', '/' etc.)."
   | "No instance for (Num (t0 -> a0))" `Text.isInfixOf` msg =
-    "HINT: you might have forgot to write multiplication operator '*'"
+    "HINT: you might have forgotten to write the multiplication operator '*'"
   | "No instance for (Fractional (t0 -> a0))" `Text.isInfixOf` msg =
-    "HINT: you might have forgot to write division operator '/'"
+    "HINT: you might have forgotten to write the division operator '/'"
   | "Variable not in scope: main :: IO" `Text.isInfixOf` msg =
-    "HINT: This error indicates you haven't defined main function."
+    "HINT: This error indicates that you haven't defined the main function."
   | otherwise = ""

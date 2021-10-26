@@ -25,7 +25,7 @@ spec =
     it "given an empty answer, show FAIL" $ do
       void $ runMmlh ["show", "--terminal", "1"]
       runMmlh ["verify", "test/assets/common/empty.hs"]
-        >>= shouldExitWithHints ["HINT: This error indicates you haven't defined main function."]
+        >>= shouldExitWithHints ["HINT: This error indicates that you haven't defined the main function."]
 
     it "given non-existing answer of exercise 2.5, show NOT VERIFIED" $ do
       void $ runMmlh ["show", "--terminal", "2.5"]
@@ -44,7 +44,7 @@ spec =
 
     it "given a not-compilable answer of exercise 4, show FAIL" $ do
       let msgs =
-            ["HINT: You seem to forget to write `do`. `do` must be put before listing `putStr`s and `getContents`."]
+            ["HINT: You seem to have forgotten to write `do`. `do` must be put before listing `putStr`s and `getContents`."]
       void $ runMmlh ["show", "--terminal", "4"]
       runMmlh ["verify", "test/assets/4/no-do.hs"]
         >>= shouldExitWithHints msgs

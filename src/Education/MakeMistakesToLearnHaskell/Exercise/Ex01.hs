@@ -17,12 +17,12 @@ diag1 :: Diagnosis
 diag1 code msg
   | "parse error on input" `Text.isInfixOf` msg
       && "'" `Text.isInfixOf` code =
-        "HINT: In Haskell, you must surround string literals with double-quote '\"'. Such as \"Hello, world\"."
+        "HINT: In Haskell, you must surround string literals with double-quotes '\"', like \"Hello, world\"."
   | ("parse error" `Text.isInfixOf` msg || "Parse error" `Text.isInfixOf` msg)
       && "top-level declaration expected." `Text.isInfixOf` msg =
-        "HINT: This error indicates you haven't defined main function."
+        "HINT: This error indicates that you haven't defined the main function."
   | "Variable not in scope: main :: IO" `Text.isInfixOf` msg =
-    "HINT: This error indicates you haven't defined main function."
+    "HINT: This error indicates that you haven't defined the main function."
   | "Variable not in scope:" `Text.isInfixOf` msg =
     "HINT: you might have misspelled 'putStrLn'."
   | otherwise = ""

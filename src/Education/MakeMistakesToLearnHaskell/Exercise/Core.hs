@@ -125,7 +125,7 @@ isInWords wd = any (Text.isInfixOf wd)
 
 detailsForgetToWriteDo :: Text -> Details
 detailsForgetToWriteDo funcNames =
-  "HINT: You seem to forget to write `do`. `do` must be put before listing " <> funcNames <> "."
+  "HINT: You seem to have forgotten to write `do`. `do` must be put before listing " <> funcNames <> "."
 
 detailsDoConsistentWidth :: Details
 detailsDoConsistentWidth = "HINT: instructions in a `do` must be in a consistent width."

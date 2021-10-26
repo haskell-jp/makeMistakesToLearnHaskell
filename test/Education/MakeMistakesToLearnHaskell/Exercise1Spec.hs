@@ -24,11 +24,11 @@ spec = do
   itShouldFailForCaseWithMessage
     "1"
     "single-quote"
-    ["HINT: In Haskell, you must surround string literals with double-quote '\"'. Such as \"Hello, world\"."]
+    ["HINT: In Haskell, you must surround string literals with double-quotes '\"', like \"Hello, world\"."]
 
   itShouldFailForCaseWithMessage
     "1"
     "no-main"
-    ["HINT: This error indicates you haven't defined main function."]
+    ["HINT: This error indicates that you haven't defined the main function."]
 
   itShouldFailForCaseWithMessage "1" "typo" []

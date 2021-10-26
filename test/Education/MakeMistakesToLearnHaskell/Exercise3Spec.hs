@@ -32,7 +32,7 @@ spec = do
   itShouldFailForCaseWithMessage
     "3"
     "no-main"
-    ["HINT: This error indicates you haven't defined main function."]
+    ["HINT: This error indicates that you haven't defined the main function."]
 
   itShouldFailForCaseWithMessage
     "3"
@@ -47,12 +47,12 @@ spec = do
   itShouldFailForCaseWithMessage
     "3"
     "no-do"
-    ["HINT: You seem to forget to write `do`. `do` must be put before listing `putStrLn`s."]
+    ["HINT: You seem to have forgotten to write `do`. `do` must be put before listing `putStrLn`s."]
 
   itShouldFailForCaseWithMessage
     "3"
     "single-quote"
-    ["HINT: In Haskell, you must surround string literals with double-quote '\"'. Such as \"Hello, world\"."]
+    ["HINT: In Haskell, you must surround string literals with double-quotes '\"', like \"Hello, world\"."]
 
   itShouldFailForCaseWithMessage "3" "typo" []
 
