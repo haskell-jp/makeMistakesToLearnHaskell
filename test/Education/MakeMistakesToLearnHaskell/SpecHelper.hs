@@ -7,7 +7,6 @@ module Education.MakeMistakesToLearnHaskell.SpecHelper where
 import qualified Education.MakeMistakesToLearnHaskell.Exercise as Exercise
 import           Education.MakeMistakesToLearnHaskell.SpecEnv (setRunHaskellFailureWithOutput, mkDefaultSpecEnv)
 
-
 shouldFail :: Exercise.Result -> IO Exercise.Details
 shouldFail (Exercise.Fail d) = return d
 shouldFail other = fail $ "Unexpected exercise result: " ++ show other
@@ -29,4 +28,4 @@ itShouldFailForCaseWithMessage ename tcid messages = do
     let e = setRunHaskellFailureWithOutput baseEnv err
     d <- shouldFail =<< Exercise.verify subject e ("test/assets/" ++ ename ++ "/" ++ tcid ++ ".hs")
 
-    for_ messages $ \message -> d `shouldSatisfy` Text.isInfixOf message
+    for_ messages $ \message -> (Text.unpack d `shouldContain` Text.unpack message)

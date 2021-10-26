@@ -7,7 +7,6 @@ module Education.MakeMistakesToLearnHaskellSpec (main, spec) where
 import qualified Education.MakeMistakesToLearnHaskell
 import           Education.MakeMistakesToLearnHaskell.Env
 
-
 -- `main` is here so that this module can be run from GHCi on its own.  It is
 -- not needed for automatic spec discovery.
 main :: IO ()
@@ -58,30 +57,30 @@ runMmlh args = do
     $ withEnv env
     $ captureProcessResult Education.MakeMistakesToLearnHaskell.main
 
-
-includes :: ByteString'.ByteString -> ByteString'.ByteString -> Bool
-includes = ByteString'.isInfixOf
-
+shouldContainBS :: ByteString'.ByteString -> ByteString'.ByteString -> Expectation
+shouldContainBS a b = if ByteString'.isInfixOf b a
+  then pure ()
+  else expectationFailure $ unwords [show a, "does not contain", show b]
 
 shouldExitWithHints :: [ByteString'.ByteString] -> ProcessResult -> IO ()
 shouldExitWithHints hintMsgs (ProcessResult out err code ex) = do
   fmap show ex `shouldBe` Nothing
-  err `shouldSatisfy` ByteString'.null
-  mapM_ ((out `shouldSatisfy`) . includes) hintMsgs
+  err `shouldBe` ByteString'.empty
+  mapM_ (out `shouldContainBS`) hintMsgs
   code `shouldBe` ExitFailure 1
 
 
 shouldVerifySuccess :: ProcessResult -> IO ()
 shouldVerifySuccess (ProcessResult out err code ex) = do
   fmap show ex `shouldBe` Nothing
-  err `shouldSatisfy` ByteString'.null
-  out `shouldSatisfy` includes "SUCCESS"
+  err `shouldBe` ByteString'.empty
+  out `shouldContainBS` "SUCCESS"
   code `shouldBe` ExitSuccess
 
 
 shouldPrintNotVerified :: ProcessResult -> IO ()
 shouldPrintNotVerified (ProcessResult out err code ex) = do
   fmap show ex `shouldBe` Nothing
-  err `shouldSatisfy` ByteString'.null
-  out `shouldSatisfy` includes "NOT VERIFIED"
+  err `shouldBe` ByteString'.empty
+  out `shouldContainBS` "NOT VERIFIED"
   code `shouldBe` ExitSuccess
