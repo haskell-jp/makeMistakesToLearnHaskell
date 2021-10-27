@@ -7,7 +7,6 @@ module Education.MakeMistakesToLearnHaskellSpec (main, spec) where
 import qualified Education.MakeMistakesToLearnHaskell
 import           Education.MakeMistakesToLearnHaskell.Env
 
-
 -- `main` is here so that this module can be run from GHCi on its own.  It is
 -- not needed for automatic spec discovery.
 main :: IO ()
@@ -25,7 +24,7 @@ spec =
     it "given an empty answer, show FAIL" $ do
       void $ runMmlh ["show", "--terminal", "1"]
       runMmlh ["verify", "test/assets/common/empty.hs"]
-        >>= shouldExitWithHints ["HINT: This error indicates you haven't defined main function."]
+        >>= shouldExitWithHints ["HINT: This error indicates that you haven't defined the main function."]
 
     it "given non-existing answer of exercise 2.5, show NOT VERIFIED" $ do
       void $ runMmlh ["show", "--terminal", "2.5"]
@@ -44,7 +43,7 @@ spec =
 
     it "given a not-compilable answer of exercise 4, show FAIL" $ do
       let msgs =
-            ["HINT: You seem to forget to write `do`. `do` must be put before listing `putStr`s and `getContents`."]
+            ["HINT: You seem to have forgotten to write `do`. `do` must be put before listing `putStr`s and `getContents`."]
       void $ runMmlh ["show", "--terminal", "4"]
       runMmlh ["verify", "test/assets/4/no-do.hs"]
         >>= shouldExitWithHints msgs
@@ -58,30 +57,30 @@ runMmlh args = do
     $ withEnv env
     $ captureProcessResult Education.MakeMistakesToLearnHaskell.main
 
-
-includes :: ByteString'.ByteString -> ByteString'.ByteString -> Bool
-includes = ByteString'.isInfixOf
-
+shouldContainBS :: ByteString'.ByteString -> ByteString'.ByteString -> Expectation
+shouldContainBS a b = if ByteString'.isInfixOf b a
+  then pure ()
+  else expectationFailure $ unwords [show a, "does not contain", show b]
 
 shouldExitWithHints :: [ByteString'.ByteString] -> ProcessResult -> IO ()
 shouldExitWithHints hintMsgs (ProcessResult out err code ex) = do
   fmap show ex `shouldBe` Nothing
-  err `shouldSatisfy` ByteString'.null
-  mapM_ ((out `shouldSatisfy`) . includes) hintMsgs
+  err `shouldBe` ByteString'.empty
+  mapM_ (out `shouldContainBS`) hintMsgs
   code `shouldBe` ExitFailure 1
 
 
 shouldVerifySuccess :: ProcessResult -> IO ()
 shouldVerifySuccess (ProcessResult out err code ex) = do
   fmap show ex `shouldBe` Nothing
-  err `shouldSatisfy` ByteString'.null
-  out `shouldSatisfy` includes "SUCCESS"
+  err `shouldBe` ByteString'.empty
+  out `shouldContainBS` "SUCCESS"
   code `shouldBe` ExitSuccess
 
 
 shouldPrintNotVerified :: ProcessResult -> IO ()
 shouldPrintNotVerified (ProcessResult out err code ex) = do
   fmap show ex `shouldBe` Nothing
-  err `shouldSatisfy` ByteString'.null
-  out `shouldSatisfy` includes "NOT VERIFIED"
+  err `shouldBe` ByteString'.empty
+  out `shouldContainBS` "NOT VERIFIED"
   code `shouldBe` ExitSuccess
