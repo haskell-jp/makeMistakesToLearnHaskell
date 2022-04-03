@@ -2,6 +2,7 @@
 cabal-helper*.build
 /tmp/
 /dist/
+/dist-newstyle/
 
 *.exe
 *.o
