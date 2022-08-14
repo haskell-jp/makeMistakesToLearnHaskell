@@ -8,4 +8,5 @@ main = do
     putStrLn arg
     content <- readFile arg
     let indentedLines = map (\l -> "  " ++ l) (lines content)
-    putStr (unlines indentedLines))
+    putStr (unlines indentedLines)
+    )
