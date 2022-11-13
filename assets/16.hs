@@ -12,12 +12,11 @@ main = do
     return (words contents)
     )
 
-  let wordCounts =
-        Map.toList
-          (Map.fromListWith
-            (\x y -> x + y)
-            (map (\w -> (w, 1))
-            (concat wordss)))
+  let words = concat wordss
+      wordAnd1s = map (\w -> (w, 1)) words
+      countsByWord =
+        Map.fromListWith (\x y -> x + y) wordAnd1s
+      wordCounts = Map.toList countsByWord
 
   for_ wordCounts (\wordCount ->
     putStrLn (fst wordCount ++ " => " ++ show (snd wordCount))
