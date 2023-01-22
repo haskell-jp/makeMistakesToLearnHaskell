@@ -7,13 +7,13 @@ import System.Environment
 
 main = do
   files <- getArgs
-  wordss <- for files (\file -> do
+  wdss <- for files (\file -> do
     contents <- readFile file
     return (words contents)
     )
 
-  let words = concat wordss
-      wordAnd1s = map (\w -> (w, 1)) words
+  let wds = concat wdss
+      wordAnd1s = map (\w -> (w, 1)) wds
       countsByWord =
         Map.fromListWith (\x y -> x + y) wordAnd1s
       wordCounts = Map.toList countsByWord
