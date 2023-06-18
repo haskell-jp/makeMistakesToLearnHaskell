@@ -25,8 +25,10 @@ answer input = Text.pack $ "Height Weight: \n" <> a <>"\n"
  where
   a = case Text.lines $ input of
     [""] -> "Invalid input"
-    [line1] -> show (bmiFromStrings heightStr weightStr)
-      where heightStr : weightStr : _ = Text.words line1
+    [line1] ->
+      case Text.words line1 of
+        heightStr : weightStr : _ -> show (bmiFromStrings heightStr weightStr)
+        _ -> error "Assertion failed: generated line must contain two numbers"
     line1 : line2 : _ -> "Weight: \n" <> show (bmiFromStrings line1 line2)
     [] -> error "Assertion failure: empty input!"
 

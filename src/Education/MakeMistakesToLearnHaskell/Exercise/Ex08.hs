@@ -33,8 +33,11 @@ answer input = Text.pack
   <> "quot: " <> show quotResult <> "\n"
   <> "rem: "  <> show remResult  <> "\n"
  where
-  [numeratorStr, denominatorStr] = lines $ Text.unpack input
+  (numeratorStr, denominatorStr) = assertPair . lines $ Text.unpack input
   numerator = read numeratorStr :: Integer
   denominator = read denominatorStr :: Integer
   (divResult, modResult) = divMod numerator denominator
   (quotResult, remResult) = quotRem numerator denominator
+
+  assertPair [l1, l2] = (l1, l2)
+  assertPair _ = error "Assertion failed: generated input must contain two numbers separated by a newline"

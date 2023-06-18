@@ -41,10 +41,14 @@ answer input = Text.pack $ "Height Weight: \n" <> a <>"\n"
   a = case lines $ Text.unpack input of
     [""] -> "Invalid input"
     [line1] -> show (weight / (height * height))
-      where heightStr : weightStr : _ = words line1
-            height, weight :: Double
-            height = read heightStr
-            weight = read weightStr
+      where
+        height, weight :: Double
+        (height, weight) =
+          case words line1 of
+            heightStr : weightStr : _ ->
+              (read heightStr, read weightStr)
+            _ ->
+              error "Assertion failed: generated line must contain two numbers"
     line1 : line2 : _ -> "Weight: \n" <> show (weight / (height * height))
       where height, weight :: Double
             height = read line1

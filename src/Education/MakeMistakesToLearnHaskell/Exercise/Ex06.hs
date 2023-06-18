@@ -35,7 +35,10 @@ data Entry = Entry
 answer :: Text -> Text
 answer input = Text.pack $ (lineCategory :: String) <> "\n" <> (linePrice :: String) <> "\n"
  where
-  [cat, priceStr] = lines $ Text.unpack input
+  (cat, priceStr) = assertPair . lines $ Text.unpack input
   entry = Entry { category = cat, price = read priceStr }
   lineCategory = "Category: " <> category entry
   linePrice = "Price: " <> show (price entry)
+
+  assertPair [l1, l2] = (l1, l2)
+  assertPair _ = error "Assertion failed: generated input must contain two lines"

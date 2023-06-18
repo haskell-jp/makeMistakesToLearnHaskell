@@ -33,5 +33,8 @@ stdinGenerator =
 answer :: Text -> Text
 answer input = Text.pack $ show (body :: Double) <> "\n"
   where
-    [principal, interestRate, years] = lines $ Text.unpack input
+    (principal, interestRate, years) = assertTuple3 . lines $ Text.unpack input
     body = read principal * (1 + read interestRate / 100) ^ (read years :: Integer)
+
+    assertTuple3 [l1, l2, l3] = (l1, l2, l3)
+    assertTuple3 _ = error "Assertion failed: generated input must contain three lines"
