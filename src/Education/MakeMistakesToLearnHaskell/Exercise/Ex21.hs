@@ -5,10 +5,9 @@ module Education.MakeMistakesToLearnHaskell.Exercise.Ex21
   , argsGenerator
   , stdinGenerator
   , formatResult
+  , idDictionary
   , fruitDictionary
   , birthdayDictionary
-  , mailAddressDictionary
-  , prefectureDictionary
   ) where
 
 #include <imports/external.hs>
@@ -40,8 +39,9 @@ argsGenerator = QuickCheck.frequency [(4, args1Valid), (1, args1Invalid), (1, ar
   args1Valid =
     fmap ((: []) . Mere)
       . QuickCheck.elements
-      . Set.toList
-      $ Set.unions [fruitDictionaryKeys, birthdayDictionaryKeys, mailAddressDictionaryKeys, prefectureDictionaryKeys]
+      . map show
+      . Map.keys
+      $ idDictionary
   args1Invalid = (: []) <$> nonEmptyString
 
   argsMore = do
@@ -58,11 +58,11 @@ answer :: [CommandLineArg] -> Text -> Either Text Text
 answer args _input =
   case mereStrings of
       [nameString] -> do
-        let mResult = formatResult
-              <$> Map.lookup nameString fruitDictionary
-              <*> Map.lookup nameString birthdayDictionary
-              <*> Map.lookup nameString mailAddressDictionary
-              <*> Map.lookup nameString prefectureDictionary
+        let mResult = do
+              personId <- Map.lookup (Text.pack nameString) idDictionary
+              formatResult
+                <$> Map.lookup personId fruitDictionary
+                <*> Map.lookup personId birthdayDictionary
         case mResult of
             Just result -> Right result
             Nothing     -> Right "Not found. He/She might be shy.\n"
@@ -71,112 +71,78 @@ answer args _input =
   mereStrings = map assertMereString args
 
 
-formatResult :: Text -> Text -> Text -> Text -> Text
-formatResult fruit birthday mailAddress prefecture = Text.unlines
+formatResult :: Text -> Text -> Text
+formatResult fruit birthday = Text.unlines
   [ "fruit: " <> fruit
   , "birthday: " <> birthday
-  , "mailAddress: " <> mailAddress
-  , "prefecture: " <> prefecture
   ]
 
 
-fruitDictionary :: Map String Text
+idDictionary :: Map Text Integer
+idDictionary = Map.fromList
+  [ ("aki"       ,  1)
+  , ("asami"     ,  2)
+  , ("kazuo"     ,  3)
+  , ("kazuyo"    ,  4)
+  , ("ken"       ,  5)
+  , ("kimiaki"   ,  6)
+  , ("kimiko"    ,  7)
+  , ("masashi"   ,  8)
+  , ("meibi"     ,  9)
+  , ("natsumi"   , 10)
+  , ("ouga"      , 11)
+  , ("rio"       , 12)
+  , ("saki"      , 13)
+  , ("shunsuke"  , 14)
+  , ("sousuke"   , 15)
+  , ("teppei"    , 16)
+  , ("yoshimasa" , 17)
+  , ("yu"        , 18)
+  , ("yuji"      , 19)
+  ]
+
+
+fruitDictionary :: Map Integer Text
 fruitDictionary = Map.fromList
-  [ ("aki"      , "apple")
-  , ("asami"    , "orange")
-  , ("ouga"     , "banana")
-  , ("kazuyo"   , "peach")
-  , ("kazuo"    , "grape")
-  , ("kimiko"   , "apple")
-  , ("ken"      , "kaki")
-  , ("saki"     , "pineapple")
-  , ("shunsuke" , "grape")
-  , ("sousuke"  , "pear")
-  , ("teppei"   , "liche")
-  , ("natsumi"  , "orange")
-  , ("masashi"  , "peach")
-  , ("meibi"    , "melon")
-  , ("yu"       , "grape fruit")
-  , ("yuji"     , "apple")
-  , ("yoshimasa", "banana")
-  , ("rio"      , "banana")
+  [ ( 1, "apple")
+  , ( 2, "orange")
+  , ( 3, "grape")
+  , ( 4, "peach")
+  , ( 5, "kaki")
+  , ( 7, "apple")
+  , ( 8, "peach")
+  , ( 9, "melon")
+  , (10, "orange")
+  , (11, "banana")
+  , (12, "banana")
+  , (13, "dragon fruit")
+  , (14, "grape")
+  , (15, "pear")
+  , (16, "liche")
+  , (17, "banana")
+  , (18, "grape fruit")
+  , (19, "apple")
   ]
 
-fruitDictionaryKeys :: Set String
-fruitDictionaryKeys = Map.keysSet fruitDictionary
 
-
-birthdayDictionary :: Map String Text
+birthdayDictionary :: Map Integer Text
 birthdayDictionary = Map.fromList
-  [ ("aki"      , "1968/1/18")
-  , ("asami"    , "1995/6/5")
-  , ("ouga"     , "1995/9/14")
-  , ("kazuyo"   , "1952/4/26")
-  , ("kazuo"    , "1942/11/4")
-  , ("kimiaki"  , "1970/5/17")
-  , ("kimiko"   , "1988/7/31")
-  , ("saki"     , "1990/3/26")
-  , ("shunsuke" , "1960/11/15")
-  , ("sousuke"  , "1977/1/1")
-  , ("teppei"   , "1976/12/4")
-  , ("natsumi"  , "1988/4/16")
-  , ("masashi"  , "1954/1/28")
-  , ("meibi"    , "1953/11/7")
-  , ("yu"       , "1990/6/22")
-  , ("yuji"     , "1989/4/16")
-  , ("yoshimasa", "1992/12/6")
-  , ("rio"      , "1987/12/8")
+  [ ( 1, "1968-01-18")
+  , ( 2, "2005-06-05")
+  , ( 3, "1942-11-04")
+  , ( 4, "1952-04-26")
+  , ( 6, "2000-05-17")
+  , ( 7, "1988-07-31")
+  , ( 8, "1954-01-28")
+  , ( 9, "1953-11-07")
+  , (10, "1988-04-16")
+  , (11, "1995-09-14")
+  , (12, "1987-12-08")
+  , (13, "2004-05-10")
+  , (14, "1960-11-15")
+  , (15, "1977-01-01")
+  , (16, "1976-12-04")
+  , (17, "1992-12-06")
+  , (18, "1990-06-22")
+  , (19, "1989-04-16")
   ]
-
-birthdayDictionaryKeys :: Set String
-birthdayDictionaryKeys = Map.keysSet birthdayDictionary
-
-
-mailAddressDictionary :: Map String Text
-mailAddressDictionary = Map.fromList
-  [ ("aki"      , "yamane_aki@example.com")
-  , ("asami"    , "ooizumi_asami@example.com")
-  , ("ouga"     , "nasu_ouga@example.com")
-  , ("kazuyo"   , "ezaki_kazuyo@example.com")
-  , ("kimiaki"  , "tsutsui_kimiaki@example.com")
-  , ("kimiko"   , "maeda_kimiko@example.com")
-  , ("ken"      , "mita_ken@example.com")
-  , ("saki"     , "okudera_saki@example.com")
-  , ("shunsuke" , "konuma_shunsuke@example.com")
-  , ("sousuke"  , "asari_sousuke@example.com")
-  , ("teppei"   , "taniguchi_teppei@example.com")
-  , ("natsumi"  , "komachi_natsumi@example.com")
-  , ("masashi"  , "itano_masashi@example.com")
-  , ("meibi"    , "shimizu_meibi@example.com")
-  , ("yu"       , "matsushima_yu@example.com")
-  , ("yoshimasa", "onoda_yoshimasa@example.com")
-  , ("rio"      , "tsukahara_rio@example.com")
-  ]
-
-mailAddressDictionaryKeys :: Set String
-mailAddressDictionaryKeys = Map.keysSet mailAddressDictionary
-
-
-prefectureDictionary :: Map String Text
-prefectureDictionary = Map.fromList
-  [ ("aki"      , "Fukuoka")
-  , ("asami"    , "Ibaraki")
-  , ("ouga"     , "Tochigi")
-  , ("kazuo"    , "Kanagawa")
-  , ("kimiaki"  , "Okayama")
-  , ("kimiko"   , "Gunma")
-  , ("ken"      , "Fukuoka")
-  , ("saki"     , "Fukui")
-  , ("shunsuke" , "Tochigi")
-  , ("sousuke"  , "Wakayama")
-  , ("teppei"   , "Kanagawa")
-  , ("natsumi"  , "Tochigi")
-  , ("masashi"  , "Aomori")
-  , ("meibi"    , "Tochigi")
-  , ("yu"       , "Tokyo")
-  , ("yoshimasa", "Mie")
-  , ("rio"      , "Hokkaido")
-  ]
-
-prefectureDictionaryKeys :: Set String
-prefectureDictionaryKeys = Map.keysSet prefectureDictionary

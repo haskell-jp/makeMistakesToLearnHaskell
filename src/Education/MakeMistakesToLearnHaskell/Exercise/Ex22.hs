@@ -26,19 +26,17 @@ answer :: [CommandLineArg] -> Text -> Either Text Text
 answer args _input =
   case mereStrings of
       [nameString] -> do
-        let eResult = Ex21.formatResult
-              <$> Error.note
-                    "Fruit not found. He/She might like vegitables better."
-                    (Map.lookup nameString Ex21.fruitDictionary)
-              <*> Error.note
-                    "Birthday not found. He/She might want to hide his/her age."
-                    (Map.lookup nameString Ex21.birthdayDictionary)
-              <*> Error.note
-                    "Mail address not found. He/She might be afraid of spams."
-                    (Map.lookup nameString Ex21.mailAddressDictionary)
-              <*> Error.note
-                    "Prefecture not found. Where does he/she live?"
-                    (Map.lookup nameString Ex21.prefectureDictionary)
+        let eResult = do
+              personId <- Error.note
+                "ID not found. Who is that person?"
+                (Map.lookup (Text.pack nameString) Ex21.idDictionary)
+              Ex21.formatResult
+                <$> Error.note
+                      "Fruit not found. He/She might like vegitables better."
+                      (Map.lookup personId Ex21.fruitDictionary)
+                <*> Error.note
+                      "Birthday not found. He/She might want to hide his/her age."
+                      (Map.lookup personId Ex21.birthdayDictionary)
         case eResult of
             Right result -> Right result
             Left emsg    -> Right $ emsg <> "\n"
