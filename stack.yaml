@@ -15,7 +15,7 @@
 # resolver:
 #  name: custom-snapshot
 #  location: "./custom-snapshot.yaml"
-resolver: lts-20.11
+resolver: lts-23.25
 #allow-newer: true
 
 # User packages to be built.

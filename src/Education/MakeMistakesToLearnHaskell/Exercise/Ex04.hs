@@ -31,7 +31,8 @@ diag4 :: Diagnosis
 diag4 code msg
   | code `isInconsistentlyIndentedAfter` "do" =
     detailsDoConsistentWidth
-  | "Perhaps this statement should be within a 'do' block?" `Text.isInfixOf` msg =
+  | "Possibly caused by a missing 'do'?" `Text.isInfixOf` msg 
+      || "Perhaps this statement should be within a 'do' block?" `Text.isInfixOf` msg =
     if hasNoMainFirst code then
       "HINT: Your source code dosn't have `main` function!" -- TODO: Rewrite other no-main cases with this.
     else if code `containsSequence` ["main", "<-"] then
