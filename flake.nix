@@ -29,6 +29,7 @@
           packages = with pkgs; [
             nodejs_24
             nixpkgs-fmt
+            pnpm
           ];
         };
       });
