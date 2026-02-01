@@ -34,4 +34,4 @@ diag1 code msg
     "HINT: you might have misspelled 'putStrLn'."
   | otherwise = ""
  where
-  hintNoMain = "HINT: This error indicates you haven't defined main function."
+  hintNoMain = "HINT: This error indicates that you haven't defined the main function."
