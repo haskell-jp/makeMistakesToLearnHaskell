@@ -44,7 +44,7 @@ diag4 code msg
       "HINT: Don't assign the result of `getContents` with `=`. Use `<-` instead."
   | "Couldn't match type ‘IO String’ with ‘[Char]’" `Text.isInfixOf` msg
     && "In the first argument of ‘lines’" `Text.isInfixOf` msg =
-      "HINT: Unfortunately, you have to assign the result of `getContents` with `<-` operator."
+      "HINT: You have to assign the result of `getContents` with `<-` operator."
   | otherwise =
     let mtoks = GHC.tokenizeHaskell code
         tokPutStr = (GHC.VariableTok, "putStr")

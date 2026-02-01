@@ -28,7 +28,7 @@ spec = do
   itShouldFailForCaseWithMessage
     "4"
     "no-do"
-    ["HINT: You seem to forget to write `do`. `do` must be put before listing `putStr`s and `getContents`."]
+    ["HINT: You seem to have forgotten to write `do`. `do` must be put before listing `putStr`s and `getContents`."]
 
   let useLeftThinArrow = "HINT: Don't assign the result of `getContents` with `=`. Use `<-` instead."
   -- ^ TODO: Collect common error messages
@@ -61,7 +61,7 @@ spec = do
   itShouldFailForCaseWithMessage
     "4"
     "no-arrow"
-    ["HINT: Unfortunately, you have to assign the result of `getContents` with `<-` operator."]
+    ["HINT: You have to assign the result of `getContents` with `<-` operator."]
 
   itShouldFailForCaseWithMessage
     "4"

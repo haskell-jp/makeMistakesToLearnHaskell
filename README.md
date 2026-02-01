@@ -1,3 +1,7 @@
+# 現在は[`ex6`](https://github.com/haskell-jp/makeMistakesToLearnHaskell/tree/ex6)というブランチで、課題6以降の執筆を続けています
+
+興味がある方は是非ご覧ください。こちらが`master`にマージされるのは、課題22の文面まで一通り埋まってからです。あしからず。
+
 # Make Mistakes to Learn Haskell!
 
 作りながら学ぶHaskell入門
@@ -25,7 +29,7 @@ wget -qO- https://get.haskellstack.org/ | sh
 
 #### 🏁Windowsをお使いの方
 
-[64bit版のWindowsをお使いの方はこちら](https://get.haskellstack.org/stable/windows-x86_64-installer.exe)、[32bit版のWindowsをお使いの方はこちら](https://get.haskellstack.org/stable/windows-i386-installer.exe)からインストーラーをダウンロードして、インストールしてください（よくわからなければ、とりあえず64bit版を試してみてください）。  
+[64bit版のWindowsをお使いの方はこちら](https://get.haskellstack.org/stable/windows-x86_64-installer.exe)からインストーラーをダウンロードして、インストールしてください（よくわからなければ、とりあえず64bit版を試してみてください。32bit版のWindowsをお使いの方は残念ながらあきらめてLinuxを仮想マシンで動かしてインストールしてください）。  
 
 [Chocolatey](https://chocolatey.org/)をお使いの方は、
 
@@ -89,6 +93,11 @@ stack install
 1. 課題1の内容を表示する  
    ```
    mmlh show 1
+   ```
+
+   - ブラウザーが起動してHTMLで課題の内容が表示されるはずですが、うまく行かない場合はターミナル上で表示させるため、次のように`--terminal`オプションを付けて実行してください。  
+   ```
+   mmlh show --terminal 1
    ```
 1. 課題の回答をテストする  
    （最後に`mmlh show`した課題のテストをする）  

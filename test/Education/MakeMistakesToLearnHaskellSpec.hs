@@ -111,10 +111,10 @@ runMmlh args stdinDat = do
     . Education.MakeMistakesToLearnHaskell.mainFromReportServer
     $ "http://localhost:" ++ show testServerPort
 
-
-includes :: ByteString'.ByteString -> ByteString'.ByteString -> Bool
-includes = ByteString'.isInfixOf
-
+shouldContainBS :: ByteString'.ByteString -> ByteString'.ByteString -> Expectation
+shouldContainBS a b = if ByteString'.isInfixOf b a
+  then pure ()
+  else expectationFailure $ unwords [show a, "does not contain", show b]
 
 shouldExitWithMessagesLike
   :: HasCallStack
@@ -140,8 +140,8 @@ shouldNotExitWithMessages = shouldExitWithMessagesLike (\s -> not . includes s)
 shouldVerifySuccess :: ProcessResult -> IO ()
 shouldVerifySuccess (ProcessResult out err code ex) = (`onException` handle) $ do
   fmap show ex `shouldBe` Nothing
-  err `shouldSatisfy` ByteString'.null
-  out `shouldSatisfy` includes "SUCCESS"
+  err `shouldBe` ByteString'.empty
+  out `shouldContainBS` "SUCCESS"
   code `shouldBe` ExitSuccess
  where
   handle = do
@@ -154,6 +154,6 @@ shouldVerifySuccess (ProcessResult out err code ex) = (`onException` handle) $ d
 shouldPrintNotVerified :: ProcessResult -> IO ()
 shouldPrintNotVerified (ProcessResult out err code ex) = do
   fmap show ex `shouldBe` Nothing
-  err `shouldSatisfy` ByteString'.null
-  out `shouldSatisfy` includes "NOT VERIFIED"
+  err `shouldBe` ByteString'.empty
+  out `shouldContainBS` "NOT VERIFIED"
   code `shouldBe` ExitSuccess

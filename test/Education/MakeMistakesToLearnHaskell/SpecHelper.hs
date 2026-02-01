@@ -8,7 +8,6 @@ import qualified Education.MakeMistakesToLearnHaskell.Exercise as Exercise
 import qualified Education.MakeMistakesToLearnHaskell.Exercise.FormatMessage as Exercise
 import           Education.MakeMistakesToLearnHaskell.SpecEnv (setRunHaskellFailureWithOutput, mkDefaultSpecEnv)
 
-
 shouldFail :: Exercise.Result -> IO Exercise.Details
 shouldFail (Exercise.Fail _code d) = return $ Exercise.formatFailure d
 shouldFail other = fail $ "Unexpected exercise result: " ++ show other
@@ -30,4 +29,4 @@ itShouldFailForCaseWithMessage cname tcid messages = do
     let e = setRunHaskellFailureWithOutput baseEnv err
     d <- shouldFail =<< Exercise.verify subject e ("test/assets/" ++ cname ++ "/" ++ tcid ++ ".hs")
 
-    for_ messages $ \message -> d `shouldSatisfy` Text.isInfixOf message
+    for_ messages $ \message -> (Text.unpack d `shouldContain` Text.unpack message)

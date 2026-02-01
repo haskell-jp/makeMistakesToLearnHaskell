@@ -32,47 +32,47 @@ spec = do
   itShouldFailForCaseWithMessage
     "2"
     "no-number-1"
-    ["HINT: you might have forgot to write some numbers between operators ('*', '/' etc.)."]
+    ["HINT: you might have forgotten to write some numbers between operators ('*', '/' etc.)."]
 
   itShouldFailForCaseWithMessage
     "2"
     "no-number-2"
-    ["HINT: you might have forgot to write some numbers between operators ('*', '/' etc.)."]
+    ["HINT: you might have forgotten to write some numbers between operators ('*', '/' etc.)."]
 
   itShouldFailForCaseWithMessage
     "2"
     "no-number-3"
-    ["HINT: you might have forgot to write some numbers between operators ('*', '/' etc.)."]
+    ["HINT: you might have forgotten to write some numbers between operators ('*', '/' etc.)."]
 
   itShouldFailForCaseWithMessage
     "2"
     "no-paren"
-    ["HINT: you might have forgot to write parentheses"]
+    ["HINT: you might have forgotten to write parentheses"]
 
   itShouldFailForCaseWithMessage
     "2"
     "no-close-paren"
-    ["HINT: you might have forgot to write close parenthesis"]
+    ["HINT: you might have forgotten to write a close parenthesis"]
 
   itShouldFailForCaseWithMessage
     "2"
     "no-main"
-    ["HINT: This error indicates you haven't defined main function."]
+    ["HINT: This error indicates that you haven't defined the main function."]
 
   itShouldFailForCaseWithMessage
     "2"
     "no-open-paren"
-    ["HINT: you might have forgot to write open parenthesis"]
+    ["HINT: you might have forgotten to write an open parenthesis"]
 
   itShouldFailForCaseWithMessage
     "2"
     "no-slash"
-    ["HINT: you might have forgot to write division operator '/'"]
+    ["HINT: you might have forgotten to write the division operator '/'"]
 
   itShouldFailForCaseWithMessage
     "2"
     "no-star"
-    ["HINT: you might have forgot to write multiplication operator '*'"]
+    ["HINT: you might have forgotten to write the multiplication operator '*'"]
 
   itShouldFailForCaseWithMessage "2" "typo" []
 
