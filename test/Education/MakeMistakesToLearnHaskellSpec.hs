@@ -130,11 +130,11 @@ shouldExitWithMessagesLike p hintMsgs (ProcessResult out err code ex) = do
 
 
 shouldExitWithMessages :: HasCallStack => [ByteString'.ByteString] -> ProcessResult -> IO ()
-shouldExitWithMessages = shouldExitWithMessagesLike includes
+shouldExitWithMessages = shouldExitWithMessagesLike (flip ByteString'.isInfixOf)
 
 
 shouldNotExitWithMessages :: HasCallStack => [ByteString'.ByteString] -> ProcessResult -> IO ()
-shouldNotExitWithMessages = shouldExitWithMessagesLike (\s -> not . includes s)
+shouldNotExitWithMessages = shouldExitWithMessagesLike (\s -> not . (flip ByteString'.isInfixOf) s)
 
 
 shouldVerifySuccess :: ProcessResult -> IO ()
