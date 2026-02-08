@@ -1,0 +1,3 @@
+# makeMistakesToLearnHaskell Reporter
+
+Herokuの無料プランが廃止されたことと、現状makeMistakesToLearnHaskell本体が執筆中であることから、現在は稼働しておりません。

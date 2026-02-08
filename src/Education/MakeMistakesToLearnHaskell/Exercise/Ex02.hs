@@ -10,7 +10,7 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Core
 import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 exercise2 :: Exercise
-exercise2 = Exercise "2" $ runHaskellExercise diag2 "20.761245674740486\n"
+exercise2 = Exercise "2" $ runHaskellExerciseEq diag2 "20.761245674740486\n"
 
 diag2 :: Diagnosis
 diag2 code msg

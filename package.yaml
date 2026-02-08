@@ -15,6 +15,7 @@ data-files:
 extra-source-files:
 - README.md
 - src/imports/*.hs
+- src/imports/external/*.hs
 - src/test/imports/*.hs
 # test data here. see https://stackoverflow.com/questions/29361413/including-data-files-only-in-cabal-test-suites
 - test/assets/1/*.hs
@@ -23,6 +24,7 @@ extra-source-files:
 library:
   source-dirs: src
   default-extensions:
+  - BangPatterns
   - CPP
   - DeriveGeneric
   - DeriveDataTypeable
@@ -34,16 +36,20 @@ library:
   - Education.MakeMistakesToLearnHaskell.Env
   - Education.MakeMistakesToLearnHaskell.Evaluator.Types
   - Education.MakeMistakesToLearnHaskell.Exercise
+  - Education.MakeMistakesToLearnHaskell.Exercise.FormatMessage
   - Education.MakeMistakesToLearnHaskell.Exercise.Types
   # ghc-options:          -Wno-unused-imports
   # Why doesn't -Wno-unused-imports work?
   dependencies:
   - base >=4.7 && <5
+  - mmlh-commons
+  - mmlh-reporter
   # TODO: Decide version
   - ansi-terminal
   - QuickCheck
   - bytestring
   - cmark
+  - containers
   - directory
   - errors
   - filepath
@@ -55,8 +61,10 @@ library:
   - regex-applicative
   - safe
   - text
+  - temporary
   - transformers
   - typed-process
+  - uri-encode
   when:
   - condition: os(windows)
     dependencies:
@@ -88,6 +96,7 @@ tests:
     dependencies:
     - base
     - makeMistakesToLearnHaskell
+    - mmlh-reporter
     - bytestring
     - directory
     - filepath

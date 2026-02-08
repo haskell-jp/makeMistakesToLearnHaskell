@@ -5,4 +5,4 @@ import qualified Education.MakeMistakesToLearnHaskell
 
 
 main :: IO ()
-main = Education.MakeMistakesToLearnHaskell.main
+main = Education.MakeMistakesToLearnHaskell.productionMain

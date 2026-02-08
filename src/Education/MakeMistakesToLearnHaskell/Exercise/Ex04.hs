@@ -2,6 +2,8 @@
 
 module Education.MakeMistakesToLearnHaskell.Exercise.Ex04
   ( exercise4
+  , stdinGen
+  , answer
   ) where
 
 #include <imports/external.hs>
@@ -11,19 +13,26 @@ import Education.MakeMistakesToLearnHaskell.Exercise.Core
 import Education.MakeMistakesToLearnHaskell.Exercise.FormatMessage
 import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
+
 exercise4 :: Exercise
 exercise4 = Exercise "4"
-          $ runHaskellExerciseWithStdin diag4 gen4
-          $ (Text.pack . unlines . reverse . lines . Text.unpack)
+          $ runHaskellExerciseWithStdinEq diag4 answer stdinGen
 
-gen4 :: Gen String
-gen4 = unlines <$> QuickCheck.listOf (QuickCheck.listOf $ QuickCheck.choose ('\33', '\126'))
+
+stdinGen :: Gen Text
+stdinGen = Text.unlines <$> QuickCheck.listOf (fmap Text.pack . QuickCheck.listOf $ QuickCheck.choose ('\33', '\126'))
+
+
+answer :: Text -> Text
+answer = Text.pack . unlines . reverse . lines . Text.unpack
+
 
 diag4 :: Diagnosis
 diag4 code msg
   | code `isInconsistentlyIndentedAfter` "do" =
     detailsDoConsistentWidth
-  | "Perhaps this statement should be within a 'do' block?" `Text.isInfixOf` msg =
+  | "Possibly caused by a missing 'do'?" `Text.isInfixOf` msg 
+      || "Perhaps this statement should be within a 'do' block?" `Text.isInfixOf` msg =
     if hasNoMainFirst code then
       "HINT: Your source code dosn't have `main` function!" -- TODO: Rewrite other no-main cases with this.
     else if code `containsSequence` ["main", "<-"] then
@@ -37,7 +46,7 @@ diag4 code msg
     && "In the first argument of ‘lines’" `Text.isInfixOf` msg =
       "HINT: You have to assign the result of `getContents` with `<-` operator."
   | otherwise =
-    let mtoks = GHC.tokenizeHaskell (Text.toStrict code)
+    let mtoks = GHC.tokenizeHaskell code
         tokPutStr = (GHC.VariableTok, "putStr")
         putStrThenSpace =
           Regex.sym tokPutStr <* optional (Regex.psym ((== GHC.SpaceTok) . fst))

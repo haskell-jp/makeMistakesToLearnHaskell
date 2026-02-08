@@ -1,0 +1,200 @@
+# 2019/10/16 社内コードリーディング勉強会の記録
+
+## 目的
+
+- makeMistakesToLearnHaskellのコードを理解することを通して、Haskellのアプリケーションの作り方を学ぶ
+- makeMistakesToLearnHaskellのコミッターを増やす
+
+## 読んだ・解説した箇所
+
+- package.yaml・cabalファイルについて
+    - 参考リンク: <https://haskell.e-bigmoon.com/stack/intro/hpack.html>
+- src/imports/external.hs:
+    - makeMistakesToLearnHaskellにおいて最も標準から外れた書き方をしている箇所
+        - CPPの`include`を使って、各モジュールで使う`import`文を共通化している
+        - 試み自体はうまくいっているものの、非標準だし、ツールが適切にサポートできていないことも多いし、どこかでやめたい方針ではある。
+            - 同じ問題意識はほかのHaskellerも持っていて、<https://github.com/ghc-proposals/ghc-proposals/pull/283>という提案もある。backpackとの兼ね合いとか面倒くさそう
+- app/Main.hs
+- src/Education/MakeMistakesToLearnHaskell.hs
+    - `avoidCodingError`: <https://haskell.jp/blog/posts/2017/windows-gotchas.html>
+    - <http://bicycle1885.hatenablog.com/entry/2012/12/24/234707>
+    - `printExerciseList`関数まで
+
+## 補足
+
+- Hasktagsなどのツールを使ってタグジャンプをできるようにしておくと追いやすいです。Haskell IDE Engineの機能を使うのもよし
+
+# 2019/10/23 社内コードリーディング勉強会の記録
+
+## 読んだ・解説した箇所
+
+- `type`キーワード: 型シノニム
+- `newtype`キーワード: 単純に一つの型をラップする型を作る
+- `<|>`: `Alternative`型クラスのメソッド。`IO`に対して使うと、左辺の`IO`がエラーを投げた場合に右辺の`IO`を実行する、という挙動になる。
+- optparse-applicative
+- `Env`型:
+    - Record of Functionsというテクニックを使って定義。ファイルへの書き込みを伴う関数など、テスト時に実行したくない関数を差し替えられるように定義した型。
+    - Javaの文化圏で言うとDIコンテナーが近い
+- `withMainEnv`関数の中身を読んでいるところ。`Env`型の値を定義する箇所を読み始めるところまで
+
+# 2019/10/30 社内コードリーディング勉強会の記録
+
+## 読んだ・解説した箇所
+
+- Education.MakeMistakesToLearnHaskell.Env:
+    - `CommandParameters`型の`!`:
+        - <https://github.com/takenobu-hs/haskell-symbol-search-cheatsheet>
+        - Haskellの記号関数以外で `!` が出てきたら、「正格評価絡み」
+            - 記号関数でも`!`がつくものは正格評価をするためのものであることが多い
+- 例外の定義の仕方
+    - `Exception`型クラスのインスタンスにする
+- 掘った関数
+    - `Education.MakeMistakesToLearnHaskell.productionMain`
+        - `mainFromReportServer`
+            - `withMainEnv`
+                - `Education.MakeMistakesToLearnHaskell.Evaluator.RunHaskell.runFile`
+                    - `Education.MakeMistakesToLearnHaskell.Evaluator.Types.CommandParameters`
+                    - `Education.MakeMistakesToLearnHaskell.Evaluator.Types.CommandError`
+                    - `Education.MakeMistakesToLearnHaskell.Evaluator.Command.resolveHaskellProcessor`
+                    - `Education.MakeMistakesToLearnHaskell.Evaluator.Command.runFileWith`
+                - `Education.MakeMistakesToLearnHaskell.Evaluator.Ghc.runFile`
+
+# 2019/11/06 社内コードリーディング勉強会の記録
+
+## 読んだ・解説した箇所
+
+- ガード構文・if式: TODO: 別途課題を設けよう
+    - 参考: <https://kazu-yamamoto.hatenablog.jp/entry/20110826/1314352340>
+    - パターンマッチにおけるパターンと、`->`や`=`の間に `|` を置くと書けるBool式
+    - GHC 8.6.5では、ガード構文に余計なケースを書いても警告が出ないらしい。でるべきでは？
+- 掘った関数
+    - ...
+        - `Education.MakeMistakesToLearnHaskell.withMainEnv`
+            - ...
+                - `Education.MakeMistakesToLearnHaskell.Evaluator.Command.runFileWith`
+                    - `Education.MakeMistakesToLearnHaskell.Evaluator.Command.fixingCodePage`
+- 質問
+    - `confirm`関数はわざわざDIするほどのものでもないような？
+        - 原則として`Education.MakeMistakesToLearnHaskell`モジュールにある関数以外は直接入出力を行うようなことをしない、という方針で作っているため、`Education.MakeMistakesToLearnHaskell.Report.printUrlIfAsked`から呼ばれる`confirm`関数も例に漏れず、直接入出力しないバージョンも作れるよう、DIできるようにしました。  
+          と、いいつつ今日の修正のとおり`printUrlIfAsked`でもちゃっかり`putStrLn`や`print`を呼んでましたし、YAGNIと言われればYAGNIな感もありますが...
+
+# 2019/11/13 社内コードリーディング勉強会の記録
+
+- `const`関数
+- `liftIO`関数
+- `stack.yaml`に管理したいパッケージを複数書けるので、それを利用してcommonsパッケージとreporterパッケージを別のパッケージとしてまとめて管理している
+- 掘った関数
+    - ...
+        - `Education.MakeMistakesToLearnHaskell.mainFromReporter`
+            - `Education.MakeMistakesToLearnHaskell.withMainEnv`
+                - `Education.MakeMistakesToLearnHaskell.Report.Client.postReport`（詳細は触れず）
+            - `Education.MakeMistakesToLearnHaskell.showExercise`
+                - `Education.MakeMistakesToLearnHaskell.Exercise.loadDescriptionByName`
+                    - `Education.MakeMistakesToLearnHaskell.Exercise.loadDescription`
+                        - `Education.MakeMistakesToLearnHaskell.Exercise.loadDescription`
+                            - `Education.MakeMistakesToLearnHaskell.Exercise.loadWithExtension`
+                                - `Education.MakeMistakesToLearnHaskell.Text.IO.readUtf8File`
+                - `Education.MakeMistakesToLearnHaskell.Error.dieWhenNothing`
+
+# 2019/11/20 社内コードリーディング勉強会の記録
+
+- `</>`: パスをくっつける演算子
+- `<>`: `Semigroup`型クラスのインスタンスをくっつける演算子。Textや文字列、リストに`Sum`型など、いろいろなものを「くっつける」ことができる。
+- `OverloadedStrings`: Textなどを文字列リテラルでしゅっと書きたいときに使う。
+- 掘った関数
+    - ...
+        - `Education.MakeMistakesToLearnHaskell.mainFromReporter`
+            - `Education.MakeMistakesToLearnHaskell.showExercise`
+                - `Education.MakeMistakesToLearnHaskell.Exercise.Record.saveLastShownName`
+                    - `Education.MakeMistakesToLearnHaskell.Exercise.Record.prepareRecordFilePath`
+                        - `Education.MakeMistakesToLearnHaskell.Exercise.Record.dirName`
+                - `Education.MakeMistakesToLearnHaskell.showMarkdown`
+                    - `Education.MakeMistakesToLearnHaskell.Text.IO.writeUtf8FileS`
+
+# 2019/11/27 社内コードリーディング勉強会の記録
+
+- `Paths_makeMistakesToLearnHaskell`: `Paths_<pkgname>`
+    - モジュールをインストールするときに自動的に決まるパス。ソースコード以外のデータを格納するのに使う
+    - **TODO**: 正直なところやめたい。これのおかげでassetsディレクトリー以下のファイルを編集する度にrebuildが必要になってしまう
+- 掘った関数
+    - ...
+        - `Education.MakeMistakesToLearnHaskell.mainFromReporter`
+            - `Education.MakeMistakesToLearnHaskell.showExercise`
+                - `Education.MakeMistakesToLearnHaskell.showMarkdown`
+                    - `Education.MakeMistakesToLearnHaskell.Text.IO.writeUtf8FileS`
+                    - `Education.MakeMistakesToLearnHaskell.Text.removeAllTrailingSpace`
+            - `Education.MakeMistakesToLearnHaskell.verifySource`
+                - `Education.MakeMistakesToLearnHaskell.Exercise.loadLastShown`
+                    - `Education.MakeMistakesToLearnHaskell.Exercise.loadLastShownName`
+                    - `Education.MakeMistakesToLearnHaskell.Exercise.getByName`
+                        - `Education.MakeMistakesToLearnHaskell.Exercise.exercises`
+                        - `Education.MakeMistakesToLearnHaskell.Exercise.Types.Exercise`
+                            - `Education.MakeMistakesToLearnHaskell.Exercise.Types.verify`
+                                - `Education.MakeMistakesToLearnHaskell.Exercise.Types.Result`
+                                    - `Education.MakeMistakesToLearnHaskell.Commons.Exercise.FailBy`
+
+# 2019/12/18 社内コードリーディング勉強会の記録
+
+- レコードのアップデートは、関数呼び出しより結合の優先順位が高い
+    - e.g. `func record { field = "a" }` は
+        - `(func record) { field = "a" }` ではなく、
+        - `func (record { field = "a" })` と解釈される
+    - `let ... in ...`: `where`の代わりによく使われる代入用の構文。`where`や`do`における`let`に比べて使用頻度は低い
+- 掘った関数
+    - ...
+        - `Education.MakeMistakesToLearnHaskell.mainFromReporter`
+            - `Education.MakeMistakesToLearnHaskell.verifySource`
+                - ...
+                    - `Education.MakeMistakesToLearnHaskell.Exercise.Types.verify`
+                        - `Education.MakeMistakesToLearnHaskell.Exercise.Ex01.verify`
+                            - `Education.MakeMistakesToLearnHaskell.Exercise.Core.runHaskellExercise`
+                                - `Education.MakeMistakesToLearnHaskell.Exercise.Core.runHaskellExercise'`
+                                    - `Education.MakeMistakesToLearnHaskell.Exercise.Core.resultForUser'`
+                            - `Education.MakeMistakesToLearnHaskell.Exercise.Ex01.diag1`
+                                - `Education.MakeMistakesToLearnHaskell.Exercise.Types.Diagnosis`
+                                    - `Education.MakeMistakesToLearnHaskell.Commons.Exercise.Details`
+                                    - `Education.MakeMistakesToLearnHaskell.Commons.Exercise.SourceCode`
+
+# 2019/12/25 社内コードリーディング勉強会の記録
+
+- 掘った関数
+    - ...
+        - `Education.MakeMistakesToLearnHaskell.mainFromReporter`
+            - ...
+            - `Education.MakeMistakesToLearnHaskell.Exercise.Ex04`
+            - `Education.MakeMistakesToLearnHaskell.Exercise.Ex05`
+- 新しい課題の判定ロジックを作りにあたり、主に実装が必要なもの
+    - エラーメッセージを出す処理: ヒントメッセージを設定する箇所なので無理にやらなくてもよい。基本的には`runHaskell`コマンドが出力した結果をそのまま流す、だけでよい
+    - `calcRight`: 与えられた入力（標準入力）を受け取って「正しい答え」を返す関数。基本的には、模範解答と実質同等な関数になってしかるべき
+    - `gen`: `calcRight`（と、ユーザーの回答のプログラム）に対して渡す入力（標準入力）を生成するQuickCheckの`Gen`型の値
+- QuickCheckに関しては下記を参照
+    - `Gen`の定義方法や、基本的な使い方
+        - <https://haskell.e-bigmoon.com/stack/test/quickcheck.html>
+        - <https://haskell.e-bigmoon.com/stack/test/quickcheck2.html>
+    - `Arbitrary`の定義例
+        - <https://github.com/kazu-yamamoto/unit-test-example/blob/master/test/Base64Spec.hs>
+        - <https://github.com/kazu-yamamoto/unit-test-example/blob/master/markdown/ja/tutorial.md>
+    - 山本悠滋の知るコツ:
+        - `suchThat`と`==>`はなるべく使わない。生成する処理が遅くなってしまう可能性が高い
+        - `Gen`は`Monad`でもあるので、Applicativeスタイルが難しかったら`do`を使って書いても問題なし。
+- お願いしたこと
+    - 課題6から課題11までにおいて、ユーザーの回答のプログラムの標準入力として渡す文字列を生成する`Gen`を実装する
+        - Pull requestとして送っていただけるとありがたいが、実装した`Gen`を山本悠滋に何らかの形で送るだけでもかまわない
+        - もちろん、`calcRight`関数も実装して、完全な`ExNN.hs`ファイルを作ってPull requestを送っていただけると特にありがたい！
+    - 課題12以降は現状の`runHaskellExerciseWithStdin`では実装しきれない（標準エラー出力を判定できるようにしたり、コマンドライン引数を扱ったりするように実装しなければならない）ので、そこまでやらなくてもよし
+
+# 2020/01/08 社内コードリーディング勉強会の記録
+
+- Hspec:
+    - MakeMistakesToLearnHaskellで使用しているテスティングフレームワーク
+    - RubyのRSpecと似た構文で書ける。
+        - `it`や`describe`や`shouldなんちゃら`という構文が似てる。
+        - 似てるのは構文だけで、RSpecに比べて遙かに機能は少なく、単純。
+    - ちなみにRSpecのSは大文字だけどHspecのsは小文字。
+    - 日本語での例は <https://github.com/kazu-yamamoto/unit-test-example/blob/master/markdown/ja/tutorial.md> がいいかも。
+- `fail`: `MonadFail`型クラスを実装した型全般で使える「失敗」を表すアクション。`IO`でとりあえず例外を起こしたいとき便利
+
+## 見つかった課題
+
+テスト実行時に、`NOPROXY`環境変数を設定し忘れているのか、プロキシの配下だとlocalhostに立てたテスト用サーバーにアクセスできてない。  
+[Issue起票済み](https://github.com/haskell-jp/makeMistakesToLearnHaskell/issues/107)

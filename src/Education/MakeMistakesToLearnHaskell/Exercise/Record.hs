@@ -17,7 +17,7 @@ loadLastShownName e = do
   path <- prepareRecordFilePath e
   exists <- Dir.doesFileExist path
   if exists then
-    fmap (lastShownName . read) $ readFile path
+    (lastShownName . read) <$> readFile path
   else
     return "1"
 
@@ -32,7 +32,7 @@ prepareRecordFilePath :: Env -> IO FilePath
 prepareRecordFilePath e = do
   let d = appHomePath e </> dirName
   Dir.createDirectoryIfMissing True d
-  return $ d </> "record.yaml"
+  return $ d </> "record.txt"
 
 
 dirName :: FilePath

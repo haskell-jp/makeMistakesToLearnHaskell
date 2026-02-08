@@ -1,9 +1,18 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
-module Education.MakeMistakesToLearnHaskell.Exercise.Types where
+module Education.MakeMistakesToLearnHaskell.Exercise.Types
+  ( module Education.MakeMistakesToLearnHaskell.Commons.Exercise
+  , Exercise (..)
+  , Result (..)
+  , Record (..)
+  , Diagnosis
+  , Judge
+  , CommandLineArg (..)
+  ) where
 
 #include <imports/external.hs>
 
+import           Education.MakeMistakesToLearnHaskell.Commons.Exercise
 import           Education.MakeMistakesToLearnHaskell.Evaluator.Types
 import           Education.MakeMistakesToLearnHaskell.Env
 
@@ -19,22 +28,37 @@ data Exercise =
     }
 
 
+-- | Result of exercise
 data Result =
-    Error !Details
-  | Fail !Details
-  | Success !Details
-  | NotVerified
-  | NotYetImplemented
+    Error -- ^ Something unexpected has happened.
+      !Details -- ^ The details of the error. Usually error messages from the ghc command etc.
+  | Fail -- ^ User's answer is wrong (or has type errors).
+      !SourceCode -- ^ User's answer as source code.
+      !FailBy -- ^ The reason why the answer is wrong.
+  | Success -- ^ User's answer is correct.
+      !Details
+  | NotVerified -- ^ This exercise doesn't have no verification. Go ahead!
+  | NotYetImplemented -- ^ Verification is not implemented yet. Sorry! Go ahead!
   deriving (Eq, Show)
 
 newtype Record = Record
   { lastShownName :: Name
   } deriving (Show, Read)
 
-type Details = Text
-
-type SourceCode = Text
-
-type Name = String
-
 type Diagnosis = SourceCode -> Details -> Details
+
+-- |
+-- * The first argument: The commandline arguments.
+-- * The second argument: The content of STDIN.
+-- * The third argument: The exit code by the user's answer program.
+-- * The fourth argument: The content of STDOUT and STDERR written by the user's answer program.
+-- * The return value: Expected output and whether the user's answer program is correct.
+type Judge = [CommandLineArg] -> Text -> ExitCode -> Text -> (Text, Bool)
+
+
+-- |
+-- Command line argument object which can represent not only "just a string",
+-- but also a file.
+data CommandLineArg =
+  Mere !String | FilePath !FilePath !Text
+  deriving (Eq, Show)

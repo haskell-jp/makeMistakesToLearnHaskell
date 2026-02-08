@@ -2,6 +2,7 @@
 
 module Education.MakeMistakesToLearnHaskell.Exercise.FormatMessage
   ( formatSingleArgFunApp
+  , formatFailure
   ) where
 
 
@@ -35,6 +36,26 @@ formatSingleArgFunApp = List.unfoldr uf
               -- NOTE: The final argument should not be tested because it should be a raw expression.
               --       E.g. The `input` argument of `reverse (lines input)`.
               if isJust $ singleArgFunAppArg safa2
-                then Just (Text.fromStrict hint, safa2)
+                then Just (hint, safa2)
                 else Nothing
       in f =<< singleArgFunAppArg safa1
+
+
+formatFailure :: FailBy -> Details
+formatFailure (WrongOutput details) = details
+formatFailure (CompileError cout diag) =
+  Text.intercalate "\n" $
+    [ header1
+    , ""
+    , cout
+    ] ++
+      if Text.null diag
+        then []
+        else
+          [ ""
+          , header2
+          , diag
+          ]
+ where
+  header1 = "======================= output by GHC ======================="
+  header2 = "==================== output by mmlh HINT ===================="

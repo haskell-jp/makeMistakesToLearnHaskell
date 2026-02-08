@@ -15,7 +15,8 @@
 # resolver:
 #  name: custom-snapshot
 #  location: "./custom-snapshot.yaml"
-resolver: lts-12.10
+resolver: lts-23.25
+#allow-newer: true
 
 # User packages to be built.
 # Various formats can be used as shown in the example below.
@@ -37,12 +38,12 @@ resolver: lts-12.10
 # will not be run. This is useful for tweaking upstream packages.
 packages:
 - '.'
+- reporter/
+- commons/
 # Dependency packages to be pulled from upstream that are not in the resolver
 # (e.g., acme-missiles-0.3)
 extra-deps:
-- main-tester-0.2.0.0
-- NoTrace-0.3.0.3
-- cmark-0.5.6
+- strip-ansi-escape-0.1.0.0@sha256:08f2ed93b16086a837ec46eab7ce8d27cf39d47783caaeb818878ea33c2ff75f,1628
 
 # Override default flag values for local packages and extra-deps
 flags: {}

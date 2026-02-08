@@ -3,7 +3,9 @@
 module Education.MakeMistakesToLearnHaskell.Evaluator.Types
   ( ErrorCode
   , ErrorMessage
-  , RunHaskellError(..)
+  , CommandName
+  , CommandResult(..)
+  , GhcError(..)
   , SingleArgFunApp(..)
   , HasParens(..)
   ) where
@@ -12,14 +14,22 @@ module Education.MakeMistakesToLearnHaskell.Evaluator.Types
 #include <imports/external.hs>
 
 
+type CommandName = String
 type ErrorCode = Int
 type ErrorMessage = ByteString
 
 
-data RunHaskellError =
-  RunHaskellNotFound | RunHaskellFailure ErrorCode ErrorMessage deriving (Show, Typeable)
+data CommandResult =
+  CommandResult
+    !ExitCode               -- ^ exit code
+    !ByteString -- ^ Merged stdout and stderr
+    deriving Show
 
-instance Exception RunHaskellError
+
+data GhcError =
+  GhcNotFound | GhcError ErrorCode ErrorMessage deriving Show
+
+instance Exception GhcError
 
 data HasParens =
   NoParens | OnlyOpenParen | BothParens
@@ -27,7 +37,7 @@ data HasParens =
 
 
 data SingleArgFunApp = SingleArgFunApp
-  { singleArgFunAppFunName :: !TextS.Text
+  { singleArgFunAppFunName :: !Text
   , singleArgFunAppArg :: !(Maybe SingleArgFunApp)
   , singleArgFunAppHasParen :: !HasParens
   } deriving (Eq, Show)
