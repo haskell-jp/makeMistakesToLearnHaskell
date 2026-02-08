@@ -32,7 +32,7 @@ spec = do
     it "given an empty answer, show FAIL" $ do
       void $ runMmlh ["show", "--terminal", "1"] ""
       runMmlh ["verify", "test/assets/common/empty.hs"] ""
-        >>= shouldExitWithMessages ["HINT: This error indicates you haven't defined main function."]
+        >>= shouldExitWithMessages ["HINT: This error indicates that you haven't defined the main function."]
 
     it "given non-existing answer of exercise 2.5, show NOT VERIFIED" $ do
       void $ runMmlh ["show", "--terminal", "2.5"] ""
@@ -47,7 +47,7 @@ spec = do
 
     it "given a not-compilable answer of exercise 4, show FAIL" $ do
       let msgs =
-            ["HINT: You seem to forget to write `do`. `do` must be put before listing `putStr`s and `getContents`."]
+            ["HINT: You seem to have forgotten to write `do`. `do` must be put before listing `putStr`s and `getContents`."]
       void $ runMmlh ["show", "--terminal", "4"] ""
       runMmlh ["verify", "test/assets/4/no-do.hs"] ""
         >>= shouldExitWithMessages msgs
@@ -64,12 +64,10 @@ spec = do
       runMmlh ["verify", "test/assets/12/wrong-output2.hs"] ""
         >>= shouldExitWithMessages msgs
 
-
-    -- Response from the report server. The stub server actually desen't return a URL. But the production server is expected to.
-    let expectedMessage n =
-          "Open Report {exerciseName = \"" <> n <> "\", exerciseAnswer = \"\", exerciseFailBy = CompileError \""
-
     context "given \"y\" from stdin" $ do
+      -- Response from the report server. The stub server actually desen't return a URL. But the production server is expected to.
+      let expectedMessage n =
+            "Open Report {exerciseName = \"" <> n <> "\", exerciseAnswer = \"\", exerciseFailBy = CompileError \""
       it "given a not-compilable answer of exercise 5, show FAIL with the URL to submit an issue to haskell-jp/" $ do
         void $ runMmlh ["show", "--terminal", "5"] ""
         runMmlh ["verify", "--terminal", "test/assets/common/empty.hs"] "y\n"
@@ -130,11 +128,11 @@ shouldExitWithMessagesLike p hintMsgs (ProcessResult out err code ex) = do
 
 
 shouldExitWithMessages :: HasCallStack => [ByteString'.ByteString] -> ProcessResult -> IO ()
-shouldExitWithMessages = shouldExitWithMessagesLike (flip ByteString'.isInfixOf)
+shouldExitWithMessages = shouldExitWithMessagesLike ByteString'.isInfixOf
 
 
 shouldNotExitWithMessages :: HasCallStack => [ByteString'.ByteString] -> ProcessResult -> IO ()
-shouldNotExitWithMessages = shouldExitWithMessagesLike (\s -> not . (flip ByteString'.isInfixOf) s)
+shouldNotExitWithMessages = shouldExitWithMessagesLike (\s -> not . ByteString'.isInfixOf s)
 
 
 shouldVerifySuccess :: ProcessResult -> IO ()
