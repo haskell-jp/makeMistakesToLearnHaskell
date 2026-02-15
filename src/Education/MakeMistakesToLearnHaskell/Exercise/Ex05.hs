@@ -8,13 +8,32 @@ module Education.MakeMistakesToLearnHaskell.Exercise.Ex05
 
 #include <imports/external.hs>
 
+import Education.MakeMistakesToLearnHaskell.Env
 import Education.MakeMistakesToLearnHaskell.Exercise.Core
 import Education.MakeMistakesToLearnHaskell.Exercise.Types
 
 
 exercise5 :: Exercise
 exercise5 = Exercise "5"
-          $ runHaskellExerciseWithStdinEq diag answer stdinGenerator
+          $ runHaskellExerciseWithStdinDoublesAreClose answer stdinGenerator
+
+
+runHaskellExerciseWithStdinDoublesAreClose
+  :: (Text -> Text)
+  -> Gen Text
+  -> Env
+  -> FilePath
+  -> IO Result
+runHaskellExerciseWithStdinDoublesAreClose =
+  runHaskellExerciseWithStdin diag . stdinJudgeByClose
+
+
+stdinJudgeByClose :: (Text -> Text) -> Judge
+stdinJudgeByClose calcRight _args input _ecode acutalOut =
+  let expectedOut = calcRight input
+      actualDouble = read (Text.unpack acutalOut) :: Double
+      expectedDouble = read (Text.unpack expectedOut) :: Double
+   in (expectedOut, abs (actualDouble - expectedDouble) < 1e-5)
 
 
 diag :: Diagnosis
