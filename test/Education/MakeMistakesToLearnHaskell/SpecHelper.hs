@@ -1,6 +1,10 @@
 {-# OPTIONS_GHC -Wno-unused-imports #-}
 
-module Education.MakeMistakesToLearnHaskell.SpecHelper where
+module Education.MakeMistakesToLearnHaskell.SpecHelper
+  ( shouldFail
+  , shouldSuccess
+  , itShouldFailForCaseWithMessage
+  ) where
 
 #include <test/imports/external.hs>
 

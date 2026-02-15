@@ -6,8 +6,10 @@ module Education.MakeMistakesToLearnHaskellSpec (main, spec) where
 
 import           Education.MakeMistakesToLearnHaskell.Report.Server (startStub)
 
-import qualified Education.MakeMistakesToLearnHaskell
+import           Education.MakeMistakesToLearnHaskell (mainFromReportServer)
 import           Education.MakeMistakesToLearnHaskell.Env
+
+import           Education.MakeMistakesToLearnHaskell.SpecHelper
 
 
 testServerPort :: Int
@@ -32,13 +34,14 @@ spec = do
     it "given an empty answer, show FAIL" $ do
       void $ runMmlh ["show", "--terminal", "1"] ""
       runMmlh ["verify", "test/assets/common/empty.hs"] ""
-        >>= shouldExitWithMessages ["HINT: This error indicates that you haven't defined the main function."]
+        >>= shouldExitFailureWithMessages ["HINT: This error indicates that you haven't defined the main function.", "FAIL"]
 
     it "given non-existing answer of exercise 2.5, show NOT VERIFIED" $ do
       void $ runMmlh ["show", "--terminal", "2.5"] ""
       runMmlh ["verify", "non-existing"] "" >>= shouldPrintNotVerified
 
     itShouldShowSuccessGivenExampleAnswerOf "4"
+    itShouldShowSuccessGivenExampleAnswerOf "5"
     itShouldShowSuccessGivenExampleAnswerOf "6"
     itShouldShowSuccessGivenExampleAnswerOf "12"
     itShouldShowSuccessGivenExampleAnswerOf "13"
@@ -47,22 +50,29 @@ spec = do
 
     it "given a not-compilable answer of exercise 4, show FAIL" $ do
       let msgs =
-            ["HINT: You seem to have forgotten to write `do`. `do` must be put before listing `putStr`s and `getContents`."]
+            [ "HINT: You seem to have forgotten to write `do`. `do` must be put before listing `putStr`s and `getContents`."
+            , "FAIL"
+            ]
       void $ runMmlh ["show", "--terminal", "4"] ""
       runMmlh ["verify", "test/assets/4/no-do.hs"] ""
-        >>= shouldExitWithMessages msgs
+        >>= shouldExitFailureWithMessages msgs
 
-    it "given the wrong answer (producing a wrong result given a correct input) of exercise 12, show SUCCESS" $ do
-      let msgs = ["Your program's output:", "Expected output:"]
+    it "given a non-model answer (using the `**` operator) of exercise 5, show SUCCESS" $ do
+      void $ runMmlh ["show", "--terminal", "5"] ""
+      runMmlh ["verify", "test/assets/5/double-stars.hs"] ""
+        >>= shouldVerifySuccess
+
+    it "given the wrong answer (producing a wrong result given a correct input) of exercise 12, show FAIL" $ do
+      let msgs = ["Your program's output:", "Expected output:", "FAIL"]
       void $ runMmlh ["show", "--terminal", "12"] ""
       runMmlh ["verify", "test/assets/12/wrong-output1.hs"] ""
-        >>= shouldExitWithMessages msgs
+        >>= shouldExitFailureWithMessages msgs
 
-    it "given the wrong answer (producing a wrong result given a wrong input) of exercise 12, show SUCCESS" $ do
-      let msgs = ["Your program's output:", "Expected output:"]
+    it "given the wrong answer (producing a wrong result given a wrong input) of exercise 12, show FAIL" $ do
+      let msgs = ["Your program's output:", "Expected output:", "FAIL"]
       void $ runMmlh ["show", "--terminal", "12"] ""
       runMmlh ["verify", "test/assets/12/wrong-output2.hs"] ""
-        >>= shouldExitWithMessages msgs
+        >>= shouldExitFailureWithMessages msgs
 
     context "given \"y\" from stdin" $ do
       -- Response from the report server. The stub server actually desen't return a URL. But the production server is expected to.
@@ -71,23 +81,23 @@ spec = do
       it "given a not-compilable answer of exercise 5, show FAIL with the URL to submit an issue to haskell-jp/" $ do
         void $ runMmlh ["show", "--terminal", "5"] ""
         runMmlh ["verify", "--terminal", "test/assets/common/empty.hs"] "y\n"
-          >>= shouldExitWithMessages [expectedMessage "5"]
+          >>= shouldExitFailureWithMessages [expectedMessage "5"]
 
       it "given a not-compilable answer of exercise 6, show FAIL with the URL to submit an issue to haskell-jp/" $ do
         void $ runMmlh ["show", "--terminal", "6"] ""
         runMmlh ["verify", "--terminal", "test/assets/common/empty.hs"] "y\n"
-          >>= shouldExitWithMessages [expectedMessage "6"]
+          >>= shouldExitFailureWithMessages [expectedMessage "6"]
 
     context "given nothing from stdin" $ do
       it "given a not-compilable answer of exercise 5, show FAIL without any URL to GitHub." $ do
         void $ runMmlh ["show", "--terminal", "5"] ""
         runMmlh ["verify", "--terminal", "test/assets/common/empty.hs"] ""
-          >>= shouldNotExitWithMessages ["Open Report"]
+          >>= shouldExitFailureNotWithMessages ["Open Report"]
 
       it "given a not-compilable answer of exercise 6, show FAIL without any URL to GitHub." $ do
         void $ runMmlh ["show", "--terminal", "6"] ""
         runMmlh ["verify", "--terminal", "test/assets/common/empty.hs"] ""
-          >>= shouldNotExitWithMessages ["Open Report"]
+          >>= shouldExitFailureNotWithMessages ["Open Report"]
 
 
 itShouldShowSuccessGivenExampleAnswerOf :: String -> Spec
@@ -106,7 +116,7 @@ runMmlh args stdinDat = do
     . withStdin stdinDat
     . withEnv env
     . captureProcessResult
-    . Education.MakeMistakesToLearnHaskell.mainFromReportServer
+    . mainFromReportServer
     $ "http://localhost:" ++ show testServerPort
 
 shouldContainBS :: ByteString'.ByteString -> ByteString'.ByteString -> Expectation
@@ -114,25 +124,25 @@ shouldContainBS a b = if ByteString'.isInfixOf b a
   then pure ()
   else expectationFailure $ unwords [show a, "does not contain", show b]
 
-shouldExitWithMessagesLike
+shouldExitFailureWithMessagesLike
   :: HasCallStack
   => (ByteString'.ByteString -> ByteString'.ByteString -> Bool)
   -> [ByteString'.ByteString]
   -> ProcessResult
   -> IO ()
-shouldExitWithMessagesLike p hintMsgs (ProcessResult out err code ex) = do
+shouldExitFailureWithMessagesLike p hintMsgs (ProcessResult out err code ex) = do
   fmap show ex `shouldBe` Nothing
   err `shouldSatisfy` ByteString'.null
   mapM_ ((out `shouldSatisfy`) . p) hintMsgs
   code `shouldBe` ExitFailure 1
 
 
-shouldExitWithMessages :: HasCallStack => [ByteString'.ByteString] -> ProcessResult -> IO ()
-shouldExitWithMessages = shouldExitWithMessagesLike ByteString'.isInfixOf
+shouldExitFailureWithMessages :: HasCallStack => [ByteString'.ByteString] -> ProcessResult -> IO ()
+shouldExitFailureWithMessages = shouldExitFailureWithMessagesLike ByteString'.isInfixOf
 
 
-shouldNotExitWithMessages :: HasCallStack => [ByteString'.ByteString] -> ProcessResult -> IO ()
-shouldNotExitWithMessages = shouldExitWithMessagesLike (\s -> not . ByteString'.isInfixOf s)
+shouldExitFailureNotWithMessages :: HasCallStack => [ByteString'.ByteString] -> ProcessResult -> IO ()
+shouldExitFailureNotWithMessages = shouldExitFailureWithMessagesLike (\s -> not . ByteString'.isInfixOf s)
 
 
 shouldVerifySuccess :: ProcessResult -> IO ()
