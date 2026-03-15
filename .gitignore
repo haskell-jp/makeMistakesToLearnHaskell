@@ -8,3 +8,6 @@ cabal-helper*.build
 *.o
 *.hi
 /makeMistakesToLearnHaskell.cabal
+
+# Nix
+result
