@@ -17,10 +17,10 @@
     "outDir": "tmp",
     "noEmit": true,
     "paths": {
-      "~/*": ["./src/*"]
+      "~/*": ["./web-src/*"]
     },
     /* if you do not use CSS modules, remove this line and delete the typescript-plugin-css-modules module from package.json */
     "plugins": [{ "name": "typescript-plugin-css-modules" }]
   },
-  "include": ["src", "./*.d.ts", "./*.config.ts"]
+  "include": ["web-src", "./*.d.ts", "./*.config.ts"]
 }
