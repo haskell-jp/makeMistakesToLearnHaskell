@@ -7,7 +7,6 @@ cabal-helper*.build
 *.exe
 *.o
 *.hi
-/makeMistakesToLearnHaskell.cabal
 
 # Nix
 result

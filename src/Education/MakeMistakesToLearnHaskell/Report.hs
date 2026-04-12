@@ -7,8 +7,8 @@ module Education.MakeMistakesToLearnHaskell.Report
 
 #include <imports/external.hs>
 
-import           Education.MakeMistakesToLearnHaskell.Report.Client    (Report (Report),
-                                                                        reportUrl)
+-- import           Education.MakeMistakesToLearnHaskell.Report.Client    (Report (Report),
+--                                                                         reportUrl)
 
 import           Education.MakeMistakesToLearnHaskell.Env
 import qualified Education.MakeMistakesToLearnHaskell.Exercise.Types as Exercise
@@ -16,6 +16,8 @@ import qualified Education.MakeMistakesToLearnHaskell.Exercise.Types as Exercise
 
 printUrlIfAsked :: Env -> Exercise.Name -> Exercise.SourceCode -> Exercise.FailBy -> IO ()
 printUrlIfAsked e name code fb = do
+  return () -- This feature is disabled for now to build with wasm32-wasi-ghc.
+  {-
   y <- confirm e "Report this failure to ask for a help?"
   when y $ do
     eurl <- fmap reportUrl <$> postReport e (Report name code fb)
@@ -27,3 +29,4 @@ printUrlIfAsked e name code fb = do
           say e "[WARN] Error when filing an issue at haskell-jp/makeMistakesToLearnHaskell-support."
           say e "[WARN] This can be a bug. Please report at https://github.com/haskell-jp/makeMistakesToLearnHaskell/issues with the error message below:"
           say e . Text.pack $ show err
+  -}

@@ -1,0 +1,163 @@
+cabal-version: 3.4
+
+name:           makeMistakesToLearnHaskell
+version:        0.1.0.0
+synopsis:       Make mistakes to learn Haskell!
+category:       Education
+homepage:       https://github.com/haskell-jp/makeMistakesToLearnHaskell#readme
+author:         Yuji Yamamoto
+maintainer:     igrep@n.email.ne.jp
+copyright:      2017 Yuji Yamamoto
+license:        Apache-2.0
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+  README.md
+  src/imports/external.hs
+  src/imports/io.hs
+  src/imports/external/io.hs
+  src/test/imports/external.hs
+  test/assets/1/no-main.hs
+  test/assets/1/single-quote-no-main.hs
+  test/assets/1/single-quote.hs
+  test/assets/1/typo.hs
+  test/assets/common/empty.hs
+-- data-files: -- TODO
+
+source-repository head
+  type: git
+  location: https://github.com/haskell-jp/makeMistakesToLearnHaskell.git
+
+library
+  exposed-modules:
+    Education.MakeMistakesToLearnHaskell
+    Education.MakeMistakesToLearnHaskell.Env
+    Education.MakeMistakesToLearnHaskell.Evaluator.Types
+    Education.MakeMistakesToLearnHaskell.Exercise
+    Education.MakeMistakesToLearnHaskell.Exercise.FormatMessage
+    Education.MakeMistakesToLearnHaskell.Exercise.Types
+  other-modules:
+    Education.MakeMistakesToLearnHaskell.Error
+    Education.MakeMistakesToLearnHaskell.Evaluator.Command
+    Education.MakeMistakesToLearnHaskell.Evaluator.Ghc
+    Education.MakeMistakesToLearnHaskell.Evaluator.Regex
+    Education.MakeMistakesToLearnHaskell.Exercise.CommandLineArg
+    Education.MakeMistakesToLearnHaskell.Exercise.Core
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex01
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex02
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex02_5
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex03
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex04
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex05
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex06
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex07
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex08
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex09
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex10
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex11
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex12
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex13
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex14
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex15
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex16
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex16_5
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex17
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex18
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex19
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex20
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex21
+    Education.MakeMistakesToLearnHaskell.Exercise.Ex22
+    Education.MakeMistakesToLearnHaskell.Exercise.Record
+    Education.MakeMistakesToLearnHaskell.Exercise.Result
+    Education.MakeMistakesToLearnHaskell.Report
+    Education.MakeMistakesToLearnHaskell.Text
+    Education.MakeMistakesToLearnHaskell.Text.IO
+    Paths_makeMistakesToLearnHaskell
+  hs-source-dirs:
+    src
+  default-extensions:
+    BangPatterns
+    CPP
+    DeriveGeneric
+    DeriveDataTypeable
+    OverloadedStrings
+  include-dirs:
+    src
+  build-depends:
+      QuickCheck
+    , ansi-terminal
+    , base >=4.7 && <5
+    , bytestring
+    , cmark
+    , containers
+    , directory
+    , errors
+    , filepath
+    , ghc-syntax-highlighter
+    -- , mmlh-commons
+    -- , mmlh-reporter
+    , open-browser
+    , optparse-applicative
+    , regex-applicative
+    , safe
+    , temporary
+    , text
+    , transformers
+    , typed-process
+    , uri-encode
+  default-language: Haskell2010
+  if os(windows)
+    build-depends:
+      Win32
+
+executable mmlh
+  main-is: Main.hs
+  hs-source-dirs:
+    app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base
+    , makeMistakesToLearnHaskell
+  default-language: Haskell2010
+
+foreign-library mmlhc
+  type: native-shared
+  lib-version: 0.1
+  hs-source-dirs:
+    c-src
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -no-keep-hi-files -no-keep-o-files
+  build-depends:
+      base
+    , ghc
+  default-language: Haskell2010
+
+test-suite makeMistakesToLearnHaskell-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+    Education.MakeMistakesToLearnHaskell.Exercise1Spec
+    Education.MakeMistakesToLearnHaskell.Exercise2Spec
+    Education.MakeMistakesToLearnHaskell.Exercise3Spec
+    Education.MakeMistakesToLearnHaskell.Exercise4Spec
+    Education.MakeMistakesToLearnHaskell.SpecEnv
+    Education.MakeMistakesToLearnHaskell.SpecHelper
+    Education.MakeMistakesToLearnHaskellSpec
+  hs-source-dirs:
+    test
+  default-extensions:
+    CPP
+    OverloadedStrings
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      QuickCheck
+    , base
+    , bytestring
+    , directory
+    , filepath
+    , hspec
+    , hspec-core
+    , main-tester >=0.2
+    , makeMistakesToLearnHaskell
+    , mmlh-reporter
+    , text
+  default-language: Haskell2010

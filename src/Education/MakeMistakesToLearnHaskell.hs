@@ -9,7 +9,7 @@ module Education.MakeMistakesToLearnHaskell
 #include <imports/external.hs>
 #include <imports/io.hs>
 
-import           Education.MakeMistakesToLearnHaskell.Report.Client    (EndpointUrl)
+-- import           Education.MakeMistakesToLearnHaskell.Report.Client    (EndpointUrl)
 
 import           Education.MakeMistakesToLearnHaskell.Env
 import qualified Education.MakeMistakesToLearnHaskell.Exercise as Exercise
@@ -75,7 +75,7 @@ withMainEnv defaultHost copts doAction = do
                   return r
               , openWithBrowser = openB
               , say = Text.putStrLn
-              , postReport = IO.postReport host
+              -- , postReport = IO.postReport host
               }
     doAction e
 
@@ -209,3 +209,6 @@ showMarkdown e md n = do
 
   unless browserLaunched $
     Text.putStr $ removeAllTrailingSpace md
+
+-- Copied from reporter/src/Education/MakeMistakesToLearnHaskell/Report/Client.hs 
+type EndpointUrl = String
