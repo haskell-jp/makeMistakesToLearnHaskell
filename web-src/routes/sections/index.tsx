@@ -31,7 +31,6 @@ const useSectionLinks = routeLoader$((): SectionLinks => {
 
 export default component$(() => {
   const sectionLinks = useSectionLinks();
-  console.log(sectionLinks);
 
   return (
     <div>
