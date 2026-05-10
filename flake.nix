@@ -34,6 +34,7 @@
             pnpm
             haskellWasm.wasm32-wasi-ghc-native
             zstd
+            wget
           ];
         };
       });
