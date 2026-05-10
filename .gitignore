@@ -51,3 +51,5 @@ lerna-debug.log*
 # Yarn
 .yarn/*
 !.yarn/releases
+
+/web-src/assets/ghc

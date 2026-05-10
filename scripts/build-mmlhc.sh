@@ -1,43 +1,37 @@
 #!/usr/bin/env bash
-# Original version: https://gitlab.haskell.org/ghc/ghc/-/blob/af40606aaaf65c112e67cb4e4c37aec4ea74fb36/testsuite/tests/ghc-api-browser/playground001.sh
-# Original version's copyright notice: Copyright 2002, The University Court of the University of Glasgow. All rights reserved.
 
-set -euo pipefail
+set -euxo pipefail
 
-# also set this when building wasm32-wasi-ghc for production
-# deployment of haskell playground, so all the .so files are
-# optimized.
-export WASM_SO_OPT="--debuginfo --low-memory-unused --strip-dwarf -Oz"
+# Original: https://gitlab.haskell.org/ghc/ghc/-/blob/af40606aaaf65c112e67cb4e4c37aec4ea74fb36/testsuite/tests/ghc-api-browser/playground001.sh
+# Copyright 2002, The University Court of the University of Glasgow. All rights reserved.
 
-# we'll build a rootfs tarball that contains everything in tmp and
-# extracts to /tmp, mapped from here
-mkdir ./tmp
+cd "$(dirname "$0")/.."
 
-$TEST_HC \
-  -v0 \
-  -package ghc \
-  -shared -dynamic \
-  -no-keep-hi-files -no-keep-o-files \
-  -O2 \
-  playground001.hs -o ./tmp/libplayground001.so
-rm -f ./*_stub.h ./playground001.hs
+outdir=./web-src/assets/ghc
+tmpdir=./web-src/assets/ghc/tmp
 
-# /tmp/clib contains libc/libc++ .so files
-cp -r "$(dirname "$TEST_CC")/../share/wasi-sysroot/lib/wasm32-wasi" ./tmp/clib
+mkdir -p "$tmpdir"
+
+wasm32-wasi-ghc -O2 -package ghc -shared -dynamic -no-keep-hi-files -no-keep-o-file -o "$tmpdir/libmmlhc.so" c-src/mmlhc.hs
+
+# $tmpdir/clib contains libc/libc++ .so files
+WASI_SDK="$(nix eval --raw 'gitlab:haskell-wasm/ghc-wasm-meta?host=gitlab.haskell.org#wasi-sdk')"
+cp -r "$WASI_SDK"/share/wasi-sysroot/lib/wasm32-wasi "$tmpdir"/clib
+chmod -R 0777 "$tmpdir"/clib
 # trim unneeded stuff in c libdir
-find ./tmp/clib -type f ! -name "*.so" -delete
-rm -f \
-  ./tmp/clib/libsetjmp.so \
-  ./tmp/clib/libwasi-emulated-*.so
+find "$tmpdir"/clib -type f ! -name "*.so" -delete
+rm -f "$tmpdir"/clib/libsetjmp.so "$tmpdir"/clib/libwasi-emulated-*.so
 
-# /tmp/hslib/lib is the ghc libdir
-mkdir ./tmp/hslib
-cp -r "$($TEST_HC --print-libdir)" ./tmp/hslib/lib
+mkdir -p "$tmpdir"/hslib
+cp -r "$(wasm32-wasi-ghc --print-libdir)" "$tmpdir"/hslib/lib
+chmod -R 0777 "$tmpdir"/hslib
 # unregister Cabal/Cabal-syntax, too big
-$GHC_PKG --no-user-package-db --global-package-db=./tmp/hslib/lib/package.conf.d unregister Cabal Cabal-syntax
-$GHC_PKG --no-user-package-db --global-package-db=./tmp/hslib/lib/package.conf.d recache
+rm "$tmpdir"/hslib/lib/package.conf.d/package.cache.lock || true
+wasm32-wasi-ghc-pkg --no-user-package-db --global-package-db="$tmpdir"/hslib/lib/package.conf.d unregister Cabal Cabal-syntax || true
+wasm32-wasi-ghc-pkg --no-user-package-db --global-package-db="$tmpdir"/hslib/lib/package.conf.d recache || true
+
 # we only need non-profiling .dyn_hi/.so, trim as much as we can
-find ./tmp/hslib/lib "(" \
+find "$tmpdir"/hslib/lib "(" \
   -name "*.hi" \
   -o -name "*.a" \
   -o -name "*.p_hi" \
@@ -47,32 +41,19 @@ find ./tmp/hslib/lib "(" \
   -o -name "libHSrts*_debug*.so" \
   ")" -delete
 rm -rf \
-  ./tmp/hslib/lib/doc \
-  ./tmp/hslib/lib/html \
-  ./tmp/hslib/lib/latex \
-  ./tmp/hslib/lib/*.mjs \
-  ./tmp/hslib/lib/*.js \
-  ./tmp/hslib/lib/*.txt
+  "$tmpdir"/hslib/lib/doc \
+  "$tmpdir"/hslib/lib/html \
+  "$tmpdir"/hslib/lib/latex \
+  "$tmpdir"/hslib/lib/*.mjs \
+  "$tmpdir"/hslib/lib/*.js \
+  "$tmpdir"/hslib/lib/*.txt
 # HS_SEARCHDIR is something like
 # /tmp/hslib/lib/wasm32-wasi-ghc-9.15.20251024 which is the
 # dynamic-library-dirs that contains all libHS*.so in one place, and
 # also static libraries in per-unit directories
-HS_SEARCHDIR=$(find ./tmp/hslib/lib -type f -name "*.so" -print0 | xargs -0 -n1 dirname | sort -u | sed "s|^\./|/|")
+HS_SEARCHDIR=$(find "$tmpdir"/hslib/lib -type f -name "*.so" -print0 | xargs -0 -n1 dirname | sort -u | sed "s|^\./|/|")
 # hunt down the remaining bits of Cabal/Cabal-syntax. too bad there's
 # no ghc-pkg uninstall.
 rm -rf ."$HS_SEARCHDIR"/*Cabal*
 
-# fix the hard coded search dir in index.html
-SED_IS_GNU=$(sed --version &> /dev/null && echo 1 || echo 0)
-if [[ $SED_IS_GNU == "1" ]]; then
-  sed -i "s|/tmp/hslib/lib/wasm32-wasi-ghc-9.15.20251024|$HS_SEARCHDIR|" ./index.html
-else
-  sed -i "" "s|/tmp/hslib/lib/wasm32-wasi-ghc-9.15.20251024|$HS_SEARCHDIR|" ./index.html
-fi
-
-# also set ZSTD_NBTHREADS/ZSTD_CLEVEL when building for production
-tar -cf ./rootfs.tar.zst --zstd tmp
-rm -rf ./tmp
-
-# pass puppeteer.launch() opts as json
-exec ./playground001.js "$1"
+tar -cf "$outdir"/rootfs.tar.zst --zstd "$tmpdir"

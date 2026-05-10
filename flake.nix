@@ -32,7 +32,8 @@
             nodejs_24
             nixpkgs-fmt
             pnpm
-            haskellWasm.all_9_14
+            haskellWasm.wasm32-wasi-ghc-native
+            zstd
           ];
         };
       });
