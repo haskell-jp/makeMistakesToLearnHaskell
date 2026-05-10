@@ -1,3 +1,6 @@
 [submodule "reporter/ulid"]
 	path = reporter/ulid
 	url = https://github.com/igrep/ulid.git
+[submodule "web-src/browser_wasi_shim"]
+	path = web-src/browser_wasi_shim
+	url = https://github.com/haskell-wasm/browser_wasi_shim.git
