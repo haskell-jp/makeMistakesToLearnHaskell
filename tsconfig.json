@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "allowJs": true,
-    "target": "ES2024",
-    "module": "ES2022",
+    "target": "es2024",
+    "module": "es2022",
     "lib": ["es2024", "DOM", "WebWorker", "DOM.Iterable"],
     "jsx": "react-jsx",
     "jsxImportSource": "@builder.io/qwik",
