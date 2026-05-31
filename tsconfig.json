@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "allowJs": true,
-    "target": "es2024",
+    "target": "es2022",
     "module": "es2022",
-    "lib": ["es2024", "DOM", "WebWorker", "DOM.Iterable"],
+    "lib": ["esnext", "DOM", "WebWorker", "DOM.Iterable"],
     "jsx": "react-jsx",
     "jsxImportSource": "@builder.io/qwik",
     "strict": true,
@@ -16,11 +16,9 @@
     "isolatedModules": true,
     "outDir": "tmp",
     "noEmit": true,
-    "paths": {
-      "~/*": ["./web-src/*"]
-    },
     /* if you do not use CSS modules, remove this line and delete the typescript-plugin-css-modules module from package.json */
     "plugins": [{ "name": "typescript-plugin-css-modules" }]
   },
-  "include": ["web-src", "./*.d.ts", "./*.config.ts"]
+  "include": ["web-src", "./*.d.ts", "./*.config.ts"],
+  "exclude": ["assets", "browser_wasi_shim", "node_modules", "tmp"]
 }

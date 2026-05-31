@@ -21,16 +21,16 @@ errorOnDuplicatesPkgDeps(devDependencies, dependencies);
  */
 export default defineConfig(({ command, mode }): UserConfig => {
   return {
+    root: `${import.meta.dirname}/web-src`,
     plugins: [
       qwikCity({
-        srcDir: "web-src",
-        routesDir: "web-src/routes",
+        routesDir: "routes",
         // serverPluginsDir: "web-src/server-plugins",
       }),
       qwikVite({
-        srcDir: "web-src",
+        srcDir: ".",
         ssr: {
-          input: "web-src/entry.ssr.tsx",
+          input: "entry.ssr.tsx",
         },
       }),
       tsconfigPaths({ root: "." }),
