@@ -13,15 +13,19 @@ import { DyLDBrowserHost, main } from "./assets/ghc/dyld.mjs";
 console.log("Worker started");
 
 // TODO: Extract as FromWorkerFacade
-addEventListener("connect", async (event) => {
+onconnect = async (event): Promise<void> => {
   console.log("Worker connected");
   const port = event.ports[0];
-  await loadWasms;
-  port.postMessage({ event: "loadedWasms" });
-  const ghcMain = await loadGhc;
-  port.postMessage({ event: "initializedGhc" });
   port.start();
-});
+  console.log("Worker: Loading WASMs");
+  await loadWasms;
+  console.log("Worker: Loaded WASMs");
+  port.postMessage({ event: "loadedWasms" });
+  console.log("Worker: WAITING Initializing GHC");
+  const ghcMain = await loadGhc;
+  console.log("Worker: Initialized GHC");
+  port.postMessage({ event: "initializedGhc" });
+};
 
 const rootfs = new PreopenDirectory("/", new Map());
 const bsdtar_wasi = new WASI(
@@ -63,6 +67,7 @@ const loadGhc = new Promise((resolve) => {
     isIserv: false,
   })
     .then((dyld) => {
+      console.log("Worker: Finished DyldJs.main");
       return dyld.exportFuncs.myMain("/tmp/hslib/lib");
     })
     .then(resolve);

@@ -25,16 +25,16 @@ export default component$(() => {
   useVisibleTask$(
     () => {
       const worker = new ToWorkerFacade(
-        new SharedWorker(new URL("../worker.js", import.meta.url), {
+        new SharedWorker(new URL("/worker.js", import.meta.url), {
           type: "module",
         }),
       );
       worker.on({
         loadedWasms: () => {
-          console.log("WASM files loaded");
+          console.log("Page: WASM files loaded");
         },
         initializedGhc: () => {
-          console.log("GHC initialized");
+          console.log("Page: GHC initialized");
         },
       });
     },
