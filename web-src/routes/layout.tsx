@@ -10,7 +10,7 @@ import Header from "../components/starter/header/header";
 import Footer from "../components/starter/footer/footer";
 
 import styles from "./styles.css?inline";
-import { ToWorkerFacade } from "../worker/facade";
+import { ToWorkerFacade } from "../to-worker/facade";
 
 export const useServerTimeLoader = routeLoader$(() => {
   return {
@@ -24,18 +24,17 @@ export default component$(() => {
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(
     () => {
+      console.log("Connecting to the GHC worker...");
       const worker = new ToWorkerFacade(
         new SharedWorker(new URL("/worker.js", import.meta.url), {
           type: "module",
         }),
       );
-      worker.on({
-        loadedWasms: () => {
-          console.log("Page: WASM files loaded");
-        },
-        initializedGhc: () => {
-          console.log("Page: GHC initialized");
-        },
+      worker.call("waitForWasmFiles").then(() => {
+        console.log("Wasm files are ready");
+        worker.call("waitForGhcReady").then(() => {
+          console.log("GHC is ready");
+        });
       });
     },
     { strategy: "document-ready" },

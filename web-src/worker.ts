@@ -9,23 +9,22 @@ import {
   WASI,
 } from "./browser_wasi_shim/src/";
 import { DyLDBrowserHost, main } from "./assets/ghc/dyld.mjs";
+import { buildOnConnectHandler } from "./from-worker/facade";
 
 console.log("Worker started");
 
-// TODO: Extract as FromWorkerFacade
-onconnect = async (event): Promise<void> => {
-  console.log("Worker connected");
-  const port = event.ports[0];
-  port.start();
-  console.log("Worker: Loading WASMs");
-  await loadWasms;
-  console.log("Worker: Loaded WASMs");
-  port.postMessage({ event: "loadedWasms" });
-  console.log("Worker: WAITING Initializing GHC");
-  const ghcMain = await loadGhc;
-  console.log("Worker: Initialized GHC");
-  port.postMessage({ event: "initializedGhc" });
+const definitions = {
+  waitForWasmFiles: async (): Promise<void> => {
+    console.log("Worker: Received loadedWasms message");
+    await loadWasms;
+  },
+  waitForGhcReady: async (): Promise<void> => {
+    console.log("Worker: Received initializedGhc message");
+    await loadGhc;
+  },
 };
+addEventListener("connect", buildOnConnectHandler(definitions));
+console.log("Worker: Connect handler registered");
 
 const rootfs = new PreopenDirectory("/", new Map());
 const bsdtar_wasi = new WASI(
@@ -48,27 +47,38 @@ const loadWasms = Promise.all([
 ]).then(([{ instance }, rootfs_bytes]) => {
   bsdtar_wasi.fds[0] = new OpenFile(new File(rootfs_bytes, { readonly: true }));
   bsdtar_wasi.start(instance);
+  console.log("Worker: Finished loading wasm files and extracting rootfs");
 });
 
 const loadGhc = new Promise((resolve) => {
-  main({
-    rpc: new DyLDBrowserHost({
-      rootfs,
-      stdout: (msg) => {
-        //document.getElementById("stdout").value += `${msg}\n`;
-      },
-      stderr: (msg) => {
-        //document.getElementById("stderr").value += `${msg}\n`;
-      },
-    }),
-    searchDirs: ["/tmp/clib", "/tmp/hslib/lib/wasm32-wasi-ghc-9.15.20251024"],
-    mainSoPath: "/tmp/libmmlhc.so",
-    args: ["libmmlhc.so", "+RTS", "-c", "-RTS"],
-    isIserv: false,
-  })
-    .then((dyld) => {
-      console.log("Worker: Finished DyldJs.main");
-      return dyld.exportFuncs.myMain("/tmp/hslib/lib");
+  loadWasms.then(() => {
+    main({
+      rpc: new DyLDBrowserHost({
+        rootfs,
+        stdout: (msg) => {
+          console.log("Worker: STDOUT:", msg);
+          //document.getElementById("stdout").value += `${msg}\n`;
+        },
+        stderr: (msg) => {
+          console.log("Worker: STDERR:", msg);
+          //document.getElementById("stderr").value += `${msg}\n`;
+        },
+      }),
+      searchDirs: [
+        "/tmp/clib",
+        "/tmp/hslib/lib/wasm32-wasi-ghc-9.15.20260331-4030",
+      ],
+      mainSoPath: "/tmp/libmmlhc.so",
+      args: ["libmmlhc.so", "+RTS", "-c", "-RTS"],
+      isIserv: false,
     })
-    .then(resolve);
+      .then((dyld) => {
+        console.log("Worker: Finished DyldJs.main");
+        return dyld.exportFuncs.mmlhcMain("/tmp/hslib/lib");
+      })
+      .then(resolve)
+      .catch((err) => {
+        console.error("Worker: Error in DyldJs.main:", err);
+      });
+  });
 });
