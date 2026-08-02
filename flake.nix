@@ -33,6 +33,7 @@
             nixpkgs-fmt
             pnpm
             haskellWasm.wasm32-wasi-ghc-native
+            haskellWasm.wasi-sdk
             zstd
             wget
           ];
