@@ -24,7 +24,7 @@ newtype JSFunction t = JSFunction JSVal
 
 type ExportedMainFunction = JSString -> JSString -> IO ()
 
--- main entry point of playground001, returns a js async function that
+-- main entry point of mmlhc, returns a js async function that
 -- takes ghc args and Main.hs content, interprets Main.hs and runs
 -- Main.main.
 mmlhcMain :: JSString -> IO (JSFunction ExportedMainFunction)
