@@ -13,10 +13,14 @@ export class ToWorkerFacade {
     ...args: WorkerArgumentsOf<M>
   ): Promise<void> {
     return new Promise((resolve) => {
-      this.#worker.port.addEventListener("message", (event): void => {
-        console.log("Main thread: Received message from worker", event.data);
-        resolve(event.data);
-      });
+      this.#worker.port.addEventListener(
+        "message",
+        (event): void => {
+          console.log("Main thread: Received message from worker", event.data);
+          resolve(event.data);
+        },
+        { once: true },
+      );
       console.log("Main thread: Sending message to worker", { op, args });
       this.#worker.port.postMessage({ op, args });
     });
