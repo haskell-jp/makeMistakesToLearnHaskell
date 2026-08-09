@@ -30,12 +30,22 @@ export default component$(() => {
           type: "module",
         }),
       );
-      worker.call("waitForWasmFiles").then(() => {
-        console.log("Wasm files are ready");
-        worker.call("waitForGhcReady").then(() => {
-          console.log("GHC is ready");
+      worker
+        .call("waitForWasmFiles")
+        .then(() => {
+          console.log("Wasm files are ready");
+          worker
+            .call("waitForGhcReady")
+            .then(() => {
+              console.log("GHC is ready");
+            })
+            .catch((err) => {
+              console.error("Error while waiting for GHC ready:", err);
+            });
+        })
+        .catch((err) => {
+          console.error("Error while waiting for GHC worker:", err);
         });
-      });
     },
     { strategy: "document-ready" },
   );
