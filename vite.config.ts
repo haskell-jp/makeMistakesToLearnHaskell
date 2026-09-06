@@ -71,6 +71,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
         "Cache-Control": "public, max-age=600",
       },
     },
+    worker: { format: 'es' },
   };
 });
 

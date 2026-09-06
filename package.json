@@ -11,7 +11,7 @@
     "build": "qwik build",
     "build.client": "vite build",
     "build.preview": "vite build --ssr web-src/entry.preview.tsx",
-    "build.server": "qwik check-client web-src dist && vite build -c adapters/static/vite.config.ts",
+    "build.server": "qwik check-client web-src dist && vite build -c adapters/static/vite.config.ts && mkdir -p web-src/dist/assets/assets/ && ln -s ../../../assets/ghc web-src/dist/assets/assets/",
     "build.types": "tsc --incremental --noEmit",
     "deploy": "echo 'Run \"npm run qwik add\" to install a server adapter'",
     "dev": "vite --mode ssr",
