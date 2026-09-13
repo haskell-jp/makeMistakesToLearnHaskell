@@ -24,16 +24,17 @@ export default component$(() => {
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(
     () => {
-      console.log("Connecting to the GHC worker...");
+      console.log("Main thread: Connecting to the GHC worker...");
       const worker = new ToWorkerFacade(
         new SharedWorker(new URL("/worker.js", import.meta.url), {
           type: "module",
         }),
       );
+      console.log("Main thread: Connected to the GHC worker:", worker);
       worker
         .call("waitForWasmFiles")
         .then(() => {
-          console.log("Wasm files are ready");
+          console.log("Main thread: Wasm files are ready");
           worker
             .call("waitForGhcReady")
             .then(() => {

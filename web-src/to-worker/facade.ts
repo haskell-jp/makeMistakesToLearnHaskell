@@ -12,8 +12,9 @@ export class ToWorkerFacade {
     op: WorkerMessage,
     ...args: WorkerArgumentsOf<M>
   ): Promise<void> {
+    const channel = new MessageChannel();
     return new Promise((resolve) => {
-      this.#worker.port.addEventListener(
+      channel.port1.addEventListener(
         "message",
         (event): void => {
           console.log("Main thread: Received message from worker", event.data);
@@ -21,8 +22,12 @@ export class ToWorkerFacade {
         },
         { once: true },
       );
-      console.log("Main thread: Sending message to worker", { op, args });
-      this.#worker.port.postMessage({ op, args });
+      console.log("Main thread: Sending message to worker", {
+        op,
+        args,
+        port: channel.port2,
+      });
+      this.#worker.port.postMessage({ op, args }, [channel.port2]);
     });
   }
 }

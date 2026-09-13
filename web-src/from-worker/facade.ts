@@ -11,14 +11,13 @@ export function buildOnConnectHandler(
   console.log("Worker: Building onConnect handler with definitions");
   return (event: Event) => {
     const port = event.ports[0];
-    console.log("Worker: Connected to main thread");
+    console.log("Worker: Connected to main thread", port);
     port.addEventListener(
       "message",
       (e: MessageEvent) => {
         console.log("Worker: Received message", e.data);
         const { op, args } = e.data;
         if (op in definitions) {
-          // TODO: Create returnPort correctly using MessageChannel, and use it to send the result back to the main thread.
           const returnPort = e.ports[0];
           console.log("Worker: returnPort", returnPort);
           const handler = definitions[op as WorkerMessage] as (
