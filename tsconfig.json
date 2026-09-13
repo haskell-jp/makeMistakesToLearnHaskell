@@ -20,5 +20,10 @@
     "plugins": [{ "name": "typescript-plugin-css-modules" }]
   },
   "include": ["web-src", "./*.d.ts", "./*.config.ts"],
-  "exclude": ["assets", "browser_wasi_shim", "node_modules", "tmp"]
+  "exclude": [
+    "web-src/assets",
+    "web-src/browser_wasi_shim",
+    "node_modules",
+    "tmp"
+  ]
 }
