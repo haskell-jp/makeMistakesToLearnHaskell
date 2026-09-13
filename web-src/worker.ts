@@ -51,34 +51,38 @@ const loadWasms = Promise.all([
 });
 
 const loadGhc = new Promise((resolve) => {
-  loadWasms.then(() => {
-    main({
-      rpc: new DyLDBrowserHost({
-        rootfs,
-        stdout: (msg) => {
-          console.log("Worker: STDOUT:", msg);
-          //document.getElementById("stdout").value += `${msg}\n`;
-        },
-        stderr: (msg) => {
-          console.log("Worker: STDERR:", msg);
-          //document.getElementById("stderr").value += `${msg}\n`;
-        },
-      }),
-      searchDirs: [
-        "/tmp/clib",
-        "/tmp/hslib/lib/wasm32-wasi-ghc-9.15.20260331-4030",
-      ],
-      mainSoPath: "/tmp/libmmlhc.so",
-      args: ["libmmlhc.so", "+RTS", "-c", "-RTS"],
-      isIserv: false,
-    })
-      .then((dyld) => {
-        console.log("Worker: Finished DyldJs.main");
-        return dyld.exportFuncs.mmlhcMain("/tmp/hslib/lib");
+  loadWasms
+    .then(() => {
+      main({
+        rpc: new DyLDBrowserHost({
+          rootfs,
+          stdout: (msg) => {
+            console.log("Worker: STDOUT:", msg);
+            //document.getElementById("stdout").value += `${msg}\n`;
+          },
+          stderr: (msg) => {
+            console.log("Worker: STDERR:", msg);
+            //document.getElementById("stderr").value += `${msg}\n`;
+          },
+        }),
+        searchDirs: [
+          "/tmp/clib",
+          "/tmp/hslib/lib/wasm32-wasi-ghc-9.15.20260331-4030",
+        ],
+        mainSoPath: "/tmp/libmmlhc.so",
+        args: ["libmmlhc.so", "+RTS", "-c", "-RTS"],
+        isIserv: false,
       })
-      .then(resolve)
-      .catch((err) => {
-        console.error("Worker: Error in DyldJs.main:", err);
-      });
-  });
+        .then((dyld) => {
+          console.log("Worker: Finished DyldJs.main");
+          return dyld.exportFuncs.mmlhcMain("/tmp/hslib/lib");
+        })
+        .then(resolve)
+        .catch((err) => {
+          console.error("Worker: Error in DyldJs.main:", err);
+        });
+    })
+    .catch((err) => {
+      console.error("Worker: Error loading wasm files:", err);
+    });
 });
