@@ -75,9 +75,8 @@ const loadGhc = new Promise((resolve) => {
       })
         .then((dyld) => {
           console.log("Worker: Finished DyldJs.main");
-          return dyld.exportFuncs.mmlhcMain("/tmp/hslib/lib");
+          resolve(dyld.exportFuncs.mmlhcMain("/tmp/hslib/lib"));
         })
-        .then(resolve)
         .catch((err) => {
           console.error("Worker: Error in DyldJs.main:", err);
         });
