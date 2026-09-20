@@ -53,7 +53,7 @@ const loadWasms = Promise.all([
 const loadGhc = new Promise((resolve) => {
   loadWasms
     .then(() => {
-      main({
+      return main({
         rpc: new DyLDBrowserHost({
           rootfs,
           stdout: (msg) => {
@@ -75,7 +75,17 @@ const loadGhc = new Promise((resolve) => {
       })
         .then((dyld) => {
           console.log("Worker: Finished DyldJs.main");
-          resolve(dyld.exportFuncs.mmlhcMain("/tmp/hslib/lib"));
+          return dyld.exportFuncs.mmlhcMain("/tmp/hslib/lib");
+        })
+        .then((f) => {
+          console.log("Worker: Finished mmlhcMain with result:", f);
+          return f("", 'main :: IO ()\nmain = putStrLn "Hello, World!"\n');
+        })
+        .then((result) => {
+          console.log(
+            "Worker: Finished running Haskell code with result:",
+            result,
+          );
         })
         .catch((err) => {
           console.error("Worker: Error in DyldJs.main:", err);
