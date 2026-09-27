@@ -26,7 +26,7 @@ export default component$(() => {
     () => {
       console.log("Main thread: Connecting to the GHC worker...");
       const worker = new ToWorkerFacade(
-        new Worker(new URL("/worker.js", import.meta.url), {
+        new SharedWorker(new URL("/worker.js", import.meta.url), {
           type: "module",
         }),
       );

@@ -9,7 +9,7 @@ import {
   WASI,
 } from "./browser_wasi_shim/src/";
 import { DyLDBrowserHost, main } from "./assets/ghc/dyld.mjs";
-import { buildOnMessageHandler } from "./from-worker/facade";
+import { buildOnConnectHandler } from "./from-worker/facade";
 
 console.log("Worker started");
 
@@ -23,8 +23,8 @@ const definitions = {
     await loadGhc;
   },
 };
-self.addEventListener("message", buildOnMessageHandler(definitions));
-console.log("Worker: Message handler registered");
+addEventListener("connect", buildOnConnectHandler(definitions));
+console.log("Worker: Connect handler registered");
 
 const rootfs = new PreopenDirectory("/", new Map());
 const bsdtar_wasi = new WASI(
@@ -79,9 +79,7 @@ const loadGhc = new Promise((resolve) => {
         })
         .then((f) => {
           console.log("Worker: Finished mmlhcMain with result:", f);
-          return resolve(
-            f("", 'main :: IO ()\nmain = putStrLn "Hello, World!"\n'),
-          );
+          return f("", 'main :: IO ()\nmain = putStrLn "Hello, World!"\n');
         })
         .then((result) => {
           console.log(
