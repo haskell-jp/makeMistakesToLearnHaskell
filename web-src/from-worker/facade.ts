@@ -18,8 +18,7 @@ export function buildOnConnectHandler(
         console.log("Worker: Received message", e.data);
         const { op, args } = e.data;
         if (op in definitions) {
-          const returnPort = e.ports[0];
-          console.log("Worker: returnPort", returnPort);
+          console.log("Worker: returnPort", port);
           const handler = definitions[op as WorkerMessage] as (
             ...args: WorkerArgumentsOf<WorkerMessage>
           ) => WorkerReturnOf<WorkerMessage>;
