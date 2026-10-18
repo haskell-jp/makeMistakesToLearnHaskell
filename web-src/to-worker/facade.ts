@@ -1,4 +1,8 @@
-import { WorkerMessage, type WorkerArgumentsOf } from "../worker-operations";
+import {
+  WorkerHandlerDefinitions,
+  WorkerMessage,
+  type WorkerArgumentsOf,
+} from "../worker-operations";
 
 export class ToWorkerFacade {
   #worker: SharedWorker;
@@ -8,24 +12,30 @@ export class ToWorkerFacade {
     this.#worker.port.start();
   }
 
-  call<M extends WorkerMessage>(
-    op: WorkerMessage,
+  // TODO: correct type
+  runMmlhcMain<M extends WorkerMessage>(
+    func: WorkerMessage,
     ...args: WorkerArgumentsOf<M>
-  ): Promise<void> {
-    return new Promise((resolve) => {
-      this.#worker.port.addEventListener(
-        "message",
-        (event): void => {
-          console.log("Main thread: Received message from worker", event.data);
-          resolve(event.data);
-        },
-        { once: true },
-      );
-      console.log("Main thread: Sending message to worker", {
-        op,
-        args,
-      });
-      this.#worker.port.postMessage({ op, args });
+  ): void {
+    console.log("Main thread: Sending message to worker", {
+      func,
+      args,
+    });
+    this.#worker.port.postMessage({ func, args });
+  }
+
+  forEachEvent(handlers: WorkerHandlerDefinitions): void {
+    this.#worker.port.addEventListener("message", (event: MessageEvent) => {
+      const { func, result } = event.data;
+      if (func in handlers) {
+        console.log("Main thread: Handling message from worker", {
+          func,
+          result,
+        });
+        handlers[func as WorkerMessage](result);
+        return;
+      }
+      console.warn(`Main thread: Unknown operation from worker: "${func}"`);
     });
   }
 }

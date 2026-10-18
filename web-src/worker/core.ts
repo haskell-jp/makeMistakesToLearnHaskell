@@ -10,8 +10,6 @@ import {
 } from "../browser_wasi_shim/src/";
 import { DyLDBrowserHost, main } from "../assets/ghc/dyld.mjs";
 
-console.log("Worker: Connect handler registered");
-
 const rootfs = new PreopenDirectory("/", new Map());
 const bsdtar_wasi = new WASI(
   ["bsdtar.wasm", "-x"],
@@ -38,45 +36,41 @@ export const loadWasms = Promise.all([
 
 export const loadGhc = new Promise((resolve) => {
   loadWasms
-    .then(() => {
-      return main({
-        rpc: new DyLDBrowserHost({
-          rootfs,
-          stdout: (msg) => {
-            console.log("Worker: STDOUT:", msg);
-            //document.getElementById("stdout").value += `${msg}\n`;
-          },
-          stderr: (msg) => {
-            console.log("Worker: STDERR:", msg);
-            //document.getElementById("stderr").value += `${msg}\n`;
-          },
-        }),
-        searchDirs: [
-          "/tmp/clib",
-          "/tmp/hslib/lib/wasm32-wasi-ghc-9.15.20260331-4030",
-        ],
-        mainSoPath: "/tmp/libmmlhc.so",
-        args: ["libmmlhc.so", "+RTS", "-c", "-RTS"],
-        isIserv: false,
-      })
-        .then((dyld) => {
-          console.log("Worker: Finished DyldJs.main");
-          return dyld.exportFuncs.mmlhcMain("/tmp/hslib/lib");
-        })
-        .then((f) => {
-          console.log("Worker: Finished mmlhcMain with result:", f);
-          return f("", 'main :: IO ()\nmain = putStrLn "Hello, World!"\n');
-        })
-        .then((result) => {
-          console.log(
-            "Worker: Finished running Haskell code with result:",
-            result,
-          );
-          resolve(result);
-        })
-        .catch((err) => {
-          console.error("Worker: Error in DyldJs.main:", err);
+    .then(async () => {
+      try {
+        const dyld = await main({
+          rpc: new DyLDBrowserHost({
+            rootfs,
+            stdout: (msg1) => {
+              console.log("Worker: STDOUT:", msg1);
+            },
+            stderr: (msg2) => {
+              console.log("Worker: STDERR:", msg2);
+            },
+          }),
+          searchDirs: [
+            "/tmp/clib",
+            "/tmp/hslib/lib/wasm32-wasi-ghc-9.15.20260331-4030",
+          ],
+          mainSoPath: "/tmp/libmmlhc.so",
+          args: ["libmmlhc.so", "+RTS", "-c", "-RTS"],
+          isIserv: false,
         });
+        console.log("Worker: Finished DyldJs.main");
+        const f = await dyld.exportFuncs.mmlhcMain("/tmp/hslib/lib");
+        console.log("Worker: Finished mmlhcMain with result:", f);
+        const result = await f(
+          "",
+          'main :: IO ()\nmain = putStrLn "Hello, World!"\n',
+        );
+        console.log(
+          "Worker: Finished running Haskell code with result:",
+          result,
+        );
+        resolve(result);
+      } catch (err) {
+        console.error("Worker: Error in DyldJs.main:", err);
+      }
     })
     .catch((err) => {
       console.error("Worker: Error loading wasm files:", err);
