@@ -34,18 +34,37 @@ export const loadWasms = Promise.all([
   console.log("Worker: Finished loading wasm files and extracting rootfs");
 });
 
-export const loadGhc = new Promise((resolve) => {
+let runMmlhcCore: (
+  ghcArgs: string,
+  hsSrc: string,
+) => Promise<string> | undefined;
+
+export const runMmlhc = async (
+  ghcArgs: string,
+  hsSrc: string,
+): Promise<void> => {
+  if (!runMmlhcCore) {
+    console.error(
+      "runMmlhcCore is not initialized. Ensure loadMmlhc has completed.",
+    );
+    return;
+  }
+  const result = await runMmlhcCore(ghcArgs, hsSrc);
+  console.log("Worker: Finished runMmlhc with result:", result);
+};
+
+export const loadMmlhc = new Promise((resolve) => {
   loadWasms
     .then(async () => {
       try {
         const dyld = await main({
           rpc: new DyLDBrowserHost({
             rootfs,
-            stdout: (msg1) => {
-              console.log("Worker: STDOUT:", msg1);
+            stdout: (msg: string) => {
+              console.log("Worker: STDOUT:", msg);
             },
-            stderr: (msg2) => {
-              console.log("Worker: STDERR:", msg2);
+            stderr: (msg: string) => {
+              console.warn("Worker: STDERR:", msg);
             },
           }),
           searchDirs: [
@@ -57,17 +76,9 @@ export const loadGhc = new Promise((resolve) => {
           isIserv: false,
         });
         console.log("Worker: Finished DyldJs.main");
-        const f = await dyld.exportFuncs.mmlhcMain("/tmp/hslib/lib");
-        console.log("Worker: Finished mmlhcMain with result:", f);
-        const result = await f(
-          "",
-          'main :: IO ()\nmain = putStrLn "Hello, World!"\n',
-        );
-        console.log(
-          "Worker: Finished running Haskell code with result:",
-          result,
-        );
-        resolve(result);
+        runMmlhcCore = await dyld.exportFuncs.mmlhcMain("/tmp/hslib/lib");
+        console.log("Worker: Finished mmlhcMain");
+        resolve(undefined);
       } catch (err) {
         console.error("Worker: Error in DyldJs.main:", err);
       }

@@ -32,14 +32,24 @@ export default component$(() => {
       );
       console.log("Main thread: Connected to the GHC worker:", worker);
       worker.forEachEvent({
-        runMmlhcMain: (result) => {
-          console.log("Main thread: Received result from worker:", result);
-        },
         loadWasms: () => {
           console.log("Main thread: Worker has loaded WASMs");
         },
         loadGhc: () => {
           console.log("Main thread: Worker has loaded GHC");
+          worker.runMmlhcMain(
+            "",
+            'main :: IO ()\nmain = putStrLn "Hello from Mmlhc!"',
+          );
+        },
+        printedStdout: (result: string) => {
+          console.log("Main thread: Worker printed to stdout:", result);
+        },
+        printedStderr: (result: string) => {
+          console.error("Main thread: Worker printed to stderr:", result);
+        },
+        runMmlhc: () => {
+          console.log("Main thread: Worker has run Mmlhc");
         },
       });
     },

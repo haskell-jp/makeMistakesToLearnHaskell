@@ -13,15 +13,9 @@ export class ToWorkerFacade {
   }
 
   // TODO: correct type
-  runMmlhcMain<M extends WorkerMessage>(
-    func: WorkerMessage,
-    ...args: WorkerArgumentsOf<M>
-  ): void {
-    console.log("Main thread: Sending message to worker", {
-      func,
-      args,
-    });
-    this.#worker.port.postMessage({ func, args });
+  runMmlhcMain(...args: WorkerArgumentsOf<"runMmlhc">): void {
+    console.log('Main thread: Sending "runMmlhc" message to worker');
+    this.#worker.port.postMessage({ func: "runMmlhc", args });
   }
 
   forEachEvent(handlers: WorkerHandlerDefinitions): void {

@@ -1,4 +1,5 @@
 import { buildOnConnectHandler } from "./from-worker/facade";
+import { WorkerFunctionDefinitions } from "./worker-operations";
 
 const coreModulePromise = import("./worker/core.js");
 
@@ -7,15 +8,23 @@ const beforeOnMessage = (port: MessagePort): void => {
     await coreModule.loadWasms;
     console.log("Worker: Wasm files loaded");
     port.postMessage({ func: "loadWasms" });
-    await coreModule.loadGhc;
+    await coreModule.loadMmlhc;
     console.log("Worker: GHC is ready");
     port.postMessage({ func: "loadGhc" });
   });
 };
 
-const definitions = {
-  runMmlhcMain: async (_hsSrc: string): Promise<void> => {
-    console.error("runMmlhcMain: Not implemented yet.");
+const definitions: WorkerFunctionDefinitions = {
+  runMmlhc: async (ghcArgs: string, hsSrc: string): Promise<void> => {
+    const coreModule = await coreModulePromise;
+    console.log(
+      "Worker: BEFORE Running runMmlhc with args:",
+      ghcArgs,
+      "and source:",
+      hsSrc,
+    );
+    await coreModule.runMmlhc(ghcArgs, hsSrc);
+    console.log("Worker: AFTER Running runMmlhc");
   },
 };
 
