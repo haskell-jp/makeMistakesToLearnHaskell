@@ -1,10 +1,8 @@
 import { buildOnConnectHandler } from "./from-worker/facade";
 
-// TODO: Try calling `import` without the `await` here, and see if it works
-let coreModulePromise: Promise<typeof import("./worker/core.js")> | null = null;
+const coreModulePromise = import("./worker/core.js");
 
 const beforeOnMessage = (port: MessagePort): void => {
-  coreModulePromise ??= import("./worker/core.js");
   coreModulePromise.then(async (coreModule) => {
     await coreModule.loadWasms;
     console.log("Worker: Wasm files loaded");
