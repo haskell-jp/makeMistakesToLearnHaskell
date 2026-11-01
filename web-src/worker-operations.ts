@@ -1,25 +1,21 @@
-// TODO: Perhaps this is overkill.
-// TODO: Migrate to the definition in `interface`.
-const WorkerFunctionDefinitions = {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  runMmlhc: (_ghcArgs: string, _hsSrc: string): Promise<void> => {
-    throw new Error("Only for type definition. Should not be called directly.");
-  },
-} as const;
-export type WorkerFunctionDefinitions = typeof WorkerFunctionDefinitions;
-export type WorkerMessage = keyof typeof WorkerFunctionDefinitions;
-export type WorkerArgumentsOf<M extends WorkerMessage> = Parameters<
-  (typeof WorkerFunctionDefinitions)[M]
->;
-export type WorkerReturnOf<M extends WorkerMessage> = ReturnType<
-  (typeof WorkerFunctionDefinitions)[M]
->;
-type OtherHandlerDefinitions = {
+export interface FromWorkerFunctions {
   loadWasms: () => void;
   loadGhc: () => void;
   printedStdout: (result: string) => void;
   printedStderr: (result: string) => void;
-};
-export type WorkerHandlerDefinitions = {
-  [func in WorkerMessage]: (result: Awaited<WorkerReturnOf<func>>) => void;
-} & OtherHandlerDefinitions;
+}
+
+export interface ToWorkerFunctions {
+  runMmlhc: (ghcArgs: string, hsSrc: string) => void;
+}
+
+export type ToWorkerFunctionName = keyof ToWorkerFunctions;
+
+export type ToWorkerArgumentsOf<T extends ToWorkerFunctionName> = Parameters<
+  ToWorkerFunctions[T]
+>;
+
+export type FromWorkerFunctionName = keyof FromWorkerFunctions;
+
+export type FromWorkerArgumentsOf<T extends FromWorkerFunctionName> =
+  Parameters<FromWorkerFunctions[T]>;

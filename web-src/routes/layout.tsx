@@ -37,7 +37,8 @@ export default component$(() => {
         },
         loadGhc: () => {
           console.log("Main thread: Worker has loaded GHC");
-          worker.runMmlhcMain(
+          worker.call(
+            "runMmlhc",
             "",
             'main :: IO ()\nmain = putStrLn "Hello from Mmlhc!"',
           );
@@ -47,9 +48,6 @@ export default component$(() => {
         },
         printedStderr: (result: string) => {
           console.error("Main thread: Worker printed to stderr:", result);
-        },
-        runMmlhc: () => {
-          console.log("Main thread: Worker has run Mmlhc");
         },
       });
     },

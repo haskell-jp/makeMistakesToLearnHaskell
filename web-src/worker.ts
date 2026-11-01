@@ -1,5 +1,5 @@
 import { buildOnConnectHandler } from "./from-worker/facade";
-import { WorkerFunctionDefinitions } from "./worker-operations";
+import { ToWorkerFunctions } from "./worker-operations";
 
 const coreModulePromise = import("./worker/core.js");
 
@@ -14,7 +14,7 @@ const beforeOnMessage = (port: MessagePort): void => {
   });
 };
 
-const definitions: WorkerFunctionDefinitions = {
+const definitions: ToWorkerFunctions = {
   runMmlhc: async (ghcArgs: string, hsSrc: string): Promise<void> => {
     const coreModule = await coreModulePromise;
     console.log(

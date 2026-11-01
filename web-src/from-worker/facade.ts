@@ -1,13 +1,12 @@
 import type {
-  WorkerArgumentsOf,
-  WorkerMessage,
-  WorkerFunctionDefinitions,
-  WorkerReturnOf,
+  ToWorkerArgumentsOf,
+  ToWorkerFunctionName,
+  ToWorkerFunctions,
 } from "../worker-operations";
 
 export function buildOnConnectHandler(
   beforeOnMessage: (port: MessagePort) => void,
-  definitions: WorkerFunctionDefinitions,
+  definitions: ToWorkerFunctions,
 ): (event: MessageEvent) => void {
   console.log("Worker: Building onConnect handler with definitions");
   return (event: MessageEvent) => {
@@ -21,15 +20,10 @@ export function buildOnConnectHandler(
         const { func, args } = e.data;
         if (func in definitions) {
           console.log("Worker: returnPort", port);
-          const handler = definitions[func as WorkerMessage] as (
-            ...args: WorkerArgumentsOf<WorkerMessage>
-          ) => WorkerReturnOf<WorkerMessage>;
-          handler(...(args as WorkerArgumentsOf<WorkerMessage>)).then(
-            (result) => {
-              console.log("Worker: Sending result back to main thread", result);
-              port.postMessage(result);
-            },
-          );
+          const handler = definitions[func as ToWorkerFunctionName] as (
+            ...args: ToWorkerArgumentsOf<ToWorkerFunctionName>
+          ) => void;
+          handler(...(args as ToWorkerArgumentsOf<ToWorkerFunctionName>));
         } else {
           console.warn(`Unknown operation: ${func}`);
         }
