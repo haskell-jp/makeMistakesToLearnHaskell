@@ -1,7 +1,6 @@
 import {
   FromWorkerFunctions,
   FromWorkerFunctionName,
-  type FromWorkerArgumentsOf,
   ToWorkerFunctionName,
   ToWorkerArgumentsOf,
 } from "../worker-operations";

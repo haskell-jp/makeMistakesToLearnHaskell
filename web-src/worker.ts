@@ -4,14 +4,20 @@ import { ToWorkerFunctions } from "./worker-operations";
 const coreModulePromise = import("./worker/core.js");
 
 const beforeOnMessage = (port: MessagePort): void => {
-  coreModulePromise.then(async (coreModule) => {
-    await coreModule.loadWasms;
-    console.log("Worker: Wasm files loaded");
-    port.postMessage({ func: "loadWasms" });
-    await coreModule.loadMmlhc;
-    console.log("Worker: GHC is ready");
-    port.postMessage({ func: "loadGhc" });
-  });
+  coreModulePromise
+    .then(async (coreModule) => {
+      coreModule.ports.push(port);
+
+      await coreModule.loadWasms;
+      console.log("Worker: Wasm files loaded");
+      port.postMessage({ func: "loadWasms" });
+      await coreModule.loadMmlhc;
+      console.log("Worker: GHC is ready");
+      port.postMessage({ func: "loadGhc" });
+    })
+    .catch((err) => {
+      console.error("Worker: Error loading core module:", err);
+    });
 };
 
 const definitions: ToWorkerFunctions = {

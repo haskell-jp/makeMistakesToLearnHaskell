@@ -23,6 +23,9 @@ const bsdtar_wasi = new WASI(
   { debug: false },
 );
 
+// TODO: Figure out better way to collect (and delete) ports.
+export const ports: MessagePort[] = [];
+
 export const loadWasms = Promise.all([
   WebAssembly.instantiateStreaming(fetch("./assets/ghc/bsdtar.wasm"), {
     wasi_snapshot_preview1: bsdtar_wasi.wasiImport,
@@ -60,11 +63,17 @@ export const loadMmlhc = new Promise((resolve) => {
         const dyld = await main({
           rpc: new DyLDBrowserHost({
             rootfs,
-            stdout: (msg: string) => {
-              console.log("Worker: STDOUT:", msg);
+            stdout: (result: string) => {
+              console.log("Worker: STDOUT:", result);
+              for (const port of ports) {
+                port.postMessage({ func: "printedStdout", result });
+              }
             },
-            stderr: (msg: string) => {
-              console.warn("Worker: STDERR:", msg);
+            stderr: (result: string) => {
+              console.warn("Worker: STDERR:", result);
+              for (const port of ports) {
+                port.postMessage({ func: "printedStderr", result });
+              }
             },
           }),
           searchDirs: [
