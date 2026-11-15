@@ -1,19 +1,17 @@
-import { buildOnConnectHandler } from "./from-worker/facade";
+import { broadcast, buildOnConnectHandler } from "./from-worker/facade";
 import { ToWorkerFunctions } from "./worker-operations";
 
 const coreModulePromise = import("./worker/core.js");
 
-const beforeOnMessage = (port: MessagePort): void => {
+const beforeOnMessage = (): void => {
   coreModulePromise
     .then(async (coreModule) => {
-      coreModule.ports.push(port);
-
       await coreModule.loadWasms;
       console.log("Worker: Wasm files loaded");
-      port.postMessage({ func: "loadWasms" });
+      broadcast("loadWasms");
       await coreModule.loadMmlhc;
       console.log("Worker: GHC is ready");
-      port.postMessage({ func: "loadGhc" });
+      broadcast("loadGhc");
     })
     .catch((err) => {
       console.error("Worker: Error loading core module:", err);

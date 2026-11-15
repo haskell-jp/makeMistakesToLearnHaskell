@@ -1,4 +1,6 @@
 import type {
+  FromWorkerArgumentsOf,
+  FromWorkerFunctionName,
   ToWorkerArgumentsOf,
   ToWorkerFunctionName,
   ToWorkerFunctions,
@@ -12,6 +14,7 @@ export function buildOnConnectHandler(
   return (event: MessageEvent) => {
     const port = event.ports[0];
     console.log("Worker: Connected to main thread", port);
+    ports.push(port);
     beforeOnMessage(port);
     port.addEventListener(
       "message",
@@ -34,3 +37,16 @@ export function buildOnConnectHandler(
     port.start();
   };
 }
+
+export function broadcast<T extends FromWorkerFunctionName>(
+  func: T,
+  ...args: FromWorkerArgumentsOf<T>
+): void {
+  console.log(`Worker: Broadcasting "${func}" message to all ports`, args);
+  for (const port of ports) {
+    port.postMessage({ func, result: args[0] });
+  }
+}
+
+// TODO: Figure out better way to collect (and delete) ports.
+export const ports: MessagePort[] = [];
